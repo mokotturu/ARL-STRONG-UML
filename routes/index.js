@@ -83,6 +83,10 @@ router.get('/declined', (req, res) => {
 	res.render('declined', { title: 'ARL STRONG UML | Declined' });
 });
 
+router.get('/exit-tutorial', (req, res) => {
+	res.render('declined', { title: 'ARL STRONG UML | Thank you' });
+});
+
 router.get('/survey-1', (req, res) => {
 	res.render('survey-1', {
 		title: 'ARL STRONG UML | Survey 1',

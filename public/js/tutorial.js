@@ -631,6 +631,35 @@ function showInstructions12() {
 	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
 	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
 	setTimeout(() => {
+		/* $('#instructions-heading').text('End of Tutorial');
+		$('#instructions-content').text('Congrats! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
+		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
+		$('#instructions-modal-content > .userInputButtons button').css('margin', '10px');
+		$('#instructions-modal').css({
+			'margin': 'auto',
+			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
+		});
+		$('#instructions-modal-content').css('align-items', 'center');
+		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
+		$('#instructions-modal').addClass('animate__animated animate__zoomIn animate__faster'); */
+
+		$endRoundModal.css('display', 'flex');
+		$endRoundModal.css('visibility', 'visible');
+		$endRoundModal.css('opacity', '1');
+		$endRoundModal.css('z-index',1000);
+		$endRoundModal.addClass('animate__animated animate__zoomIn animate__faster');
+	}, 500);
+}
+
+function showInstructions13() {
+	$('.tableItems').removeClass('animate__animated animate__shakeX');
+	$endRoundModal.removeClass('animate__animated animate__zoomIn animate__faster');
+	$endRoundModal.addClass('animate__animated animate__zoomOut animate__faster');
+	setTimeout(() => {
+		$endRoundModal.css('display', 'none');
+		$endRoundModal.css('visibility', 'hidden');
+		$endRoundModal.css('opacity', '0');
+		$endRoundModal.css('z-index', 0);
 		$('#instructions-heading').text('End of Tutorial');
 		$('#instructions-content').text('Congrats! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
 		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
@@ -643,11 +672,6 @@ function showInstructions12() {
 		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
 		$('#instructions-modal').addClass('animate__animated animate__zoomIn animate__faster');
 	}, 500);
-
-	$endRoundModal.css('display', 'flex');
-	$endRoundModal.css('visibility', 'visible');
-	$endRoundModal.css('opacity', '1');
-	$endRoundModal.css('z-index',1000);
 }
 
 function nextInstruction() {
@@ -686,6 +710,9 @@ function nextInstruction() {
 		case 12:
 			showInstructions12();
 			break;
+		case 13:
+			showInstructions13();
+			break;
 		default:
 			console.error('No instructions found with that ID.');
 			break;
@@ -694,14 +721,24 @@ function nextInstruction() {
 	$('#instructions-modal').attr('data-id', `${currInstructionID}`);
 }
 
+function validateUser() {
+	if ($('#intervalSurvey').serialize() == 'optradioQ1=3') {
+		// proceed to game
+		nextInstruction();
+	} else {
+		// byebye
+		window.location.href = '/exit-tutorial'
+	}
+}
+
 function updateTime() {
 	if (++seconds % duration == 0) {
-		seconds = 0;
-		agentNum = 1;
-		pause = true;
+		// seconds = 0;
+		// agentNum = 1;
+		// pause = true;
 		clearInterval(timeout);
 		// showExploredInfo();
-		showTrustPrompt();
+		// showTrustPrompt();
 	}
 	$timer.text(`Time elapsed: ${seconds}s`);
 }

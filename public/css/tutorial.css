@@ -207,7 +207,7 @@ nav {
 
 #endRoundQContainer {
 	width: 45em !important;
-	height: 40em !important;
+	height: 30em !important;
 	padding: 35px 50px;
 	visibility: visible;
 	opacity: 1; 
@@ -220,7 +220,7 @@ nav {
 .optionsContainer {
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(7, 1fr);
+	grid-template-columns: repeat(4, 1fr);
 	grid-template-rows: 1fr;
 	grid-column-gap: 0px;
 	grid-row-gap: 0px;
@@ -247,8 +247,18 @@ nav {
 
 .questionContainer h4 {
 	margin: 0.5em 0 1em 0;
-	font-size: 30px;
+	font-size: 22px;
 	line-height: 160%;
+}
+
+.grid-item {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	background-color: rgb(100, 100, 100);
+	border-radius: 7px;
+	padding: 10px;
+	margin: 5px;
 }
 
 
