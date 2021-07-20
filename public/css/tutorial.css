@@ -700,7 +700,7 @@ button:hover, select:hover, option {
 button:disabled, button[disabled], button[disabled]:hover, button[disabled]:focus, button[disabled]:active {
 	background-color: #3C3C3C;
 	color: #777777;
-	cursor: auto;
+	cursor: not-allowed;
 	box-shadow: none;
 }
 
