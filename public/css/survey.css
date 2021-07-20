@@ -107,7 +107,9 @@ nav .items p {
 }
 
 .popup-modal {
-	background-color: white;
+	background-color: rgba(90, 90, 90);
+	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	color: white;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -181,7 +183,7 @@ form button {
 
 .grid-container {
 	display: grid;
-	grid-template-columns: auto auto auto auto auto auto auto auto auto;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
 }
 
 .grid-item {
@@ -227,10 +229,60 @@ button:hover {
 
 .question .options {
 	margin: 20px 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.question .smallOptions {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(0px, 1fr));
+	grid-template-rows: 1fr;
+	grid-column-gap: 0px;
+	grid-row-gap: 0px;
 }
 
 .question .options label {
-	padding-right: 50px;
+	margin: 0.2em;
+	padding: 1em;
+	background-color: rgb(200, 200, 200);
+	border-radius: 7px;
+	border: none !important;
+}
+
+.question .options label input[type=radio] {
+	margin-right: 1em;
+}
+
+.question .options label input[type=text] {
+	margin: 0 0.5em 0 1em;
+	background-color: transparent;
+	outline: none;
+	border: none;
+	border-bottom: 2px solid #888888;
+	padding: 0.5em;
+}
+
+.question .options label input[type=text]:focus {
+	outline: none;
+	border: 2px solid #222222;
+	border-radius: 2px;
+}
+
+.border-effect ~ .focus-border {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 0;
+	height: 2px;
+	background-color: #3399FF;
+	transition: 0.4s;
+}
+
+.border-effect:focus ~ .focus-border {
+	width: 100%;
+	transition: 0.4s;
+	left: 0;
 }
 
 .question textarea {
@@ -307,4 +359,16 @@ footer a:hover {
 	-webkit-transform: rotate(360deg) scale(1);
 	transform: rotate(360deg) scale(1);
 	background-color: #6e7681;
+}
+
+::placeholder {
+	color: #777777;
+}
+
+:-ms-input-placeholder {
+	color: #777777;
+}
+
+::-ms-input-placeholder {
+	color: #777777;
 }

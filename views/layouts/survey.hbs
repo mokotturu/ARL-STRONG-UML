@@ -53,11 +53,11 @@
 		$('form').append(`<input type="hidden" name="uuid" id="uuid" value="${sessionStorage.getItem("uuid")}">`);
 	});
 
-	$(window).on('beforeunload', e => {
+	/* $(window).on('beforeunload', e => {
 		if (e.target.activeElement == $('#submit')[0]) return;
 		e.preventDefault();
 		e.returnValue = 'Your progress will not be saved.';
 		return "Your progress will not be saved.";
-	});
+	}); */
 </script>
 </html>

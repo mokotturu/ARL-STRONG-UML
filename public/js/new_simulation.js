@@ -40,7 +40,7 @@ const colors = {
 
 var grid;
 var uuid;
-var data = [{ movement: [], human: [], agents: [] }, { movement: [], human: [], agents: [] }];
+var data = [{ movement: [], human: [], agents: [] }, { movement: [], human: [], agents: [], endGame: [] }];
 var obstacles = { victims: [], hazards: [], targets: [] };
 var mapPaths = [
 	'src/data9.min.json',	//  0
@@ -414,7 +414,7 @@ function updateTime() {
 // game loop
 function loop() {
 	if (!pause) {
-		if (intervalCount >= intervals) terminate();
+		if (intervalCount >= intervals) preTerminationPrompt();
 		refreshMap();
 		currentFrame = requestAnimationFrame(loop);
 	}
@@ -463,9 +463,27 @@ function refreshMap() {
 	spawn([...obstacles.targets, human/* , ...agents */], 1);
 }
 
-function terminate() {
+function preTerminationPrompt() {
+	// end game
 	pause = true;
 	clearInterval(timeout);
+	$(document).off();
+	cancelAnimationFrame(currentFrame);
+
+	// show survey
+	$('#endGameQContainer').css('display', 'flex');
+	$('#endGameQContainer').css('visibility', 'visible');
+	$('#endGameQContainer').css('opacity', '1');
+}
+
+function terminate() {
+	$('.body-container').css('visibility', 'hidden');
+	$('.body-container').css('opacity', '0');
+	$('.loader').css('visibility', 'visible');
+	$('.loader').css('opacity', '1');
+
+	data.endGame = $('#endGameSurvey').serializeArray();
+	sessionStorage.setItem('finishedGame', true);
 
 	$.ajax({
 		url: "/simulation/2",
@@ -480,7 +498,8 @@ function terminate() {
 			agent1Explored: [],
 			agent2Explored: [],
 			obstacles: obstacles,
-			decisions: { agent1: log[0], agent2: log[1] }
+			decisions: { agent1: log[0], agent2: log[1] },
+			endGame: data.endGame
 		}),
 		contentType: "application/json; charset=utf-8",
 		success: (data, status, jqXHR) => {
@@ -592,33 +611,26 @@ function showExploredInfo() {
 function updateResults(){
 	let tempString = ' ';
 	for (let i = 0; i < human.tempTargetsFound.positive; i++){
-
-		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
+		tempString+= `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
 	}
 	$("div.hBlueStar").html(tempString);
 
 	tempString = ' ';
-
 	for (let j = 0; j < human.tempTargetsFound.negative; j++){
-
-		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
+		tempString+= `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
 	}
 	$("div.hYellowStar").html(tempString);
 
 	tempString = ' '; 
-
 	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].positive; k++){
-		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
+		tempString+= `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
 	}
-
 	$("div.aBlueStar").html(tempString);
 
 	tempString = ' ';
-
 	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].negative; l++){
-		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
+		tempString+= `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
 	}
-
 	$("div.aYellowStar").html(tempString);
 
 	/* tempString = ' ';
@@ -1324,9 +1336,11 @@ function difference(setA, setB) {
 
 function toggleTextInput() {
 	if ($('input[name="optradioQ3"]:checked').val() == 5) {
-		$('#q3Option5Text').css('display', 'block');
+		$('.hideTextArea').css('display', 'inline-block');
+		$('.hideTextArea').prop('required', true);
 	} else {
-		$('#q3Option5Text').css('display', 'none');
-		$('#q3Option5Text').val('');
+		$('.hideTextArea').css('display', 'none');
+		$('.hideTextArea').val('');
+		$('.hideTextArea').prop('required', false);
 	}
 }

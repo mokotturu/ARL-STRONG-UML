@@ -208,6 +208,17 @@ nav {
 #endRoundQContent {
 	color: white;
 }
+
+#endGameQContainer {
+	width: 45em !important;
+	height: 30em !important;
+	padding: 35px 50px;
+}
+
+#endGameQContent {
+	color: white;
+}
+
 .q3Class{
 	padding-bottom:1em;
 	text-align: center;
@@ -253,7 +264,7 @@ nav {
 .optionsContainer {
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(7, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(0px, 1fr));
 	grid-template-rows: 1fr;
 	grid-column-gap: 0px;
 	grid-row-gap: 0px;
@@ -264,13 +275,9 @@ nav {
 }
 
 #q3Option5Text {
-	margin: 0 20px;
+	margin: 0 0.5em 0 1em;
 	transition: 0.3s;
 	display: none;
-}
-
-#q3Option5Text:focus {
-	border: 2px solid white;
 }
 
 .fullWidthOptions {
@@ -683,11 +690,23 @@ nav {
 	background-color: #252525;
 }
 
-input {
-	background-color: inherit;
-	border: 0px;
-	border-bottom: 1px solid white;
+input[type=radio] {
+	margin-right: 1em;
+}
+
+input[type=text] {
 	color: white;
+	background-color: transparent;
+	outline: none;
+	border: none;
+	border-bottom: 2px solid #888888;
+	padding: 0.5em;
+}
+
+input[type=text]:focus {
+	outline: none;
+	border: 2px solid #222222;
+	border-radius: 2px;
 }
 
 button, select, option {

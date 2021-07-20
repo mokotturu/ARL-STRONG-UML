@@ -271,7 +271,8 @@ nav .items p {
 }
 
 .popup-modal {
-	background-color: white;
+	background-color: rgba(90, 90, 90);
+	color: white;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 	display: flex;
 	flex-direction: column;
@@ -287,7 +288,7 @@ nav .items p {
 }
 
 code {
-	background-color: lightgrey;
+	background-color: rgb(60, 60, 60);
 	border-radius: 7px;
 	padding: 10px 20px;
 }

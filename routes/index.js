@@ -65,7 +65,8 @@ router.post('/simulation/2', async (req, res) => {
 					agent1: req.body.decisions.agent1,
 					agent2: req.body.decisions.agent2
 				},
-				obstacles: req.body.obstacles
+				obstacles: req.body.obstacles,
+				endGame: req.body.endGame
 			}
 		);
 		res.sendStatus(200);
@@ -111,6 +112,7 @@ router.post('/survey-1-submit', async (req, res) => {
 					principled: req.body.principled,
 					genuine: req.body.genuine,
 					kind: req.body.kind,
+					manOption3: req.body.manOption3,
 					dependable: req.body.dependable,
 					capable: req.body.capable,
 					moral: req.body.moral,
@@ -132,7 +134,7 @@ router.post('/survey-1-submit', async (req, res) => {
 	}
 });
 
-router.get('/survey-2', (req, res) => {
+/* router.get('/survey-2', (req, res) => {
 	res.render('survey-2', {
 		title: 'ARL STRONG UML | Survey 2',
 		layout: 'survey.hbs'
@@ -159,14 +161,37 @@ router.post('/survey-2-submit', async (req, res) => {
 		console.log(err);
 		res.redirect(500, 'error/500');
 	}
-});
+}); */
 
-// survey 3 is now survey 1
- router.get('/survey-3', (req, res) => {
+ router.get('/survey-2', (req, res) => {
 	res.render('survey-3', {
-		title: 'ARL STRONG UML | Survey 3',
+		title: 'ARL STRONG UML | Survey 2',
 		layout: 'survey.hbs'
 	});
+});
+
+router.post('/survey-2-submit', async (req, res) => {
+	console.log(req.body);
+	try {
+		await SimulationResult.findOneAndUpdate(
+			{ uuid: req.body.uuid },
+			{
+				survey2: {
+					question1: req.body.question1,
+					pdText: req.body.pdText,
+					question2: req.body.question2,
+					question3: req.body.question3,
+					question4: req.body.question4,
+					question5: req.body.question5,
+				},
+				survey2Modified: new Date()
+			}
+		);
+		res.redirect('/thank-you');
+	} catch (err) {
+		console.log(err);
+		res.redirect(500, 'error/500');
+	}
 });
 
 /*

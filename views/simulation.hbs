@@ -195,10 +195,10 @@
 
 		<div class="popup-modal-container" id="endRoundQContainer">
 			<div class="popup-modal" id="endRoundQContent">
-				<h1 id="q3PromptTitle">Please respond to the following questions below:</h1>
+				<h1 id="q3PromptTitle">Please respond to the following questions:</h1>
 				<form name="intervalSurvey" id="intervalSurvey" onsubmit="return false;">
 					<div class="questionContainer">
-						<h4>Please rate the performance of your robot in this search and rescue task so far (7 being poor performance, 1 being excellent performance).</h4>
+						<h4>Please rate the performance of your robot in this search and rescue task so far<br>(1 = poor performance, 7 = excellent performance).</h4>
 						<div class="optionsContainer">
 							<label for="oneOne" class="radio-inline grid-item"><input id="oneOne" type="radio" name="optradioQ1" value="1">1</label>
 							<label for="oneTwo" class="radio-inline grid-item"><input id="oneTwo" type="radio" name="optradioQ1" value="2">2</label>
@@ -210,7 +210,7 @@
 						</div>
 					</div>
 					<div class="questionContainer">
-						<h4>Please rate the robot as a teammate (7 being poor teammate, 1 being excellent teammate).</h4>
+						<h4>Please rate the robot as a teammate<br>(1 = poor teammate, 7 = excellent teammate).</h4>
 						<div class="optionsContainer">
 							<label for="twoOne"  class="radio-inline grid-item"><input id="twoOne" type="radio" name="optradioQ2" value="1">1</label>
 							<label for="twoTwo" class="radio-inline grid-item"><input id="twoTwo" type="radio" name="optradioQ2" value="2">2</label>
@@ -228,12 +228,44 @@
 							<label for="longTwo" class="fullWidthOption grid-item"><input id="longTwo" type="radio" name="optradioQ3" value="2" onclick="toggleTextInput()">Bad performance of the robot in last round</label>
 							<label for="longThree" class="fullWidthOption grid-item"><input id="longThree" type="radio" name="optradioQ3" value="3" onclick="toggleTextInput()">Overall good performance of robot up to this point</label>
 							<label for="longFour" class="fullWidthOption grid-item"><input id="longFour" type="radio" name="optradioQ3" value="4" onclick="toggleTextInput()">Overall bad performance of robot up to this point</label>
-							<label for="longFive" class="fullWidthOption grid-item" id="otherRadioButton"><input id="longFive" type="radio" name="optradioQ3" value="5" onclick="toggleTextInput()">Other<input type="text" name="q3Option5Text" id="q3Option5Text" placeholder="Please mention why"></label>
+							<label for="longFive" class="fullWidthOption grid-item" id="otherRadioButton"><input id="longFive" type="radio" name="optradioQ3" value="5" onclick="toggleTextInput()">
+								Other
+								<input type="text" name="q3Option5Text" id="q3Option5Text" class="hideTextArea" placeholder="Please mention why"><sup class="hideTextArea" style="font-size: 11px;color: red; display: none;">&#9733; required</sup>
+							</label>
 						</div>
 					</div>
 				</form>
 				<div class="userInputButtons">
-					<button id="submitendRoundQ" onclick="hideExploredInfo()">Submit</button> 
+					<button id="submitendRoundQ" onclick="hideExploredInfo()">Submit</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="popup-modal-container" id="endGameQContainer">
+			<div class="popup-modal" id="endGameQContent">
+				<h1 id="endGameQPromptTitle">Please respond to the following questions:</h1>
+				<form name="endGameSurvey" id="endGameSurvey" onsubmit="return false;">
+					<div class="questionContainer">
+						<h4>How many rounds of the game did you play?</h4>
+						<div class="optionsContainer">
+							<label for="endOneOne" class="radio-inline grid-item"><input id="endOneOne" type="radio" name="optradioEQ1" value="5">5</label>
+							<label for="endOneTwo" class="radio-inline grid-item"><input id="endOneTwo" type="radio" name="optradioEQ1" value="12">12</label>
+							<label for="endOneThree" class="radio-inline grid-item"><input id="endOneThree" type="radio" name="optradioEQ1" value="7">7</label>
+							<label for="endOneFour" class="radio-inline grid-item"><input id="endOneFour" type="radio" name="optradioEQ1" value="10">10</label>
+						</div>
+					</div>
+					<div class="questionContainer">
+						<h4>The scores gained by the robot in the last two rounds were:</h4>
+						<div class="optionsContainer">
+							<label for="endTwoOne"  class="radio-inline grid-item"><input id="endTwoOne" type="radio" name="optradioEQ2" value="pp">Positive, Positive</label>
+							<label for="endTwoTwo" class="radio-inline grid-item"><input id="endTwoTwo" type="radio" name="optradioEQ2" value="pn">Positive, Negative</label>
+							<label for="endTwoThree" class="radio-inline grid-item"><input id="endTwoThree" type="radio" name="optradioEQ2" value="nn">Negative, Negative</label>
+							<label for="endTwoFour" class="radio-inline grid-item"><input id="endTwoFour" type="radio" name="optradioEQ2" value="np">Negative, Positive</label>
+						</div>
+					</div>
+				</form>
+				<div class="userInputButtons">
+					<button id="submitendRoundQ" onclick="terminate()">Submit</button>
 				</div>
 			</div>
 		</div>

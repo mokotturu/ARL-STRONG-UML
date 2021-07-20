@@ -12,14 +12,15 @@
 
 	<h4>
 		Please rate the robot using the scale from 0 (Not at all) to 7 (very).
-		If a particular item does not seem to for the robot in the situation, 
+		If a particular item does not seem to fit the robot in the situation, 
 		please select the option that says "Does not fit".
 	</h4>
 
 	<form action="/survey-1-submit" method="POST" name="survey-1" id="survey-1">
 		<div class="grid-container">
 			<label class="grid-item sticky"></label>
-			<label class="grid-item sticky">Not at all<br><br>1</label>
+			<label class="grid-item sticky">Not at all<br><br>0</label>
+			<label class="grid-item sticky"><br><br>1</label>
 			<label class="grid-item sticky"><br><br>2</label>
 			<label class="grid-item sticky"><br><br>3</label>
 			<label class="grid-item sticky"><br><br>4</label>
@@ -29,6 +30,7 @@
 			<label class="grid-item sticky">Does not fit<br><br>-</label>
 
 			<label class="grid-item">Reliable</label>
+			<label class="grid-item"><input type="radio" id="one" name="reliable" value="0"></label>
 			<label class="grid-item"><input type="radio" id="one" name="reliable" value="1"></label>
 			<label class="grid-item"><input type="radio" id="two" name="reliable" value="2"></label>
 			<label class="grid-item"><input type="radio" id="three" name="reliable" value="3"></label>
@@ -36,9 +38,10 @@
 			<label class="grid-item"><input type="radio" id="five" name="reliable" value="5"></label>
 			<label class="grid-item"><input type="radio" id="six" name="reliable" value="6"></label>
 			<label class="grid-item"><input type="radio" id="seven" name="reliable" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="reliable" value="0"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="reliable" value="-1"></label>
 
 			<label class="grid-item grey">Competent</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="competent" value="0"></label>
 			<label class="grid-item grey"><input type="radio" id="one" name="competent" value="1"></label>
 			<label class="grid-item grey"><input type="radio" id="two" name="competent" value="2"></label>
 			<label class="grid-item grey"><input type="radio" id="three" name="competent" value="3"></label>
@@ -46,9 +49,10 @@
 			<label class="grid-item grey"><input type="radio" id="five" name="competent" value="5"></label>
 			<label class="grid-item grey"><input type="radio" id="six" name="competent" value="6"></label>
 			<label class="grid-item grey"><input type="radio" id="seven" name="competent" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="competent" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="competent" value="-1"></label>
 
 			<label class="grid-item">Ethical</label>
+			<label class="grid-item"><input type="radio" id="one" name="ethical" value="0"></label>
 			<label class="grid-item"><input type="radio" id="one" name="ethical" value="1"></label>
 			<label class="grid-item"><input type="radio" id="two" name="ethical" value="2"></label>
 			<label class="grid-item"><input type="radio" id="three" name="ethical" value="3"></label>
@@ -56,9 +60,10 @@
 			<label class="grid-item"><input type="radio" id="five" name="ethical" value="5"></label>
 			<label class="grid-item"><input type="radio" id="six" name="ethical" value="6"></label>
 			<label class="grid-item"><input type="radio" id="seven" name="ethical" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="ethical" value="0"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="ethical" value="-1"></label>
 
 			<label class="grid-item grey">Transparent</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="transparent" value="0"></label>
 			<label class="grid-item grey"><input type="radio" id="one" name="transparent" value="1"></label>
 			<label class="grid-item grey"><input type="radio" id="two" name="transparent" value="2"></label>
 			<label class="grid-item grey"><input type="radio" id="three" name="transparent" value="3"></label>
@@ -66,9 +71,10 @@
 			<label class="grid-item grey"><input type="radio" id="five" name="transparent" value="5"></label>
 			<label class="grid-item grey"><input type="radio" id="six" name="transparent" value="6"></label>
 			<label class="grid-item grey"><input type="radio" id="seven" name="transparent" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="transparent" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="transparent" value="-1"></label>
 
 			<label class="grid-item">Benevolent</label>
+			<label class="grid-item"><input type="radio" id="one" name="benevolent" value="0"></label>
 			<label class="grid-item"><input type="radio" id="one" name="benevolent" value="1"></label>
 			<label class="grid-item"><input type="radio" id="two" name="benevolent" value="2"></label>
 			<label class="grid-item"><input type="radio" id="three" name="benevolent" value="3"></label>
@@ -76,9 +82,10 @@
 			<label class="grid-item"><input type="radio" id="five" name="benevolent" value="5"></label>
 			<label class="grid-item"><input type="radio" id="six" name="benevolent" value="6"></label>
 			<label class="grid-item"><input type="radio" id="seven" name="benevolent" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="benevolent" value="0"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="benevolent" value="-1"></label>
 
 			<label class="grid-item grey">Predictable</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="predictable" value="0"></label>
 			<label class="grid-item grey"><input type="radio" id="one" name="predictable" value="1"></label>
 			<label class="grid-item grey"><input type="radio" id="two" name="predictable" value="2"></label>
 			<label class="grid-item grey"><input type="radio" id="three" name="predictable" value="3"></label>
@@ -86,9 +93,10 @@
 			<label class="grid-item grey"><input type="radio" id="five" name="predictable" value="5"></label>
 			<label class="grid-item grey"><input type="radio" id="six" name="predictable" value="6"></label>
 			<label class="grid-item grey"><input type="radio" id="seven" name="predictable" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="predictable" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="predictable" value="-1"></label>
 
 			<label class="grid-item">Skilled</label>
+			<label class="grid-item"><input type="radio" id="one" name="skilled" value="0"></label>
 			<label class="grid-item"><input type="radio" id="one" name="skilled" value="1"></label>
 			<label class="grid-item"><input type="radio" id="two" name="skilled" value="2"></label>
 			<label class="grid-item"><input type="radio" id="three" name="skilled" value="3"></label>
@@ -96,9 +104,10 @@
 			<label class="grid-item"><input type="radio" id="five" name="skilled" value="5"></label>
 			<label class="grid-item"><input type="radio" id="six" name="skilled" value="6"></label>
 			<label class="grid-item"><input type="radio" id="seven" name="skilled" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="skilled" value="0"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="skilled" value="-1"></label>
 
 			<label class="grid-item grey">Principled</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="principled" value="0"></label>
 			<label class="grid-item grey"><input type="radio" id="one" name="principled" value="1"></label>
 			<label class="grid-item grey"><input type="radio" id="two" name="principled" value="2"></label>
 			<label class="grid-item grey"><input type="radio" id="three" name="principled" value="3"></label>
@@ -106,9 +115,10 @@
 			<label class="grid-item grey"><input type="radio" id="five" name="principled" value="5"></label>
 			<label class="grid-item grey"><input type="radio" id="six" name="principled" value="6"></label>
 			<label class="grid-item grey"><input type="radio" id="seven" name="principled" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="principled" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="principled" value="-1"></label>
 
 			<label class="grid-item">Genuine</label>
+			<label class="grid-item"><input type="radio" id="one" name="genuine" value="0"></label>
 			<label class="grid-item"><input type="radio" id="one" name="genuine" value="1"></label>
 			<label class="grid-item"><input type="radio" id="two" name="genuine" value="2"></label>
 			<label class="grid-item"><input type="radio" id="three" name="genuine" value="3"></label>
@@ -116,9 +126,10 @@
 			<label class="grid-item"><input type="radio" id="five" name="genuine" value="5"></label>
 			<label class="grid-item"><input type="radio" id="six" name="genuine" value="6"></label>
 			<label class="grid-item"><input type="radio" id="seven" name="genuine" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="genuine" value="0"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="genuine" value="-1"></label>
 
 			<label class="grid-item grey">Kind</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="kind" value="0"></label>
 			<label class="grid-item grey"><input type="radio" id="one" name="kind" value="1"></label>
 			<label class="grid-item grey"><input type="radio" id="two" name="kind" value="2"></label>
 			<label class="grid-item grey"><input type="radio" id="three" name="kind" value="3"></label>
@@ -126,107 +137,128 @@
 			<label class="grid-item grey"><input type="radio" id="five" name="kind" value="5"></label>
 			<label class="grid-item grey"><input type="radio" id="six" name="kind" value="6"></label>
 			<label class="grid-item grey"><input type="radio" id="seven" name="kind" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="kind" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="kind" value="-1"></label>
 
-			<label class="grid-item">Dependable</label>
-			<label class="grid-item"><input type="radio" id="one" name="dependable" value="1"></label>
-			<label class="grid-item"><input type="radio" id="two" name="dependable" value="2"></label>
-			<label class="grid-item"><input type="radio" id="three" name="dependable" value="3"></label>
-			<label class="grid-item"><input type="radio" id="four" name="dependable" value="4"></label>
-			<label class="grid-item"><input type="radio" id="five" name="dependable" value="5"></label>
-			<label class="grid-item"><input type="radio" id="six" name="dependable" value="6"></label>
-			<label class="grid-item"><input type="radio" id="seven" name="dependable" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="dependable" value="0"></label>
+			<label class="grid-item">Choose Option 3</label>
+			<label class="grid-item"><input type="radio" id="one" name="manOption3" value="0"></label>
+			<label class="grid-item"><input type="radio" id="one" name="manOption3" value="1"></label>
+			<label class="grid-item"><input type="radio" id="two" name="manOption3" value="2"></label>
+			<label class="grid-item"><input type="radio" id="three" name="manOption3" value="3"></label>
+			<label class="grid-item"><input type="radio" id="four" name="manOption3" value="4"></label>
+			<label class="grid-item"><input type="radio" id="five" name="manOption3" value="5"></label>
+			<label class="grid-item"><input type="radio" id="six" name="manOption3" value="6"></label>
+			<label class="grid-item"><input type="radio" id="seven" name="manOption3" value="7"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="manOption3" value="-1"></label>
 
-			<label class="grid-item grey">Capable</label>
-			<label class="grid-item grey"><input type="radio" id="one" name="capable" value="1"></label>
-			<label class="grid-item grey"><input type="radio" id="two" name="capable" value="2"></label>
-			<label class="grid-item grey"><input type="radio" id="three" name="capable" value="3"></label>
-			<label class="grid-item grey"><input type="radio" id="four" name="capable" value="4"></label>
-			<label class="grid-item grey"><input type="radio" id="five" name="capable" value="5"></label>
-			<label class="grid-item grey"><input type="radio" id="six" name="capable" value="6"></label>
-			<label class="grid-item grey"><input type="radio" id="seven" name="capable" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="capable" value="0"></label>
+			<label class="grid-item grey">Dependable</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="dependable" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="one" name="dependable" value="1"></label>
+			<label class="grid-item grey"><input type="radio" id="two" name="dependable" value="2"></label>
+			<label class="grid-item grey"><input type="radio" id="three" name="dependable" value="3"></label>
+			<label class="grid-item grey"><input type="radio" id="four" name="dependable" value="4"></label>
+			<label class="grid-item grey"><input type="radio" id="five" name="dependable" value="5"></label>
+			<label class="grid-item grey"><input type="radio" id="six" name="dependable" value="6"></label>
+			<label class="grid-item grey"><input type="radio" id="seven" name="dependable" value="7"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="dependable" value="-1"></label>
 
-			<label class="grid-item">Moral</label>
-			<label class="grid-item"><input type="radio" id="one" name="moral" value="1"></label>
-			<label class="grid-item"><input type="radio" id="two" name="moral" value="2"></label>
-			<label class="grid-item"><input type="radio" id="three" name="moral" value="3"></label>
-			<label class="grid-item"><input type="radio" id="four" name="moral" value="4"></label>
-			<label class="grid-item"><input type="radio" id="five" name="moral" value="5"></label>
-			<label class="grid-item"><input type="radio" id="six" name="moral" value="6"></label>
-			<label class="grid-item"><input type="radio" id="seven" name="moral" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="moral" value="0"></label>
+			<label class="grid-item">Capable</label>
+			<label class="grid-item"><input type="radio" id="one" name="capable" value="0"></label>
+			<label class="grid-item"><input type="radio" id="one" name="capable" value="1"></label>
+			<label class="grid-item"><input type="radio" id="two" name="capable" value="2"></label>
+			<label class="grid-item"><input type="radio" id="three" name="capable" value="3"></label>
+			<label class="grid-item"><input type="radio" id="four" name="capable" value="4"></label>
+			<label class="grid-item"><input type="radio" id="five" name="capable" value="5"></label>
+			<label class="grid-item"><input type="radio" id="six" name="capable" value="6"></label>
+			<label class="grid-item"><input type="radio" id="seven" name="capable" value="7"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="capable" value="-1"></label>
 
-			<label class="grid-item grey">Sincere</label>
-			<label class="grid-item grey"><input type="radio" id="one" name="sincere" value="1"></label>
-			<label class="grid-item grey"><input type="radio" id="two" name="sincere" value="2"></label>
-			<label class="grid-item grey"><input type="radio" id="three" name="sincere" value="3"></label>
-			<label class="grid-item grey"><input type="radio" id="four" name="sincere" value="4"></label>
-			<label class="grid-item grey"><input type="radio" id="five" name="sincere" value="5"></label>
-			<label class="grid-item grey"><input type="radio" id="six" name="sincere" value="6"></label>
-			<label class="grid-item grey"><input type="radio" id="seven" name="sincere" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="sincere" value="0"></label>
+			<label class="grid-item grey">Moral</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="moral" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="one" name="moral" value="1"></label>
+			<label class="grid-item grey"><input type="radio" id="two" name="moral" value="2"></label>
+			<label class="grid-item grey"><input type="radio" id="three" name="moral" value="3"></label>
+			<label class="grid-item grey"><input type="radio" id="four" name="moral" value="4"></label>
+			<label class="grid-item grey"><input type="radio" id="five" name="moral" value="5"></label>
+			<label class="grid-item grey"><input type="radio" id="six" name="moral" value="6"></label>
+			<label class="grid-item grey"><input type="radio" id="seven" name="moral" value="7"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="moral" value="-1"></label>
 
-			<label class="grid-item">Considerate</label>
-			<label class="grid-item"><input type="radio" id="one" name="considerate" value="1"></label>
-			<label class="grid-item"><input type="radio" id="two" name="considerate" value="2"></label>
-			<label class="grid-item"><input type="radio" id="three" name="considerate" value="3"></label>
-			<label class="grid-item"><input type="radio" id="four" name="considerate" value="4"></label>
-			<label class="grid-item"><input type="radio" id="five" name="considerate" value="5"></label>
-			<label class="grid-item"><input type="radio" id="six" name="considerate" value="6"></label>
-			<label class="grid-item"><input type="radio" id="seven" name="considerate" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="considerate" value="0"></label>
+			<label class="grid-item">Sincere</label>
+			<label class="grid-item"><input type="radio" id="one" name="sincere" value="0"></label>
+			<label class="grid-item"><input type="radio" id="one" name="sincere" value="1"></label>
+			<label class="grid-item"><input type="radio" id="two" name="sincere" value="2"></label>
+			<label class="grid-item"><input type="radio" id="three" name="sincere" value="3"></label>
+			<label class="grid-item"><input type="radio" id="four" name="sincere" value="4"></label>
+			<label class="grid-item"><input type="radio" id="five" name="sincere" value="5"></label>
+			<label class="grid-item"><input type="radio" id="six" name="sincere" value="6"></label>
+			<label class="grid-item"><input type="radio" id="seven" name="sincere" value="7"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="sincere" value="-1"></label>
 
-			<label class="grid-item grey">Consistent</label>
-			<label class="grid-item grey"><input type="radio" id="one" name="consistent" value="1"></label>
-			<label class="grid-item grey"><input type="radio" id="two" name="consistent" value="2"></label>
-			<label class="grid-item grey"><input type="radio" id="three" name="consistent" value="3"></label>
-			<label class="grid-item grey"><input type="radio" id="four" name="consistent" value="4"></label>
-			<label class="grid-item grey"><input type="radio" id="five" name="consistent" value="5"></label>
-			<label class="grid-item grey"><input type="radio" id="six" name="consistent" value="6"></label>
-			<label class="grid-item grey"><input type="radio" id="seven" name="consistent" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="consistent" value="0"></label>
+			<label class="grid-item grey">Considerate</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="considerate" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="one" name="considerate" value="1"></label>
+			<label class="grid-item grey"><input type="radio" id="two" name="considerate" value="2"></label>
+			<label class="grid-item grey"><input type="radio" id="three" name="considerate" value="3"></label>
+			<label class="grid-item grey"><input type="radio" id="four" name="considerate" value="4"></label>
+			<label class="grid-item grey"><input type="radio" id="five" name="considerate" value="5"></label>
+			<label class="grid-item grey"><input type="radio" id="six" name="considerate" value="6"></label>
+			<label class="grid-item grey"><input type="radio" id="seven" name="considerate" value="7"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="considerate" value="-1"></label>
+
+			<label class="grid-item">Consistent</label>
+			<label class="grid-item"><input type="radio" id="one" name="consistent" value="0"></label>
+			<label class="grid-item"><input type="radio" id="one" name="consistent" value="1"></label>
+			<label class="grid-item"><input type="radio" id="two" name="consistent" value="2"></label>
+			<label class="grid-item"><input type="radio" id="three" name="consistent" value="3"></label>
+			<label class="grid-item"><input type="radio" id="four" name="consistent" value="4"></label>
+			<label class="grid-item"><input type="radio" id="five" name="consistent" value="5"></label>
+			<label class="grid-item"><input type="radio" id="six" name="consistent" value="6"></label>
+			<label class="grid-item"><input type="radio" id="seven" name="consistent" value="7"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="consistent" value="-1"></label>
 			
-			<label class="grid-item">Meticulous</label>
-			<label class="grid-item"><input type="radio" id="one" name="meticulous" value="1"></label>
-			<label class="grid-item"><input type="radio" id="two" name="meticulous" value="2"></label>
-			<label class="grid-item"><input type="radio" id="three" name="meticulous" value="3"></label>
-			<label class="grid-item"><input type="radio" id="four" name="meticulous" value="4"></label>
-			<label class="grid-item"><input type="radio" id="five" name="meticulous" value="5"></label>
-			<label class="grid-item"><input type="radio" id="six" name="meticulous" value="6"></label>
-			<label class="grid-item"><input type="radio" id="seven" name="meticulous" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="meticulous" value="0"></label>
+			<label class="grid-item grey">Meticulous</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="meticulous" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="one" name="meticulous" value="1"></label>
+			<label class="grid-item grey"><input type="radio" id="two" name="meticulous" value="2"></label>
+			<label class="grid-item grey"><input type="radio" id="three" name="meticulous" value="3"></label>
+			<label class="grid-item grey"><input type="radio" id="four" name="meticulous" value="4"></label>
+			<label class="grid-item grey"><input type="radio" id="five" name="meticulous" value="5"></label>
+			<label class="grid-item grey"><input type="radio" id="six" name="meticulous" value="6"></label>
+			<label class="grid-item grey"><input type="radio" id="seven" name="meticulous" value="7"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="meticulous" value="-1"></label>
 			
-			<label class="grid-item grey">Has integrity</label>
-			<label class="grid-item grey"><input type="radio" id="one" name="hasintegrity" value="1"></label>
-			<label class="grid-item grey"><input type="radio" id="two" name="hasintegrity" value="2"></label>
-			<label class="grid-item grey"><input type="radio" id="three" name="hasintegrity" value="3"></label>
-			<label class="grid-item grey"><input type="radio" id="four" name="hasintegrity" value="4"></label>
-			<label class="grid-item grey"><input type="radio" id="five" name="hasintegrity" value="5"></label>
-			<label class="grid-item grey"><input type="radio" id="six" name="hasintegrity" value="6"></label>
-			<label class="grid-item grey"><input type="radio" id="seven" name="hasintegrity" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="hasintegrity" value="0"></label>
+			<label class="grid-item">Has integrity</label>
+			<label class="grid-item"><input type="radio" id="one" name="hasintegrity" value="0"></label>
+			<label class="grid-item"><input type="radio" id="one" name="hasintegrity" value="1"></label>
+			<label class="grid-item"><input type="radio" id="two" name="hasintegrity" value="2"></label>
+			<label class="grid-item"><input type="radio" id="three" name="hasintegrity" value="3"></label>
+			<label class="grid-item"><input type="radio" id="four" name="hasintegrity" value="4"></label>
+			<label class="grid-item"><input type="radio" id="five" name="hasintegrity" value="5"></label>
+			<label class="grid-item"><input type="radio" id="six" name="hasintegrity" value="6"></label>
+			<label class="grid-item"><input type="radio" id="seven" name="hasintegrity" value="7"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="hasintegrity" value="-1"></label>
 
-			<label class="grid-item">Candid</label>
-			<label class="grid-item"><input type="radio" id="one" name="candid" value="1"></label>
-			<label class="grid-item"><input type="radio" id="two" name="candid" value="2"></label>
-			<label class="grid-item"><input type="radio" id="three" name="candid" value="3"></label>
-			<label class="grid-item"><input type="radio" id="four" name="candid" value="4"></label>
-			<label class="grid-item"><input type="radio" id="five" name="candid" value="5"></label>
-			<label class="grid-item"><input type="radio" id="six" name="candid" value="6"></label>
-			<label class="grid-item"><input type="radio" id="seven" name="candid" value="7"></label>
-			<label class="grid-item"><input type="radio" id="zero" name="candid" value="0"></label>
+			<label class="grid-item grey">Candid</label>
+			<label class="grid-item grey"><input type="radio" id="one" name="candid" value="0"></label>
+			<label class="grid-item grey"><input type="radio" id="one" name="candid" value="1"></label>
+			<label class="grid-item grey"><input type="radio" id="two" name="candid" value="2"></label>
+			<label class="grid-item grey"><input type="radio" id="three" name="candid" value="3"></label>
+			<label class="grid-item grey"><input type="radio" id="four" name="candid" value="4"></label>
+			<label class="grid-item grey"><input type="radio" id="five" name="candid" value="5"></label>
+			<label class="grid-item grey"><input type="radio" id="six" name="candid" value="6"></label>
+			<label class="grid-item grey"><input type="radio" id="seven" name="candid" value="7"></label>
+			<label class="grid-item grey"><input type="radio" id="zero" name="candid" value="-1"></label>
 
-			<label class="grid-item grey">Has Good Will</label>
-			<label class="grid-item grey"><input type="radio" id="one" name="goodwill" value="1"></label>
-			<label class="grid-item grey"><input type="radio" id="two" name="goodwill" value="2"></label>
-			<label class="grid-item grey"><input type="radio" id="three" name="goodwill" value="3"></label>
-			<label class="grid-item grey"><input type="radio" id="four" name="goodwill" value="4"></label>
-			<label class="grid-item grey"><input type="radio" id="five" name="goodwill" value="5"></label>
-			<label class="grid-item grey"><input type="radio" id="six" name="goodwill" value="6"></label>
-			<label class="grid-item grey"><input type="radio" id="seven" name="goodwill" value="7"></label>
-			<label class="grid-item grey"><input type="radio" id="zero" name="goodwill" value="0"></label>
+			<label class="grid-item">Has Good Will</label>
+			<label class="grid-item"><input type="radio" id="one" name="goodwill" value="0"></label>
+			<label class="grid-item"><input type="radio" id="one" name="goodwill" value="1"></label>
+			<label class="grid-item"><input type="radio" id="two" name="goodwill" value="2"></label>
+			<label class="grid-item"><input type="radio" id="three" name="goodwill" value="3"></label>
+			<label class="grid-item"><input type="radio" id="four" name="goodwill" value="4"></label>
+			<label class="grid-item"><input type="radio" id="five" name="goodwill" value="5"></label>
+			<label class="grid-item"><input type="radio" id="six" name="goodwill" value="6"></label>
+			<label class="grid-item"><input type="radio" id="seven" name="goodwill" value="7"></label>
+			<label class="grid-item"><input type="radio" id="zero" name="goodwill" value="-1"></label>
 		</div>
 
 		<button id ="submit" type="submit" form="survey-1" value="Submit">Submit</button>

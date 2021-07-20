@@ -23,6 +23,7 @@ const SimulationResultSchema = new mongoose.Schema({
 		agent2: []
 	},
 	obstacles: [],
+	endGame: [],
 	survey1: {
 		reliable: Number,
 		competent: Number,
@@ -34,6 +35,7 @@ const SimulationResultSchema = new mongoose.Schema({
 		principled: Number,
 		genuine: Number,
 		kind: Number,
+		manOption3: Number,
 		dependable: Number,
 		capable: Number,
 		moral: Number,
@@ -46,10 +48,11 @@ const SimulationResultSchema = new mongoose.Schema({
 		goodwill: Number
 	},
 	survey2: {
-		question1: [],
-		question2: [],
-		question3: [],
-		question4: []
+		question1: String,
+		question2: String,
+		question3: String,
+		question4: String,
+		question5: String
 	},
 	createdAt: {
 		type: Date,

@@ -731,9 +731,12 @@ function nextInstruction() {
 }
 
 function validateUser() {
-	if ($('#intervalSurvey').serialize() == 'optradioQ1=3') {
+	if ($('#intervalSurvey').serialize() == 'optradioQ1=-100') {
 		// proceed to game
 		nextInstruction();
+	} else if ($('#intervalSurvey').serialize() == '') {
+		// what
+		$('#intervalSurvey').append(`<p style="font-size=14px; color: #ff4848;">Please select at least one option.</p>`)
 	} else {
 		// byebye
 		window.location.href = '/exit-tutorial'
