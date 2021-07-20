@@ -9,7 +9,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
 	<link rel="icon" href="/img/favicon.png" type="image/png">
 	<script src="https://kit.fontawesome.com/4240eddcaa.js" crossorigin="anonymous"></script>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 	<title>ARL STRONG UML | Tutorial</title>
 </head>
@@ -55,11 +55,11 @@
 						<p>Entire map</p>
 						<p class="agent-text">
 							Agent explored area
-							<i class="fas fa-info-circle tooltip">
+							{{!-- <i class="fas fa-info-circle tooltip">
 								<span class="tooltiptext">If there is no area highlighted in green/orange, then the agent did not explore any new area.</span>
-							</i>
+							</i> --}}
 						</p>
-						<p>Human explored area (blue)</p>
+						<p>Human explored area</p>
 					</div>
 				</div>
 				<div class = "scores">
@@ -153,17 +153,11 @@
 					<div class="icon"><span style="width: 40px; height: 20px; background-color: #9999ff; border-radius: 7px;"></span></div>
 					<p>Human explored region</p>
 					<div class="icon"><span style="width: 40px; height: 20px; background-color: #99ffb7; border-radius: 7px;"></span></div>
-					<p>Agent 1 explored region in the current interval</p>
-					<div class="icon"><span style="width: 40px; height: 20px; background-color: #ffbf7f; border-radius: 7px;"></span></div>
-					<p>Agent 2 explored region in the current interval</p>
-					<div class="icon"><span style="width: 40px; height: 20px; background-color: #ff9eae; border-radius: 7px;"></span></div>
-					<p>Trusted agent explored region (both agents)</p>
-					<div class="icon"><span style="width: 40px; height: 20px; background-color: #ffff7f; border-radius: 7px;"></span></div>
-					<p>Region explored by both human and agent</p>
-					<div class="icon"><img src="img/victim.png" style="width: 23px; height: 20px" /></div>
-					<p>Red circle represents a victim</p>
-					<div class="icon"><img src="img/hazard.png" style="width: 23px; height: 20px" /></div>
-					<p>Yellow triangle represents a hazard</p>
+					<p>Agent explored region</p>
+					<div class="icon"><span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span></div>
+					<p>Positive reward</p>
+					<div class="icon"><span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span></div>
+					<p>Negative reward</p>
 				</div>
 				<div id="gameDetails">
 					<div id="timer">Time elapsed: 0s</div>

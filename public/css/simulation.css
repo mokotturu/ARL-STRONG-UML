@@ -173,7 +173,7 @@ nav {
 	border-radius: 7px;
 	transition: visibility 0.2s linear, opacity 0.2s linear;
 	scroll-behavior: smooth;
-	box-shadow: 0 0 0 9999px #000000dd;
+	box-shadow: 0 0 0 9999px #000000AA;
 }
 
 .popup-modal {
@@ -187,6 +187,7 @@ nav {
 	width: 45em !important;
 	height: 25em !important;
 	padding: 0 50px;
+	overflow: hidden;
 }
 
 #trust-confirm-modal-content {
@@ -195,7 +196,6 @@ nav {
 	align-items: center;
 	text-align: center;
 }
-
 
 #endRoundQContainer {
 	width: 45em !important;
@@ -293,17 +293,12 @@ nav {
 }
 
 .scores{
-	/*
-	display: inline-flex;
-	background-color: rgb(38, 27, 202);
-	text-align: center;
-	gap: 5px;
-	color: white;
-	*/
+	padding: 10px 0;
+	border-radius: 7px;
 	display: inline-flex;
     flex-wrap: wrap;
-	justify-content: space-evenly;
-	text-align:center;
+	justify-content: space-around;
+	text-align: center;
 }
 
 .resultsBlockItemWrapper {
@@ -333,12 +328,11 @@ nav {
 }
 
 .scoreBlock {
-    margin-top: 50px;
 	align-content: center;
 	border-radius:7px;
-	width:30vw;
+	width: 28vw;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-	padding: 20px 0;
+	padding: 1em 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-evenly;
@@ -456,13 +450,14 @@ nav {
 .map-info {
 	display: flex;
 	flex-direction: column;
+	border-radius: 7px;
 }
 
 #images-container {
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: space-around;
 	align-items: center;
-	padding: 20px 0 0 0;
+	padding: 1em 0 0 0;
 }
 
 #minimap {
@@ -475,14 +470,15 @@ nav {
 	background-color: black;
 	border-top-left-radius: 7px;
 	border-top-right-radius: 7px;
-	width: 30vw;
-	height: 30vw;
+	width: 15vw;
+	height: 15vw;
 	overflow: hidden;
+	transition: 0.3s;
 }
 
 .headings-container {
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: space-around;
 	align-items: flex-start;
 }
 
@@ -490,7 +486,7 @@ nav {
 	font-size: 16px;
 	font-weight: bold;
 	letter-spacing: 1px;
-	width: 30vw;
+	width: 15vw;
 	text-align: center;
 	border-bottom-left-radius: 7px;
 	border-bottom-right-radius: 7px;
@@ -578,15 +574,19 @@ nav {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 10px 0;
 	flex-wrap: wrap;
+}
+
+#instructions-button {
+	margin: 0;
 }
 
 .tableItems {
 	display: flex;
 	flex-wrap: nowrap;
-	padding: 20px 0;
+	padding: 10px 0;
 	margin: 0 80px;
+	border-radius: 7px;
 	text-align: center;
 	overflow-x: scroll;
 	scroll-behavior: smooth;
@@ -603,7 +603,7 @@ nav {
 }
 
 #simulation {
-	height: 100%;
+	height: 97vh;
 	display: flex;
 	justify-content: space-around;
 	padding: 0 15px;
@@ -614,20 +614,20 @@ nav {
 #info {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
 }
 
 #legend {
 	padding: 20px;
-	margin-bottom: 10px;
+	margin-bottom: 1em;
 	background-color: #303030;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 	border-radius: 7px;
 	display: grid;
 	grid-template-columns: 1fr 3fr;
-	grid-template-rows: repeat(7, 1fr);
-	grid-row-gap: 40px;
+	grid-template-rows: repeat(4, 1fr);
+	grid-row-gap: 2em;
 }
 
 #legend .icon {
@@ -663,7 +663,7 @@ nav {
 #map-container {
 	width: 97vh;
 	height: 97vh;
-	margin-top: 5px;
+	margin-left: 1em;
 	overflow: hidden;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 	border-radius: 7px;
@@ -710,6 +710,13 @@ button:hover, select:hover, option {
 	background-color: #303030;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 	cursor: pointer;
+}
+
+button:disabled, button[disabled], button[disabled]:hover, button[disabled]:focus, button[disabled]:active {
+	background-color: #3C3C3C;
+	color: #777777;
+	cursor: not-allowed;
+	box-shadow: none;
 }
 
 h1, h2, h3, p {

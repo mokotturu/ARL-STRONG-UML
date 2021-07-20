@@ -23,7 +23,7 @@ const colors = {
 	lightHuman: '#9999ff',
 	agent: '#ff3d5d',
 	lightAgent: '#ff9eae',
-	team: '#ffff7f',
+	team: '#bfbf00',
 	lightTeam: '#ffff7f',
 	wall: 'black',
 	agent1: '#33ff70',
@@ -32,8 +32,8 @@ const colors = {
 	lightAgent2: '#ffbf7f',
 	victim: 'red',
 	hazard: 'yellow',
-	blueTarget: '#007FFF',
-	yellowTarget: '#FFC72C'
+	positiveTarget: '#ffc72c',
+	negativeTarget: '#ff4848'
 };
 
 var grid;
@@ -59,14 +59,10 @@ var mapPaths = [
 ];
 var obstacleLocs = [
 	[
-		[213, 210],
-		[153, 256],
-		[289, 202]
+		[222, 348],
 	],
 	[
-		/* [203, 194],
-		[143, 241],
-		[279, 192] */
+		[232, 338],
 	]
 ];
 
@@ -81,13 +77,13 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ score:  100, blue: 2, yellow: 1 },
-	{ score: -100, blue: 1, yellow: 2 },
-	{ score: -100, blue: 1, yellow: 2 },
-	{ score: -100, blue: 2, yellow: 3 },
-	{ score:  200, blue: 4, yellow: 2 },
-	{ score:  300, blue: 3, yellow: 0 },
-	{ score:  200, blue: 3, yellow: 1 }
+	{ score:  100, positive: 2, negative: 1 },
+	{ score: -100, positive: 1, negative: 2 },
+	{ score: -100, positive: 1, negative: 2 },
+	{ score: -100, positive: 2, negative: 3 },
+	{ score:  200, positive: 4, negative: 2 },
+	{ score:  300, positive: 3, negative: 0 },
+	{ score:  200, positive: 3, negative: 1 }
 ];
 
 var fakeAgentNum = 0;
@@ -123,8 +119,8 @@ class Player {
 		this.fovSize = fovSize;
 		this.explored = new Set();
 		this.tempExplored = new Set();
-		this.tempTargetsFound = { blue: 0, yellow: 0 };
-		this.totalTargetsFound = { blue: 0, yellow: 0 };
+		this.tempTargetsFound = { positive: 0, negative: 0 };
+		this.totalTargetsFound = { positive: 0, negative: 0 };
 	}
 
 	spawn(size) {
@@ -209,12 +205,12 @@ class Player {
 		if (pickedObstacle.length == 0) return;
 		if (pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = false;
-			if (pickedObstacle[0].variant == 'blue') --this.tempTargetsFound.blue;
-			else if (pickedObstacle[0].variant == 'yellow') --this.tempTargetsFound.yellow;
+			if (pickedObstacle[0].variant == 'positive') --this.tempTargetsFound.positive;
+			else if (pickedObstacle[0].variant == 'negative') --this.tempTargetsFound.negative;
 		} else {
 			pickedObstacle[0].isPicked = true;
-			if (pickedObstacle[0].variant == 'blue') ++this.tempTargetsFound.blue;
-			else if (pickedObstacle[0].variant == 'yellow') ++this.tempTargetsFound.yellow;
+			if (pickedObstacle[0].variant == 'positive') ++this.tempTargetsFound.positive;
+			else if (pickedObstacle[0].variant == 'negative') ++this.tempTargetsFound.negative;
 		}
 	}
 }
@@ -296,8 +292,8 @@ class Obstacle {
 		this.variant = variant;
 		this.score = score || 0;
 		this.isPicked = false;
-		if (this.variant == 'blue') grid[this.x][this.y].isBlue = true;
-		if (this.variant == 'yellow') grid[this.x][this.y].isYellow = true;
+		if (this.variant == 'positive') grid[this.x][this.y].isPositive = true;
+		if (this.variant == 'negative') grid[this.x][this.y].isNegative = true;
 	}
 
 	spawn(size) {
@@ -318,7 +314,7 @@ class Obstacle {
 					radius: boxWidth*2,
 					sides: 3
 				});
-			} else if (this.variant == 'blue' || this.variant == 'yellow') {
+			} else if (this.variant == 'positive') {
 				$('canvas').drawPolygon({
 					fromCenter: true,
 					fillStyle: this.color,
@@ -328,6 +324,15 @@ class Obstacle {
 					radius: boxWidth*2,
 					sides: 5,
 					concavity: 0.5
+				});
+			} else if (this.variant == 'negative') {
+				$map.drawEllipse({
+					fromCenter: true,
+					fillStyle: this.color,
+					strokeStyle: (this.isPicked) ? '#39ff14' : 'white',
+					strokeWidth: (this.isPicked) ? 3 : 1,
+					x: this.x * boxWidth + boxWidth/2, y: this.y * boxHeight + boxHeight/2,
+					width: boxWidth*3, height: boxHeight*3
 				});
 			}
 		}
@@ -358,14 +363,18 @@ $(document).ready(async () => {
 	});
 
 	for (let i = 0; i < obstacleLocs[0].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.blueTarget, 'blue', 100));
+		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.positiveTarget, 'positive', 100));
+	}
+
+	for (let i = 0; i < obstacleLocs[1].length; ++i) {
+		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.negativeTarget, 'negative', -100));
 	}
 
 	for (let i = 0; i < 20; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.blueTarget, 'blue', 100));
+		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.positiveTarget, 'positive', 100));
 		tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.yellowTarget, 'yellow', -100));
+		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.negativeTarget, 'negative', -100));
 	}
 
 	$('.loader').css('visibility', 'hidden');
@@ -764,7 +773,7 @@ async function initMaps(path) {
 		for (let x = 0; x < columns; ++x) {
 			grid.push([]);
 			for (let y = 0; y < rows; ++y) {
-				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", isHumanExplored: false, isAgentExplored: false, isTempAgentExplored: false, isBlue: false, isYellow: false });
+				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", isHumanExplored: false, isAgentExplored: false, isTempAgentExplored: false, isPositive: false, isNegative: false });
 			}
 		}
 	}).fail(() => {
@@ -845,7 +854,7 @@ function showTrustPrompt() {
 
 function showExploredInfo() {
 	nextInstruction();
-	currHumanScore = human.tempTargetsFound.blue * 100 - human.tempTargetsFound.yellow * 100;
+	currHumanScore = human.tempTargetsFound.positive * 100 - human.tempTargetsFound.negative * 100;
 	// currAgentScore = fakeAgentScores[fakeAgentNum].score;
 	let tempCurrAgentScore = fakeAgentScores[fakeAgentNum].score;
 	totalHumanScore += currHumanScore;
@@ -865,29 +874,29 @@ function showExploredInfo() {
 	$agentText.toggleClass(`agent${agentNum - 1}`, false);
 	$agentText.toggleClass(`agent${agentNum + 1}`, false);
 	$agentText.toggleClass(`agent${agentNum}`, true);
-	$('#agentTargetsFound').text(`Blue: ${fakeAgentScores[fakeAgentNum].blue}, Yellow:  ${fakeAgentScores[fakeAgentNum++].yellow}`);
-	$('#humanTargetsFound').text(`Blue: ${human.tempTargetsFound.blue}, Yellow:  ${human.tempTargetsFound.yellow}`);
+	$('#agentTargetsFound').text(`Blue: ${fakeAgentScores[fakeAgentNum].positive}, Yellow:  ${fakeAgentScores[fakeAgentNum++].negative}`);
+	$('#humanTargetsFound').text(`Blue: ${human.tempTargetsFound.positive}, Yellow:  ${human.tempTargetsFound.negative}`);
 
 	if (log[agentNum - 1][intervalCount - 1].trusted) {
 		if (currAgentScore > 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
 		else if (currAgentScore < 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-		else $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
+		else $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
 	} else {
-		if (currAgentScore > 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}>trending_flat</span>`);
-		else if (currAgentScore < 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-		else $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
+		if (currAgentScore > 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.negativeTarget}>trending_flat</span>`);
+		else if (currAgentScore < 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
+		else $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
 	}
 
 	
 	if (currHumanScore > 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
 	else if (currHumanScore < 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
+	else $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
 
 	$('#agentOverall').text(totalAgentScore);
 	$('#humanOverall').text(totalHumanScore);
 	if (teamScore > tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
 	else if (teamScore < tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
+	else $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
 	tempTeamScore = teamScore;
 	if (log[agentNum - 1][intervalCount - 1] != null) {
 		log[agentNum - 1].forEach((data, i) => {
@@ -914,7 +923,7 @@ function showExploredInfo() {
 //Update the display for star count for targets on the results display
 function updateResults(){
 	let tempString = ' ';
-	for (let i = 0; i < human.tempTargetsFound.blue; i++){
+	for (let i = 0; i < human.tempTargetsFound.positive; i++){
 
 		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
 	}
@@ -922,7 +931,7 @@ function updateResults(){
 
 	tempString = ' ';
 
-	for (let j = 0; j < human.tempTargetsFound.yellow; j++){
+	for (let j = 0; j < human.tempTargetsFound.negative; j++){
 
 		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
 	}
@@ -930,7 +939,7 @@ function updateResults(){
 
 	tempString = ' '; 
 
-	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].blue; k++){
+	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].positive; k++){
 		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
 	}
 
@@ -938,7 +947,7 @@ function updateResults(){
 
 	tempString = ' ';
 
-	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].yellow; l++){
+	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].negative; l++){
 		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
 	}
 
@@ -1016,8 +1025,8 @@ function updateResults(){
 function confirmExploration() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
-	human.totalTargetsFound.blue += human.tempTargetsFound.blue;
-	human.totalTargetsFound.yellow += human.tempTargetsFound.yellow;
+	human.totalTargetsFound.positive += human.tempTargetsFound.positive;
+	human.totalTargetsFound.negative += human.tempTargetsFound.negative;
 	currAgentScore = fakeAgentScores[fakeAgentNum].score;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: true, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -1032,8 +1041,8 @@ function confirmExploration() {
 function undoExploration() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
-	human.totalTargetsFound.blue += human.tempTargetsFound.blue;
-	human.totalTargetsFound.yellow += human.tempTargetsFound.yellow;
+	human.totalTargetsFound.positive += human.tempTargetsFound.positive;
+	human.totalTargetsFound.negative += human.tempTargetsFound.negative;
 	currAgentScore = 0;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: false, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -1053,17 +1062,17 @@ function undoExploration() {
 // redraw the map and hide pop-up
 function hideExploredInfo() {
 	if (agentNum < agents.length) {
-		// agents[agentNum - 1].tempTargetsFound.blue = 0;
-		// agents[agentNum - 1].tempTargetsFound.yellow = 0;
+		// agents[agentNum - 1].tempTargetsFound.positive = 0;
+		// agents[agentNum - 1].tempTargetsFound.negative = 0;
 		++agentNum;
 		showExploredInfo();
 		return;
 	}
 
-	// agents[agentNum - 1].tempTargetsFound.blue = 0;
-	// agents[agentNum - 1].tempTargetsFound.yellow = 0;
-	human.tempTargetsFound.blue = 0;
-	human.tempTargetsFound.yellow = 0;
+	// agents[agentNum - 1].tempTargetsFound.positive = 0;
+	// agents[agentNum - 1].tempTargetsFound.negative = 0;
+	human.tempTargetsFound.positive = 0;
+	human.tempTargetsFound.negative = 0;
 
 	if (intervalCount == Math.floor(intervals / 2)) {
 		$.ajax({
@@ -1469,11 +1478,11 @@ function randomWalk(agent) {
 function moveAgent(agent) {
 	agent.drawCells([grid[agent.traversal[agent.stepCount - 1].loc.x][agent.traversal[agent.stepCount - 1].loc.y]]);
 	agent.updateLoc(agent.traversal[agent.stepCount].loc.x, agent.traversal[agent.stepCount++].loc.y);
-	if (grid[agent.x][agent.y].isBlue && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
-		++agent.tempTargetsFound.blue;
+	if (grid[agent.x][agent.y].isPositive && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
+		++agent.tempTargetsFound.positive;
 	}
-	if (grid[agent.x][agent.y].isYellow && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
-		++agent.tempTargetsFound.yellow;
+	if (grid[agent.x][agent.y].isNegative && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
+		++agent.tempTargetsFound.negative;
 	}
 	agent.tempExplored.add(grid[agent.x][agent.y]);
 	grid[agent.x][agent.y].isTempAgentExplored = true;
@@ -1483,11 +1492,11 @@ function moveAgent(agent) {
 
 	fov.forEach(cell => {
 		let thisCell = { x: cell[0], y: cell[1] };
-		if (grid[thisCell.x][thisCell.y].isBlue && !grid[thisCell.x][thisCell.y].isTempAgentExplored && !grid[thisCell.x][thisCell.y].isAgentExplored) {
-			++agent.tempTargetsFound.blue;
+		if (grid[thisCell.x][thisCell.y].isPositive && !grid[thisCell.x][thisCell.y].isTempAgentExplored && !grid[thisCell.x][thisCell.y].isAgentExplored) {
+			++agent.tempTargetsFound.positive;
 		}
-		if (grid[thisCell.x][thisCell.y].isYellow && !grid[thisCell.x][thisCell.y].isTempAgentExplored && !grid[thisCell.x][thisCell.y].isAgentExplored) {
-			++agent.tempTargetsFound.yellow;
+		if (grid[thisCell.x][thisCell.y].isNegative && !grid[thisCell.x][thisCell.y].isTempAgentExplored && !grid[thisCell.x][thisCell.y].isAgentExplored) {
+			++agent.tempTargetsFound.negative;
 		}
 		let neighbours = [
 			{ x: cell[0],     y: cell[1] - 1 },
