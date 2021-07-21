@@ -537,6 +537,7 @@ function showPostIntegratePrompt(){
 	$endRoundModal.css('display', 'flex');
 	$endRoundModal.css('visibility', 'visible');
 	$endRoundModal.css('opacity', '1');
+	setTimeout(() => { $endRoundModal.scrollTop(-10000) }, 500);
 }
 
 function showExploredInfo() {

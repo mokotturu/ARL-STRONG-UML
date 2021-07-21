@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const SimulationResultSchema = new mongoose.Schema({
 	uuid: String,
+	failedTutorial: Boolean,
 	map: Number,
 	section1: {
 		movement: [],

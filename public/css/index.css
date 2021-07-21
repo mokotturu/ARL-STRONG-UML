@@ -60,7 +60,7 @@ html, body {
 	z-index: 0;
 }
 
-video {
+#background-video video {
 	top: 0;
 	left: 0;
 	display: block;
@@ -240,7 +240,7 @@ nav .items p {
 	font-family: 'Montserrat', 'sans-serif';
 	font-size: 18px;
 	line-height: 150%;
-	padding: 0 150px 100px 150px;
+	padding: 0 150px 50px 150px;
 	margin: 0;
 	display: flex;
 	flex-direction: column;
@@ -285,6 +285,7 @@ nav .items p {
 #pdf {
 	width: 60vw;
 	height: 70vh;
+	border-radius: 7px;
 }
 
 code {

@@ -21,6 +21,21 @@ router.get('/tutorial', (req, res) => {
 	res.render('tutorial', { layout: false });
 });
 
+router.post('/tutorial/failed', async (req, res) => {
+	console.log(req.body);
+	try {
+		const result = new SimulationResult({
+			uuid: req.body.uuid,
+			failedTutorial: true
+		});
+		await result.save();
+		res.sendStatus(200);
+	} catch (err) {
+		console.log(err);
+		res.redirect(500, 'error/500');
+	}
+});
+
 router.get('/simulation', (req, res) => {
 	res.render('simulation', { layout: false });
 });
@@ -98,7 +113,7 @@ router.get('/survey-1', (req, res) => {
 router.post('/survey-1-submit', async (req, res) => {
 	console.log(req.body);
 	try {
-		await SimulationResult.findOneAndUpdate(
+		const result = await SimulationResult.updateOne(
 			{ uuid: req.body.uuid },
 			{
 				survey1: {
@@ -173,7 +188,7 @@ router.post('/survey-2-submit', async (req, res) => {
 router.post('/survey-2-submit', async (req, res) => {
 	console.log(req.body);
 	try {
-		await SimulationResult.findOneAndUpdate(
+		const result = await SimulationResult.updateOne(
 			{ uuid: req.body.uuid },
 			{
 				survey2: {

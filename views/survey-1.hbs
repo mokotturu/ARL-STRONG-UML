@@ -269,9 +269,11 @@
 	const $popupModal = $('.popup-modal-container');
 
 	$(document).ready(() => {
-		$popupModal.css('visibility', 'visible');
-		$popupModal.css('opacity', '1');
-		$('form').addClass('disabled');
+		if (sessionStorage.getItem('finishedGame')) {
+			$popupModal.css('visibility', 'visible');
+			$popupModal.css('opacity', '1');
+			$('form').addClass('disabled');
+		}
 	});
 
 	$(window).on('click', e => {

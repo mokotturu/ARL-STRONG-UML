@@ -12,6 +12,7 @@ const $dropdown = $('#maps');
 const $progressbar = $('.background');
 const $agentText = $('.agent-text');
 const $endRoundModal = $('#endRoundQContainer');
+const $instructionsModal = $('#instructions-modal');
 $.jCanvas.defaults.fromCenter = false;
 
 var rows, columns, boxWidth, boxHeight;
@@ -121,6 +122,7 @@ class Player {
 		this.tempExplored = new Set();
 		this.tempTargetsFound = { positive: 0, negative: 0 };
 		this.totalTargetsFound = { positive: 0, negative: 0 };
+		this.tutorial = { inTutorial: true, restricted: true, dir: 1, step: 0 };
 	}
 
 	spawn(size) {
@@ -202,8 +204,8 @@ class Player {
 
 	pickTarget() {
 		let pickedObstacle = obstacles.targets.filter(cell => cell.x == this.x && cell.y == this.y);
-		if (pickedObstacle.length == 0) return;
-		if (pickedObstacle[0].isPicked) {
+		if (pickedObstacle.length == 0) return false;
+		/* if (pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = false;
 			if (pickedObstacle[0].variant == 'positive') --this.tempTargetsFound.positive;
 			else if (pickedObstacle[0].variant == 'negative') --this.tempTargetsFound.negative;
@@ -211,7 +213,13 @@ class Player {
 			pickedObstacle[0].isPicked = true;
 			if (pickedObstacle[0].variant == 'positive') ++this.tempTargetsFound.positive;
 			else if (pickedObstacle[0].variant == 'negative') ++this.tempTargetsFound.negative;
+		} */
+		if (!pickedObstacle[0].isPicked) {
+			pickedObstacle[0].isPicked = true;
+			if (pickedObstacle[0].variant == 'positive') ++this.tempTargetsFound.positive;
+			else if (pickedObstacle[0].variant == 'negative') ++this.tempTargetsFound.negative;
 		}
+		return true;
 	}
 }
 
@@ -381,78 +389,34 @@ $(document).ready(async () => {
 	$('.body-container').css('visibility', 'visible');
 	$('.body-container').css('opacity', '1');
 	
-	$(document).on('keydown', e => {
+	/* $(document).on('keydown', e => {
 		eventKeyHandlers(e);
-	});
+	}); */
 	
 	showInstructions1();
 
 	updateScrollingPosition(human.x, human.y);
-	timeout = setInterval(updateTime, 1000);
+	// timeout = setInterval(updateTime, 1000);
 
 	currentFrame = requestAnimationFrame(loop);
 	// currentFrame = setInterval(loop, 100);
 });
 
 function showInstructions1() {
-	$('#instructions-modal').css('display', 'flex');
-	$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
+	$instructionsModal.css('display', 'flex');
+	$instructionsModal.addClass('animate__animated animate__fadeInLeft');
 }
 
 function showInstructions2() {
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
-	setTimeout(() => {
-		$('#instructions-heading').text('Legend:');
-		$('#instructions-content').text('This list has all the colors used in this game and their respective descriptions.');
-		$('#instructions-modal').css('margin', '2em 2em auto auto');
-		$('#instructions-modal').css('box-shadow', '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInRight animate__faster');
-		$('#legend').addClass('animate__animated animate__shakeX');
-		$('#legend').css({
-			'border': '2px solid white',
-			'box-shadow': '0 0 0 9999px #000000AA'
-		});
-	}, 500);
-}
-
-function showInstructions3() {
-	$('#legend').css({
-		'border': 'none',
-		'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
-	});
-	$('#legend').removeClass('animate__animated animate__shakeX');
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInRight animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutRight animate__faster');
-	setTimeout(() => {
-		$('#instructions-heading').text('Game Details:');
-		$('#instructions-content').text('You can see how much time has elapsed in this round and the overall team score here.');
-		$('#instructions-modal').css('margin', 'auto 2em 2em auto');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutRight animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInRight animate__faster');
-		$('#gameDetails').addClass('animate__animated animate__shakeX');
-		$('#gameDetails').css({
-			'border': '2px solid white',
-			'box-shadow': '0 0 0 9999px #000000AA'
-		});
-	}, 500);
-}
-
-function showInstructions4() {
-	$('#gameDetails').css({
-		'border': 'none',
-		'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
-	});
-	$('#gameDetails').removeClass('animate__animated animate__shakeX');
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInRight animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutRight animate__faster');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('How to play:');
-		$('#instructions-content').text('This is the playground. The blue character in the middle is the human. The light blue area around the human is the area in the field of view of the human. To move around the map, use your arrow keys, or AWSD, or HJKL.');
-		$('#instructions-modal').css('margin', 'auto auto 2em 2em');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutRight animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
+		$('#instructions-content').text('This is the playground. The blue character in the center is the human. The light blue area around the human is the area in the field of view of the human. To move around the map, you can use your arrow keys, or AWSD, or HJKL. Let\'s practice!');
+		$instructionsModal.css('box-shadow', '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)');
+		$instructionsModal[0].style.setProperty('height', '25em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
 		$mapContainer.addClass('animate__animated animate__shakeX');
 		$mapContainer.css({
 			'border': '2px solid white',
@@ -461,209 +425,211 @@ function showInstructions4() {
 	}, 500);
 }
 
-function showInstructions5() {
-	$mapContainer.css({
-		'border': 'none',
-		'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
-	});
+function showInstructions3() {
 	$mapContainer.removeClass('animate__animated animate__shakeX');
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
-		$('#instructions-heading').text('Visual cues(?):');
-		$('#instructions-content').text('As you move around the map, you will encounter several stars and triangles. The golden stars represent targets that will award the team with +100 points, while the red triangles represent targets that will penalize the team with -100 points. You must pick up a target to score points. To collect a target, go to the center of a star/triangle and press spacebar. You will know that you picked up the target because it\'s border turns green. You can drop the target by pressing spacebar again while standing over the target.');
-		$('#instructions-modal')[0].style.setProperty('height', '35em', 'important');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
-		$mapContainer.css({
-			'border': '2px solid white',
-			'box-shadow': '0 0 0 9999px #000000AA'
+		$('#instructions-heading').text('Move up:');
+		$('#instructions-content').html('Press (and hold) the up arrow (or W or K) to move up.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_up</span><div class="key">W</div><div class="key">K</div></div>');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#instructions-button').prop('disabled', true);
+		$(document).on('keydown', e => {
+			eventKeyHandlers(e);
 		});
+	}, 500);
+}
+
+function showInstructions4() {
+	$('#instructions-heading').addClass('animate__animated animate__zoomOut');
+	$('#instructions-content').addClass('animate__animated animate__zoomOut');
+	setTimeout(() => {
+		$('#instructions-heading').html(`Well done! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-content').css('display', 'none');
+		$instructionsModal[0].style.setProperty('height', '20em', 'important');
+		$('#instructions-heading').removeClass('animate__zoomOut');
+		$('#instructions-content').removeClass('animate__zoomOut');
+		$('#instructions-heading').addClass('animate__zoomIn');
+		$('#instructions-content').addClass('animate__zoomIn');
+		$(document).off();
+	}, 500);
+}
+
+function showInstructions5() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	setTimeout(() => {
+		$('#instructions-heading').text('Move right:');
+		$('#instructions-content').html('Press (and hold) the right arrow (or D or L) to move right.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_right</span><div class="key">D</div><div class="key">L</div></div>');
+		$('#instructions-content').css('display', 'initial');
+		$instructionsModal[0].style.setProperty('height', '25em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#instructions-button').prop('disabled', true);
+		$(document).on('keydown', e => {
+			eventKeyHandlers(e);
+		});
+		human.tutorial.inTutorial = true;
+		human.tutorial.dir = 2;
+		human.tutorial.step = 0;
 	}, 500);
 }
 
 function showInstructions6() {
-	$mapContainer.css({
-		'border': 'none',
-		'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
-	});
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
+	$('#instructions-heading').addClass('animate__zoomOut');
+	$('#instructions-content').addClass('animate__zoomOut');
 	setTimeout(() => {
-		$('#instructions-heading').text('Game:');
-		$('#instructions-content').text('The game has 7 rounds, and each round is played for 40 seconds. After each round, you will be prompted to integrate or discard the agent\'s score. If you trust the agent based on its performance in the previous rounds, click Integrate. If you do not trust the agent, then click Discard. When you integrate the agent\'s score to the team, the points scored by the agent will be added to the overall team score. When you discard the agent\'s score, any points scored by the agent in that round will be ignored and will not be added to the overall team score.');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
-		$mapContainer.css({
-			'border': '2px solid white',
-			'box-shadow': '0 0 0 9999px #000000AA'
-		});
+		$('#instructions-heading').html(`Great! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-content').css('display', 'none');
+		$instructionsModal[0].style.setProperty('height', '20em', 'important');
+		$('#instructions-heading').removeClass('animate__zoomOut');
+		$('#instructions-content').removeClass('animate__zoomOut');
+		$('#instructions-heading').addClass('animate__zoomIn');
+		$('#instructions-content').addClass('animate__zoomIn');
+		$(document).off();
 	}, 500);
 }
 
 function showInstructions7() {
-	$mapContainer.css({
-		'border': 'none',
-		'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
-	});
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
-		$('#instructions-heading').text('Decision:');
-		$('#instructions-content').text('Make a decision based on the agent\'s performance in the previous rounds.');
-		$('#instructions-modal-content > .userInputButtons').css('display', 'none');
-		$('#instructions-modal')[0].style.setProperty('width', '30em', 'important');
-		$('#instructions-modal')[0].style.setProperty('height', '10em', 'important');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
-
-		seconds = 0;
-		agentNum = 1;
-		pause = true;
-		clearInterval(timeout);
-		showTrustPrompt();
-		
-		$trustConfirmModal.addClass('animate__animated animate__shakeX');
-		$trustConfirmModal.css({
-			'border': '2px solid white',
+		$('#instructions-heading').text('Move down:');
+		$('#instructions-content').html('Press (and hold) the down arrow (or S or J) to move down.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_down</span><div class="key">S</div><div class="key">J</div></div>');
+		$('#instructions-content').css('display', 'initial');
+		$instructionsModal[0].style.setProperty('height', '25em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#instructions-button').prop('disabled', true);
+		$(document).on('keydown', e => {
+			eventKeyHandlers(e);
 		});
+		human.tutorial.inTutorial = true;
+		human.tutorial.dir = 3;
+		human.tutorial.step = 0;
 	}, 500);
 }
 
 function showInstructions8() {
-	$trustConfirmModal.css({
-		'border': 'none'
-	});
-	$trustConfirmModal.removeClass('animate__animated animate__shakeX');
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
+	$('#instructions-heading').addClass('animate__zoomOut');
+	$('#instructions-content').addClass('animate__zoomOut');
 	setTimeout(() => {
-		$('#instructions-heading').text('Results:');
-		$('#instructions-content').text('This popup shows you all the information about the area explored and the targets collected by the human (you) and the agent.');
-		$('#instructions-modal-content > .userInputButtons').css('display', 'flex');
-		$('#instructions-modal')[0].style.setProperty('width', '40em', 'important');
-		$('#instructions-modal')[0].style.setProperty('height', '20em', 'important');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
-		
-		$detailsModal.css({
-			'border': '2px solid white'
-		});
-		$('#exploration-details-modal .userInputButtons button').prop('disabled', true);
+		$('#instructions-heading').html(`Perfect! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-content').css('display', 'none');
+		$instructionsModal[0].style.setProperty('height', '20em', 'important');
+		$('#instructions-heading').removeClass('animate__zoomOut');
+		$('#instructions-content').removeClass('animate__zoomOut');
+		$('#instructions-heading').addClass('animate__zoomIn');
+		$('#instructions-content').addClass('animate__zoomIn');
+		$(document).off();
 	}, 500);
 }
 
 function showInstructions9() {
-	$detailsModal.css({
-		'border': 'none'
-	});
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
-		$('#instructions-heading').text('Map images:');
-		$('#instructions-content').text('These images show the current explored area and targets collected by you and the agent in the last interval.');
-		$('#instructions-modal')[0].style.setProperty('width', '40em', 'important');
-		$('#instructions-modal')[0].style.setProperty('height', '20em', 'important');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
-		
-		$('.map-info').addClass('animate__animated animate__shakeX');
-		$('.map-info').css({
-			'border': '2px solid white',
-			'box-shadow': '0 0 0 9999px #000000AA',
-			'z-index': '999'
+		$('#instructions-heading').text('Move left:');
+		$('#instructions-content').html('Press (and hold) the left arrow (or A or H) to move left.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_left</span><div class="key">A</div><div class="key">H</div></div>');
+		$('#instructions-content').css('display', 'initial');
+		$instructionsModal[0].style.setProperty('height', '25em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#instructions-button').prop('disabled', true);
+		$(document).on('keydown', e => {
+			eventKeyHandlers(e);
 		});
+		human.tutorial.inTutorial = true;
+		human.tutorial.dir = 4;
+		human.tutorial.step = 0;
 	}, 500);
 }
 
 function showInstructions10() {
-	$('.map-info').css({
-		'border': 'none',
-		'box-shadow': 'none',
-		'z-index': 'initial'
-	});
-	$('.map-info').removeClass('animate__animated animate__shakeX');
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
+	$('#instructions-heading').addClass('animate__zoomOut');
+	$('#instructions-content').addClass('animate__zoomOut');
 	setTimeout(() => {
-		$('#instructions-heading').text('Score details:');
-		$('#instructions-content').text('These blocks display the details of the targets collected and points scored by you and the agent. The leftmost block displays the overall score of the team in the current round as well as the overall score. The second and third blocks display the number of each kind of targets collected by you and the agent and the points scored as a result. NOTE: Agent score is only shown when you integrate the score. If you discarded it\'s score, then the agent\'s score for this round will be 0.');
-		$('#instructions-modal').css('margin', '2em auto auto 2em');
-		$('#instructions-modal')[0].style.setProperty('width', '70em', 'important');
-		$('#instructions-modal')[0].style.setProperty('height', '20em', 'important');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
-		
-		$('.scores').addClass('animate__animated animate__shakeX');
-		$('.scores').css({
-			'border': '2px solid white',
-			'box-shadow': '0 0 0 9999px #000000AA',
-			'z-index': '999'
-		});
+		$('#instructions-heading').html(`Right on! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-content').css('display', 'none');
+		$instructionsModal[0].style.setProperty('height', '20em', 'important');
+		$('#instructions-heading').removeClass('animate__zoomOut');
+		$('#instructions-content').removeClass('animate__zoomOut');
+		$('#instructions-heading').addClass('animate__zoomIn');
+		$('#instructions-content').addClass('animate__zoomIn');
+		$(document).off();
 	}, 500);
 }
 
 function showInstructions11() {
-	$('.scores').css({
-		'border': 'none',
-		'box-shadow': 'none',
-		'z-index': 'initial'
-	});
-	$('.scores').removeClass('animate__animated animate__shakeX');
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
-		$('#instructions-heading').text('Rounds history:');
-		$('#instructions-content').text('These blocks display the decisions made (integrated/discarded) in the previous rounds by you.');
-		$('#instructions-modal').css('margin', 'auto auto auto 2em');
-		$('#instructions-modal')[0].style.setProperty('width', '40em', 'important');
-		$('#instructions-modal')[0].style.setProperty('height', '20em', 'important');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__fadeInLeft animate__faster');
-		
-		$('.tableItems').addClass('animate__animated animate__shakeX');
-		$('.tableItems').css({
-			'border': '2px solid white',
-			'box-shadow': '0 0 0 9999px #000000AA',
-			'z-index': '999'
+		$('#instructions-heading').text('Picking up targets:');
+		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of a target (yellow star or red circle) and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
+		$('#instructions-content').css('display', 'initial');
+		$instructionsModal[0].style.setProperty('height', '25em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#instructions-button').prop('disabled', true);
+		$(document).on('keydown', e => {
+			eventKeyHandlers(e);
 		});
+		human.tutorial.inTutorial = true;
+		human.tutorial.restricted = false;
+		human.tutorial.step = 0;
 	}, 500);
 }
 
 function showInstructions12() {
-	$('.tableItems').css({
-		'border': 'none',
-		'box-shadow': 'none',
-		'z-index': 'initial'
-	});
-	$('.tableItems').removeClass('animate__animated animate__shakeX');
-	$('#instructions-modal').removeClass('animate__animated animate__fadeInLeft animate__faster');
-	$('#instructions-modal').addClass('animate__animated animate__fadeOutLeft animate__faster');
+	$('#instructions-heading').addClass('animate__zoomOut');
+	$('#instructions-content').addClass('animate__zoomOut');
 	setTimeout(() => {
-		/* $('#instructions-heading').text('End of Tutorial');
-		$('#instructions-content').text('Congrats! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
-		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
-		$('#instructions-modal-content > .userInputButtons button').css('margin', '10px');
-		$('#instructions-modal').css({
-			'margin': 'auto',
-			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
-		});
-		$('#instructions-modal-content').css('align-items', 'center');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__zoomIn animate__faster'); */
-
-		$endRoundModal.css('display', 'flex');
-		$endRoundModal.css('visibility', 'visible');
-		$endRoundModal.css('opacity', '1');
-		$endRoundModal.css('z-index',1000);
-		$endRoundModal.addClass('animate__animated animate__zoomIn animate__faster');
+		$('#instructions-heading').html(`Way to go! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-content').css('display', 'none');
+		$instructionsModal[0].style.setProperty('height', '20em', 'important');
+		$('#instructions-heading').removeClass('animate__zoomOut');
+		$('#instructions-content').removeClass('animate__zoomOut');
+		$('#instructions-heading').addClass('animate__zoomIn');
+		$('#instructions-content').addClass('animate__zoomIn');
+		$(document).off();
 	}, 500);
 }
 
 function showInstructions13() {
-	$('.tableItems').removeClass('animate__animated animate__shakeX');
-	$endRoundModal.removeClass('animate__animated animate__zoomIn animate__faster');
-	$endRoundModal.addClass('animate__animated animate__zoomOut animate__faster');
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	setTimeout(() => {
+		$endRoundModal.css('display', 'flex');
+		$endRoundModal.css('visibility', 'visible');
+		$endRoundModal.css('opacity', '1');
+		$endRoundModal.css('z-index',1000);
+		$endRoundModal.addClass('animate__animated animate__zoomIn');
+	}, 500);
+}
+
+function showInstructions14() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$endRoundModal.removeClass('animate__zoomIn');
+	$endRoundModal.addClass('animate__zoomOut');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$endRoundModal.css('display', 'none');
 		$endRoundModal.css('visibility', 'hidden');
@@ -672,19 +638,20 @@ function showInstructions13() {
 		$('#instructions-heading').text('End of Tutorial');
 		$('#instructions-content').text('Congrats! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
 		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
+		$('#instructions-content').css('display', 'initial');
 		$('#instructions-modal-content > .userInputButtons button').css('margin', '10px');
-		$('#instructions-modal').css({
+		$instructionsModal.css({
 			'margin': 'auto',
 			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
 		});
 		$('#instructions-modal-content').css('align-items', 'center');
-		$('#instructions-modal').removeClass('animate__animated animate__fadeOutLeft animate__faster');
-		$('#instructions-modal').addClass('animate__animated animate__zoomIn animate__faster');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__zoomIn');
 	}, 500);
 }
 
 function nextInstruction() {
-	let currInstructionID = $('#instructions-modal').attr('data-id');
+	let currInstructionID = $instructionsModal.attr('data-id');
 	switch (++currInstructionID) {
 		case 2:
 			showInstructions2();
@@ -722,12 +689,15 @@ function nextInstruction() {
 		case 13:
 			showInstructions13();
 			break;
+		case 14:
+			showInstructions14();
+			break;
 		default:
 			console.error('No instructions found with that ID.');
 			break;
 	}
 
-	$('#instructions-modal').attr('data-id', `${currInstructionID}`);
+	$instructionsModal.attr('data-id', `${currInstructionID}`);
 }
 
 function validateUser() {
@@ -736,10 +706,25 @@ function validateUser() {
 		nextInstruction();
 	} else if ($('#intervalSurvey').serialize() == '') {
 		// what
-		$('#intervalSurvey').append(`<p style="font-size=14px; color: #ff4848;">Please select at least one option.</p>`)
+		$('#intervalSurvey').append(`<p style="font-size=14px; color: #ff4848;">Please select at least one option.</p>`);
 	} else {
 		// byebye
-		window.location.href = '/exit-tutorial'
+		$.ajax({
+			url: "/tutorial/failed",
+			type: "POST",
+			data: JSON.stringify({
+				uuid: uuid
+			}),
+			contentType: "application/json; charset=utf-8",
+			success: (data, status, jqXHR) => {
+				console.log(data, status, jqXHR);
+				window.location.href = '/exit-tutorial';
+			},
+			error: (jqXHR, status, err) => {
+				console.log(jqXHR, status, err);
+				alert(err);
+			}
+		});
 	}
 }
 
@@ -1415,29 +1400,56 @@ function eventKeyHandlers(e) {
 		case 37:	// left arrow
 		case 72:	// h
 			e.preventDefault();
-			human.moveLeft();
+			if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 4)) {
+				human.moveLeft();
+				if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+					human.tutorial.inTutorial = false;
+					nextInstruction();
+				}
+			}
 			break;
 		case 87:	// w
 		case 38:	// up arrow
 		case 75:	// k
 			e.preventDefault();
-			human.moveUp();
+			if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 1)) {
+				human.moveUp();
+				if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+					human.tutorial.inTutorial = false;
+					nextInstruction();
+				}
+			}
 			break;
 		case 68:	// d
 		case 39:	// right arrow
 		case 76:	// l
 			e.preventDefault();
-			human.moveRight();
+			if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 2)) {
+				human.moveRight();
+				if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+					human.tutorial.inTutorial = false;
+					nextInstruction();
+				}
+			}
 			break;
 		case 83:	// s
 		case 40:	// down arrow
 		case 74:	// j
 			e.preventDefault();
-			human.moveDown();
+			if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 3)) {
+				human.moveDown();
+				if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+					human.tutorial.inTutorial = false;
+					nextInstruction();
+				}
+			}
 			break;
 		case 32:	// space bar
 			e.preventDefault();
-			human.pickTarget();
+			if (human.tutorial.inTutorial && human.pickTarget()) {
+				human.tutorial.inTutorial = false;
+				nextInstruction();
+			}
 			break;
 		case 49:	// 1
 			e.preventDefault();
