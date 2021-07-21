@@ -173,6 +173,7 @@ nav {
 	width: 95%;
 	height: 95%;
 	margin: auto;
+	overflow: hidden;
 	overflow-y: scroll;
 	border-radius: 7px;
 	transition: visibility 0.2s linear, opacity 0.2s linear;
@@ -185,7 +186,7 @@ nav {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	overflow: hidden;
+	overflow: visible;
 }
 
 #instructions-modal {
