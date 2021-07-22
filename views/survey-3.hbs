@@ -75,6 +75,10 @@
 </div>
 
 <script>
+	$(document).ready(() => {
+		if (!sessionStorage.getItem('uuid')) window.location.href = '/';
+	});
+	
 	function toggleTextInput() {
 		if ($('input[name="question1"]:checked').val() == 'pd') {
 			$('.hideTextArea').css('display', 'inline-block');
