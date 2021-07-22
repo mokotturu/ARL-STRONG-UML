@@ -523,6 +523,8 @@ function showTrustPrompt() {
 	if (agentNum == 1) {
 		$humanImage.attr("src", $map.getCanvasImage());
 		$botImage.attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
+		$minimapImage.attr("src", $map.getCanvasImage());
+		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 	}
 
 	$trustConfirmModal.css('display', 'flex');
@@ -554,7 +556,6 @@ function showExploredInfo() {
 	$detailsModal.css('display', 'flex');
 	$detailsModal.css('visibility', 'visible');
 	$detailsModal.css('opacity', '1');
-	$minimapImage.attr("src", $map.getCanvasImage());
 
 	$log.empty();
 

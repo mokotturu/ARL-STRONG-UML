@@ -467,20 +467,22 @@ nav {
 	padding: 1em 0 0 0;
 }
 
-#minimap {
+#minimap, #minimapAgentOverlay {
 	width: 100%;
 	height: 100%;
+	position: absolute;
 }
 
 .explored {
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-	background-color: black;
+	background-color: #252525;
 	border-top-left-radius: 7px;
 	border-top-right-radius: 7px;
 	width: 15vw;
 	height: 15vw;
 	overflow: hidden;
 	transition: 0.3s;
+	position: relative;
 }
 
 .headings-container {
