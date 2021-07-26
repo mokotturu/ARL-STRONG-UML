@@ -1,4 +1,5 @@
 const $popupModal = $(".popup-modal-container");
+const $instructionsModal = $('#instructionsContainer');
 
 $(document).ready(() => {
 	$.get("/user/:uuid", data => {
@@ -31,6 +32,23 @@ function showConsentForm() {
 	$('nav').addClass('disabled');
 	$('.main-content').addClass('disabled');
 	$('#instructions').addClass('disabled');
+}
+
+function displayVideo(){
+	$instructionsModal.css('display', 'flex');
+	$instructionsModal.css('visibility', 'visible');
+	$instructionsModal.css('opacity', '1');
+	$instructionsModal.css('z-index', 999);
+}
+
+function beginTutorial(){
+	$instructionsModal.css('display', 'none');
+	$instructionsModal.css('visibility', 'hidden');
+	$instructionsModal.css('opacity', '0');
+	$instructionsModal.css('z-index', 0);
+
+	showConsentForm();
+
 }
 
 function agree() {

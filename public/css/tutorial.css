@@ -247,6 +247,26 @@ nav {
 	text-align: center;
 }
 
+#redirectTutorialContainer{
+	width: 45em !important;
+	height: 30em !important;
+	padding: 35px 50px;
+	visibility: visible;
+	opacity: 1;
+}
+
+
+#redirectTutorialContent {
+	color: white;
+	padding-top:100px;
+}
+
+#tutRedTitle{
+	text-align: center;
+	font-size:30px;
+}
+
+
 #endRoundQContainer {
 	width: 45em !important;
 	height: 30em !important;

@@ -13,6 +13,7 @@ const $progressbar = $('.background');
 const $agentText = $('.agent-text');
 const $endRoundModal = $('#endRoundQContainer');
 const $instructionsModal = $('#instructions-modal');
+const $tutorialRedirectModal = $('#redirectTutorialContainer');
 $.jCanvas.defaults.fromCenter = false;
 
 var rows, columns, boxWidth, boxHeight;
@@ -101,7 +102,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 7, duration = 4000, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 4000, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -715,6 +716,8 @@ function validateUser() {
 		$('#intervalSurvey').append(`<p style="font-size=14px; color: #ff4848;">Please select at least one option.</p>`);
 	} else {
 		// byebye
+
+		/*
 		$.ajax({
 			url: "/tutorial/failed",
 			type: "POST",
@@ -732,6 +735,23 @@ function validateUser() {
 			}
 		});
 	}
+	*/
+
+		$endRoundModal.css('display', 'none');
+		$endRoundModal.css('visibility', 'hidden');
+		$endRoundModal.css('opacity', '0');
+		$endRoundModal.css('z-index', 0);
+
+		$tutorialRedirectModal.css('display', 'flex');
+		$tutorialRedirectModal.css('visibility', 'visible');
+		$tutorialRedirectModal.css('opacity', '1');
+		$tutorialRedirectModal.css('z-index', 999);
+}
+	
+}
+
+function tutorialRedirect(){
+	location.reload();
 }
 
 function updateTime() {

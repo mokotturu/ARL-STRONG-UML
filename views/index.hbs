@@ -7,7 +7,17 @@
 <div class="main-content">
 	<h1>ARL STRONG - UMass Lowell</h1>
 	{{!-- <button onclick="scrollDown()">Watch Video</button> --}}
-	<button id="begin" onclick="showConsentForm()">Begin Tutorial</button>
+	
+	<div class = "instructionsVid-container" id = "instructionsContainer">
+		<div class = class="instructionsVid-modal" id="instructionsContent">
+			<video width="960" height="720" controls>
+			<source src="img/instructions.mp4" type="video/mp4">
+			</video>
+			<button id="startTut" onclick="beginTutorial()">Begin Tutorial</button>
+		</div>
+	</div>
+
+	<button id="watch" onclick="displayVideo()">Watch Instructions Video</button>
 </div>
 <div class="popup-modal-container">
 	<div class="popup-modal">
