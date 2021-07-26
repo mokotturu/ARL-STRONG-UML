@@ -37,7 +37,7 @@ html, body {
 	pointer-events: none;
 }
 
-.navRight {
+/* .navRight {
 	margin: 0 30px;
 	padding: 10px;
 	background-color: #FF9800;
@@ -49,7 +49,7 @@ html, body {
 
 .navRight > * {
 	margin: 0 5px;
-}
+} */
 
 #background-video {
 	position: absolute;
@@ -271,7 +271,7 @@ nav .items p {
 }
 
 .popup-modal {
-	background-color: rgba(90, 90, 90);
+	background-color: #454545;
 	z-index: 100000;
 	color: white;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);

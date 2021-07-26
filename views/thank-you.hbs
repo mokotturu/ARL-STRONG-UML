@@ -7,14 +7,20 @@
 
 <div class="popup-modal-container">
 	<div class="popup-modal" style="padding: 20px 50px;">
-		<p style="font-size:25px;font-weight:bold;">Thank you for participating!</p>
-		<p>Your confirmation code is:</p>
+		<p style="font-size:25px;font-weight:bold;margin:25px 0;">Thank you for participating!</p>
+		<p style="margin:1em 0;">Your confirmation code is:</p>
 		<code></code>
 		<div id="userInputButtons" style="padding-top:30px;">
 			<button id="copyButton" onclick="copyCode()">Copy code</button>
 		</div>
 	</div>
 </div>
+
+<style>
+	.popup-modal {
+		align-items: initial;
+	}
+</style>
 
 <script>
 	const $popupModal = $(".popup-modal-container");

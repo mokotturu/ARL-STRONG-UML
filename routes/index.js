@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
 		'index',
 		{
 			title: 'ARL STRONG UML | Home',
-			navRight: `<span class="material-icons">warning</span><p>This is a testing site.</p>`
+			// navRight: `<span class="material-icons">warning</span><p>This is a testing site.</p>`
 		}
 	);
 });
