@@ -349,9 +349,13 @@ class Obstacle {
 
 // GAME BEGINS
 $(document).ready(async () => {
+	// if on small screen
+	if (window.location.pathname != '/mobile' && window.innerWidth < 1200) window.location.href = '/mobile';
+	
+	// if not uuid
+	if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
+
 	startTime = new Date();
-	// if (!sessionStorage.getItem('uuid')) await $.get('/user/:uuid', data => sessionStorage.setItem('uuid', data));
-	if (!sessionStorage.getItem('uuid')) window.location.href = '/';
 	uuid = sessionStorage.getItem('uuid');
 
 	$('.body-container').css('visibility', 'hidden');

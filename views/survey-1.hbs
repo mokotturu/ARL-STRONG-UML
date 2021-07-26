@@ -269,7 +269,7 @@
 	const $popupModal = $('.popup-modal-container');
 
 	$(document).ready(() => {
-		if (!sessionStorage.getItem('uuid')) window.location.href = '/';
+		// if (!sessionStorage.getItem('uuid')) window.location.href = '/';
 		if (sessionStorage.getItem('finishedGame')) {
 			$popupModal.css('visibility', 'visible');
 			$popupModal.css('opacity', '1');

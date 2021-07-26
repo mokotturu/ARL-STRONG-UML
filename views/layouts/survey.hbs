@@ -38,6 +38,12 @@
 
 <script>
 	$(document).ready(() => {
+		// if on small screen
+		if (window.location.pathname != '/mobile' && window.innerWidth < 1200) window.location.href = '/mobile';
+		
+		// if not uuid
+		if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
+
 		$(document).scroll(() => {
 			$('nav').toggleClass('scrolled', $(this).scrollTop() > $('nav').height());
 			$('nav a').toggleClass('scrolled', $(this).scrollTop() > $('nav').height());

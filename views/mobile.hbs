@@ -1,0 +1,40 @@
+<style>
+	nav a {
+		font-size: 18px !important;
+	}
+	
+	.popup-modal-container {
+		width: initial;
+	}
+
+	.main-content h1 {
+		font-size: 26px;
+	}
+</style>
+
+<div class="main-content">
+	<h1>ARL STRONG - UMass Lowell</h1>
+</div>
+<div class="popup-modal-container">
+	<div class="popup-modal">
+		<p>This site is not designed to be used on a mobile device.</p>
+		<div id="userInputButtons">
+			<button onclick="closePopup()">OK</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(() => {
+		$(".popup-modal-container").css('visibility', 'visible');
+		$(".popup-modal-container").css('opacity', '1');
+	});
+
+	function closePopup() {
+		$(".popup-modal-container").css('display', 'none');
+		$(".popup-modal-container").css('opacity', '0');
+		$(".popup-modal-container").css('visibility', 'hidden');
+	}
+</script>
+
+<script type="text/javascript" src="js/landing-page.js"></script>

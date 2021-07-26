@@ -7,6 +7,15 @@ router.get('/user/:uuid', (req, res) => {
 	res.send(uuid.v4());
 });
 
+router.get('/mobile', (req, res) => {
+	res.render(
+		'mobile',
+		{
+			title: 'ARL STRONG UML | Home',
+		}
+	);
+});
+
 router.get('/', (req, res) => {
 	res.render(
 		'index',

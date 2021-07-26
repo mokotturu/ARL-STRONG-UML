@@ -8,6 +8,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="/css/index.css">
+	{{!-- <link rel="stylesheet" href="/css/style.css"> --}}
 	<link rel="icon" href="/img/favicon.png" type="image/png">
 	<script src="https://kit.fontawesome.com/4240eddcaa.js" crossorigin="anonymous"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -39,6 +40,12 @@
 
 <script>
 	$(document).ready(() => {
+		// if on small screen
+		if (window.location.pathname != '/mobile' && window.innerWidth < 1200) window.location.href = '/mobile';
+		
+		// if not uuid
+		if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
+
 		$(document).scroll(() => {
 			$('nav').toggleClass('scrolled', $(this).scrollTop() > $('nav').height());
 			$('nav a').toggleClass('scrolled', $(this).scrollTop() > $('nav').height());
