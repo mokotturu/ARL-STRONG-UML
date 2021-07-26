@@ -715,9 +715,7 @@ function validateUser() {
 		// what
 		$('#intervalSurvey').append(`<p style="font-size=14px; color: #ff4848;">Please select at least one option.</p>`);
 	} else {
-		// byebye
-
-		/*
+		// oops
 		$.ajax({
 			url: "/tutorial/failed",
 			type: "POST",
@@ -727,7 +725,17 @@ function validateUser() {
 			contentType: "application/json; charset=utf-8",
 			success: (data, status, jqXHR) => {
 				console.log(data, status, jqXHR);
-				window.location.href = '/exit-tutorial';
+				// window.location.href = '/exit-tutorial';
+				
+				$endRoundModal.css('display', 'none');
+				$endRoundModal.css('visibility', 'hidden');
+				$endRoundModal.css('opacity', '0');
+				$endRoundModal.css('z-index', 0);
+
+				$tutorialRedirectModal.css('display', 'flex');
+				$tutorialRedirectModal.css('visibility', 'visible');
+				$tutorialRedirectModal.css('opacity', '1');
+				$tutorialRedirectModal.css('z-index', 999);
 			},
 			error: (jqXHR, status, err) => {
 				console.log(jqXHR, status, err);
@@ -735,19 +743,6 @@ function validateUser() {
 			}
 		});
 	}
-	*/
-
-		$endRoundModal.css('display', 'none');
-		$endRoundModal.css('visibility', 'hidden');
-		$endRoundModal.css('opacity', '0');
-		$endRoundModal.css('z-index', 0);
-
-		$tutorialRedirectModal.css('display', 'flex');
-		$tutorialRedirectModal.css('visibility', 'visible');
-		$tutorialRedirectModal.css('opacity', '1');
-		$tutorialRedirectModal.css('z-index', 999);
-}
-	
 }
 
 function tutorialRedirect(){

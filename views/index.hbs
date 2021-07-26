@@ -6,21 +6,25 @@
 </div>
 <div class="main-content">
 	<h1>ARL STRONG - UMass Lowell</h1>
-	{{!-- <button onclick="scrollDown()">Watch Video</button> --}}
+	{{!-- <button id="watch" onclick="displayVideo()">Watch Instructions Video</button> --}}
+	<button id="begin" onclick="showConsentForm()">Begin Tutorial</button>
+</div>
 	
-	<div class = "instructionsVid-container" id = "instructionsContainer">
-		<div class = class="instructionsVid-modal" id="instructionsContent">
-			<video width="960" height="720" controls>
+<div class="popup-modal-container" id="instructionsContainer">
+	<div class="popup-modal" id="instructionsContent">
+		<h4 class="modal-heading">Instructions Video</h4>
+		<video controls>
 			<source src="img/instructions.mp4" type="video/mp4">
-			</video>
-			<button id="startTut" onclick="beginTutorial()">Begin Tutorial</button>
+		</video>
+		<div id="userInputButtons">
+		<button id="startTut" onclick="window.location.href = '/tutorial'">Continue</button>
 		</div>
 	</div>
-
-	<button id="watch" onclick="displayVideo()">Watch Instructions Video</button>
 </div>
-<div class="popup-modal-container">
-	<div class="popup-modal">
+
+<div class="popup-modal-container" id="consentFormContainer">
+	<div class="popup-modal" id="consentFormContent">
+		<h4 class="modal-heading">Consent Form</h4>
 		<div id="consent-form">
 			<object data="src\Consent form.pdf" type="application/pdf" id="pdf"></object>
 		</div>

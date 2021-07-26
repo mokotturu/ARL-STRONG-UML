@@ -249,21 +249,22 @@ nav {
 
 #redirectTutorialContainer{
 	width: 45em !important;
-	height: 30em !important;
+	height: 20em !important;
 	padding: 35px 50px;
 	visibility: visible;
+	overflow-y: initial;
 	opacity: 1;
 }
 
 
 #redirectTutorialContent {
 	color: white;
-	padding-top:100px;
+	justify-content: space-evenly;
 }
 
 #tutRedTitle{
 	text-align: center;
-	font-size:30px;
+	font-size:24px;
 }
 
 
