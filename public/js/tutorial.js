@@ -99,7 +99,7 @@ var human, agent1;
 var agents = [];
 var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, currHumanScore = 0, currAgentScore = 0;
 
-var seconds = 0, timeout, startTime;
+var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
 var intervalCount = 0, half = 0, intervals = 10, duration = 4000, agentNum = 1;
@@ -400,6 +400,13 @@ $(document).ready(async () => {
 		eventKeyHandlers(e);
 	}); */
 	
+	$(document).on('keyup', () => {
+		if (throttle) {
+			clearTimeout(throttle);
+			throttle = null;
+		}
+	});
+	
 	showInstructions1();
 
 	updateScrollingPosition(human.x, human.y);
@@ -438,7 +445,7 @@ function showInstructions3() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Move up:');
-		$('#instructions-content').html('Press (and hold) the up arrow (or W or K) to move up.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_up</span><div class="key">W</div><div class="key">K</div></div>');
+		$('#instructions-content').html('Press and hold the up arrow (or W or K) to move up.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_up</span><div class="key">W</div><div class="key">K</div></div>');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').prop('disabled', true);
@@ -471,7 +478,7 @@ function showInstructions5() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Move right:');
-		$('#instructions-content').html('Press (and hold) the right arrow (or D or L) to move right.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_right</span><div class="key">D</div><div class="key">L</div></div>');
+		$('#instructions-content').html('Press and hold the right arrow (or D or L) to move right.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_right</span><div class="key">D</div><div class="key">L</div></div>');
 		$('#instructions-content').css('display', 'initial');
 		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
@@ -509,7 +516,7 @@ function showInstructions7() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Move down:');
-		$('#instructions-content').html('Press (and hold) the down arrow (or S or J) to move down.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_down</span><div class="key">S</div><div class="key">J</div></div>');
+		$('#instructions-content').html('Press and hold the down arrow (or S or J) to move down.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_down</span><div class="key">S</div><div class="key">J</div></div>');
 		$('#instructions-content').css('display', 'initial');
 		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
@@ -547,7 +554,7 @@ function showInstructions9() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Move left:');
-		$('#instructions-content').html('Press (and hold) the left arrow (or A or H) to move left.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_left</span><div class="key">A</div><div class="key">H</div></div>');
+		$('#instructions-content').html('Press and hold the left arrow (or A or H) to move left.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_left</span><div class="key">A</div><div class="key">H</div></div>');
 		$('#instructions-content').css('display', 'initial');
 		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
@@ -1416,73 +1423,76 @@ function bresenhamdsQuad4Helper(cell1, cell2) {
 
 // human controls
 function eventKeyHandlers(e) {
-	switch (e.keyCode) {
-		case 65:	// a
-		case 37:	// left arrow
-		case 72:	// h
-			e.preventDefault();
-			if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 4)) {
-				human.moveLeft();
-				if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+	if (!throttle) {
+		switch (e.keyCode) {
+			case 65:	// a
+			case 37:	// left arrow
+			case 72:	// h
+				e.preventDefault();
+				if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 4)) {
+					human.moveLeft();
+					if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+						human.tutorial.inTutorial = false;
+						nextInstruction();
+					}
+				}
+				break;
+			case 87:	// w
+			case 38:	// up arrow
+			case 75:	// k
+				e.preventDefault();
+				if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 1)) {
+					human.moveUp();
+					if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+						human.tutorial.inTutorial = false;
+						nextInstruction();
+					}
+				}
+				break;
+			case 68:	// d
+			case 39:	// right arrow
+			case 76:	// l
+				e.preventDefault();
+				if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 2)) {
+					human.moveRight();
+					if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+						human.tutorial.inTutorial = false;
+						nextInstruction();
+					}
+				}
+				break;
+			case 83:	// s
+			case 40:	// down arrow
+			case 74:	// j
+				e.preventDefault();
+				if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 3)) {
+					human.moveDown();
+					if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
+						human.tutorial.inTutorial = false;
+						nextInstruction();
+					}
+				}
+				break;
+			case 32:	// space bar
+				e.preventDefault();
+				if (human.tutorial.inTutorial && human.pickTarget()) {
 					human.tutorial.inTutorial = false;
 					nextInstruction();
 				}
-			}
-			break;
-		case 87:	// w
-		case 38:	// up arrow
-		case 75:	// k
-			e.preventDefault();
-			if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 1)) {
-				human.moveUp();
-				if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
-					human.tutorial.inTutorial = false;
-					nextInstruction();
-				}
-			}
-			break;
-		case 68:	// d
-		case 39:	// right arrow
-		case 76:	// l
-			e.preventDefault();
-			if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 2)) {
-				human.moveRight();
-				if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
-					human.tutorial.inTutorial = false;
-					nextInstruction();
-				}
-			}
-			break;
-		case 83:	// s
-		case 40:	// down arrow
-		case 74:	// j
-			e.preventDefault();
-			if (!human.tutorial.restricted || (human.tutorial.inTutorial && human.tutorial.dir == 3)) {
-				human.moveDown();
-				if (human.tutorial.restricted && ++human.tutorial.step >= 30) {
-					human.tutorial.inTutorial = false;
-					nextInstruction();
-				}
-			}
-			break;
-		case 32:	// space bar
-			e.preventDefault();
-			if (human.tutorial.inTutorial && human.pickTarget()) {
-				human.tutorial.inTutorial = false;
-				nextInstruction();
-			}
-			break;
-		case 49:	// 1
-			e.preventDefault();
-			// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-			updateScrollingPosition(agent1.x, agent1.y);
-			break;
-		case 50:	// 2
-			e.preventDefault();
-			// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-			updateScrollingPosition(agent2.x, agent2.y);
-		default:	// nothing
-			break;
+				break;
+			case 49:	// 1
+				e.preventDefault();
+				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
+				updateScrollingPosition(agent1.x, agent1.y);
+				break;
+			case 50:	// 2
+				e.preventDefault();
+				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
+				updateScrollingPosition(agent2.x, agent2.y);
+			default:	// nothing
+				break;
+		}
+		throttle = setTimeout(() => { throttle = null; }, 50);
 	}
 }
 

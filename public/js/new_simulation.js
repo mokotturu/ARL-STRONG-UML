@@ -75,7 +75,10 @@ var fakeBotImageScales = [
 	{ left:  96, right: 192, top: 217, bottom: 242 },
 	{ left:  96, right: 275, top: 201, bottom: 257 },
 	{ left: 270, right: 319, top: 201, bottom: 348 },
-	{ left: 166, right: 267, top: 304, bottom: 329 }
+	{ left: 166, right: 267, top: 304, bottom: 329 },
+	{ left:  96, right: 192, top: 158, bottom: 182 },
+	{ left:  96, right: 192, top: 177, bottom: 202 },
+	{ left:  96, right: 192, top: 197, bottom: 222 }
 ];
 
 var fakeAgentScores = [
@@ -85,7 +88,10 @@ var fakeAgentScores = [
 	{ score: -100, positive: 2, negative: 3 },
 	{ score:  200, positive: 4, negative: 2 },
 	{ score:  300, positive: 3, negative: 0 },
-	{ score:  200, positive: 3, negative: 1 }
+	{ score:  200, positive: 3, negative: 1 },
+	{ score:  100, positive: 2, negative: 1 },
+	{ score: -100, positive: 1, negative: 2 },
+	{ score: -100, positive: 1, negative: 2 }
 ];
 
 var fakeAgentNum = 0;
@@ -99,10 +105,10 @@ var human, agent1;
 var agents = [];
 var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, currHumanScore = 0, currAgentScore = 0;
 
-var seconds = 0, timeout, startTime;
+var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 7, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -136,10 +142,11 @@ class Player {
 		data[half].human.push(tracker);
 	}
 
-	drawCells(cells) {
+	drawCells(cells, shouldAdd) {
 		let tempLightColor, tempDarkColor;
+		if (shouldAdd == null) shouldAdd = true;
 		cells.forEach(cell => {
-			this.explored.add(cell);
+			if (shouldAdd) this.tempExplored.add(cell);
 			grid[cell.x][cell.y].isHumanExplored = true;
 			tempLightColor = this.lightColor, tempDarkColor = this.darkColor;
 			if (cell.isAgentExplored && cell.isHumanExplored) {
@@ -397,6 +404,13 @@ $(document).ready(async () => {
 	$(document).on('keydown', e => {
 		eventKeyHandlers(e);
 	});
+	
+	$(document).on('keyup', () => {
+		if (throttle) {
+			clearTimeout(throttle);
+			throttle = null;
+		}
+	});
 
 	updateScrollingPosition(human.x, human.y);
 	timeout = setInterval(updateTime, 1000);
@@ -603,7 +617,7 @@ function showExploredInfo() {
 		});
 	}
 
-	getSetBoundaries(human.explored, 0);
+	getSetBoundaries(human.tempExplored, 0);
 	fakeGetSetBoundaries();
 	scaleImages();
 
@@ -788,7 +802,9 @@ function hideExploredInfo() {
 		width: canvasWidth, height: canvasHeight
 	});
 
-	human.drawCells(human.explored);
+	human.explored = union(human.explored, human.tempExplored);
+	human.tempExplored.clear();
+	human.drawCells(human.explored, false);
 	for (const agent of agents) {
 		agent.drawCells(agent.explored);
 		agent.tempExplored.clear();
@@ -1101,46 +1117,49 @@ function bresenhamdsQuad4Helper(cell1, cell2) {
 
 // human controls
 function eventKeyHandlers(e) {
-	switch (e.keyCode) {
-		case 65:	// a
-		case 37:	// left arrow
-		case 72:	// h
-			e.preventDefault();
-			human.moveLeft();
-			break;
-		case 87:	// w
-		case 38:	// up arrow
-		case 75:	// k
-			e.preventDefault();
-			human.moveUp();
-			break;
-		case 68:	// d
-		case 39:	// right arrow
-		case 76:	// l
-			e.preventDefault();
-			human.moveRight();
-			break;
-		case 83:	// s
-		case 40:	// down arrow
-		case 74:	// j
-			e.preventDefault();
-			human.moveDown();
-			break;
-		case 32:	// space bar
-			e.preventDefault();
-			human.pickTarget();
-			break;
-		case 49:	// 1
-			e.preventDefault();
-			// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-			updateScrollingPosition(agent1.x, agent1.y);
-			break;
-		case 50:	// 2
-			e.preventDefault();
-			// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-			updateScrollingPosition(agent2.x, agent2.y);
-		default:	// nothing
-			break;
+	if (!throttle) {
+		switch (e.keyCode) {
+			case 65:	// a
+			case 37:	// left arrow
+			case 72:	// h
+				e.preventDefault();
+				human.moveLeft();
+				break;
+			case 87:	// w
+			case 38:	// up arrow
+			case 75:	// k
+				e.preventDefault();
+				human.moveUp();
+				break;
+			case 68:	// d
+			case 39:	// right arrow
+			case 76:	// l
+				e.preventDefault();
+				human.moveRight();
+				break;
+			case 83:	// s
+			case 40:	// down arrow
+			case 74:	// j
+				e.preventDefault();
+				human.moveDown();
+				break;
+			case 32:	// space bar
+				e.preventDefault();
+				human.pickTarget();
+				break;
+			case 49:	// 1
+				e.preventDefault();
+				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
+				updateScrollingPosition(agent1.x, agent1.y);
+				break;
+			case 50:	// 2
+				e.preventDefault();
+				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
+				updateScrollingPosition(agent2.x, agent2.y);
+			default:	// nothing
+				break;
+		}
+		throttle = setTimeout(() => { throttle = null; }, 50);
 	}
 }
 
