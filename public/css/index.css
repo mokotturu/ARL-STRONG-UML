@@ -341,6 +341,13 @@ button:hover {
 	cursor: pointer;
 }
 
+button:disabled, button[disabled], button[disabled]:hover, button[disabled]:focus, button[disabled]:active {
+	background-color: #3C3C3C;
+	color: #777777;
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
 h2 {
 	margin: 50px 0;
 }

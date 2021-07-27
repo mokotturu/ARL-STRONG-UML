@@ -746,7 +746,7 @@ function validateUser() {
 }
 
 function tutorialRedirect(){
-	location.reload();
+	window.location.href = '/';
 }
 
 function updateTime() {

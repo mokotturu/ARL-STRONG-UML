@@ -1,3 +1,7 @@
+var timer = null, timeWatched = 0, totalTime = 107;
+$('#instructionsContent > video').on('play', () => startPlaying());
+$('#instructionsContent > video').on('pause', () => pausePlaying());
+
 $(document).ready(() => {
 	$.get("/user/:uuid", data => {
 		sessionStorage.setItem('uuid', data);
@@ -10,6 +14,15 @@ $(document).ready(() => {
 		if (elem.getBoundingClientRect().top + elem.offsetHeight < window.innerHeight) elem.style.opacity = 1;
 	}
 }); */
+
+function startPlaying() {
+	timer = window.setInterval(() => ++timeWatched, 1000);
+}
+
+function pausePlaying() {
+	if (timeWatched >= totalTime) $('#startTut').prop('disabled', false);
+	if (timer) clearInterval(timer);
+}
 
 $(window).on('click', e => {
 	if ($(".popup-modal-container").is(e.target)) {
