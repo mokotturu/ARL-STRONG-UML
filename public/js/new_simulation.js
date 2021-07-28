@@ -69,16 +69,16 @@ var obstacleLocs = [
 ];
 
 var fakeBotImageScales = [
-	{ left:  96, right: 192, top: 158, bottom: 182 },
-	{ left:  96, right: 192, top: 177, bottom: 202 },
-	{ left:  96, right: 192, top: 197, bottom: 222 },
-	{ left:  96, right: 192, top: 217, bottom: 242 },
-	{ left:  96, right: 275, top: 201, bottom: 257 },
-	{ left: 270, right: 319, top: 201, bottom: 348 },
-	{ left: 166, right: 267, top: 304, bottom: 329 },
-	{ left:  96, right: 192, top: 158, bottom: 182 },
-	{ left:  96, right: 192, top: 177, bottom: 202 },
-	{ left:  96, right: 192, top: 197, bottom: 222 }
+	{ left:  96, right: 192, top: 158, bottom: 202 },
+	{ left:  96, right: 192, top: 197, bottom: 242 },
+	{ left: 166, right: 369, top: 198, bottom: 410 },
+	{ left: 272, right: 369, top: 405, bottom: 454 },
+	{ left: 272, right: 369, top: 213, bottom: 483 },
+	{ left: 281, right: 381, top:  49, bottom: 214 },
+	{ left: 281, right: 381, top:  84, bottom: 128 },
+	{ left: 281, right: 431, top:  92, bottom: 286 },
+	{ left: 335, right: 431, top: 281, bottom: 330 },
+	{ left: 335, right: 431, top: 325, bottom: 370 }
 ];
 
 var fakeAgentScores = [
@@ -127,8 +127,8 @@ class Player {
 		this.fovSize = fovSize;
 		this.explored = new Set();
 		this.tempExplored = new Set();
-		this.tempTargetsFound = { positive: 0, negative: 0 };
-		this.totalTargetsFound = { positive: 0, negative: 0 };
+		this.tempTargetsFound = { positive: [], negative: [] };
+		this.totalTargetsFound = { positive: [], negative: [] };
 	}
 
 	spawn(size) {
@@ -223,8 +223,8 @@ class Player {
 		} */
 		if (!pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = true;
-			if (pickedObstacle[0].variant == 'positive') ++this.tempTargetsFound.positive;
-			else if (pickedObstacle[0].variant == 'negative') ++this.tempTargetsFound.negative;
+			if (pickedObstacle[0].variant == 'positive') this.tempTargetsFound.positive.push(pickedObstacle[0]);
+			else if (pickedObstacle[0].variant == 'negative') this.tempTargetsFound.negative.push(pickedObstacle[0]);
 		}
 	}
 }
@@ -541,6 +541,9 @@ function showTrustPrompt() {
 	initialTimeStamp = performance.now();
 
 	if (agentNum == 1) {
+		$map.clearCanvas();
+		human.drawCells(human.tempExplored, false);
+		spawn([...human.tempTargetsFound.positive, ...human.tempTargetsFound.negative, human], 1);
 		$humanImage.attr("src", $map.getCanvasImage());
 		$botImage.attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 		$minimapImage.attr("src", $map.getCanvasImage());
@@ -563,7 +566,7 @@ function showPostIntegratePrompt(){
 }
 
 function showExploredInfo() {
-	currHumanScore = human.tempTargetsFound.positive * 100 - human.tempTargetsFound.negative * 100;
+	currHumanScore = human.tempTargetsFound.positive.length * 100 - human.tempTargetsFound.negative.length * 100;
 	// currAgentScore = fakeAgentScores[fakeAgentNum].score;
 	let tempCurrAgentScore = fakeAgentScores[fakeAgentNum].score;
 	totalHumanScore += currHumanScore;
@@ -632,13 +635,13 @@ function showExploredInfo() {
 //Update the display for star count for targets on the results display
 function updateResults(){
 	let tempString = ' ';
-	for (let i = 0; i < human.tempTargetsFound.positive; i++){
+	for (let i = 0; i < human.tempTargetsFound.positive.length; i++){
 		tempString+= `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
 	}
 	$("div.hBlueStar").html(tempString);
 
 	tempString = ' ';
-	for (let j = 0; j < human.tempTargetsFound.negative; j++){
+	for (let j = 0; j < human.tempTargetsFound.negative.length; j++){
 		tempString+= `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
 	}
 	$("div.hYellowStar").html(tempString);
@@ -727,8 +730,8 @@ function updateResults(){
 function confirmExploration() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
-	human.totalTargetsFound.positive += human.tempTargetsFound.positive;
-	human.totalTargetsFound.negative += human.tempTargetsFound.negative;
+	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
+	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
 	currAgentScore = fakeAgentScores[fakeAgentNum].score;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: true, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -743,8 +746,8 @@ function confirmExploration() {
 function undoExploration() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
-	human.totalTargetsFound.positive += human.tempTargetsFound.positive;
-	human.totalTargetsFound.negative += human.tempTargetsFound.negative;
+	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
+	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
 	currAgentScore = 0;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: false, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -773,8 +776,8 @@ function hideExploredInfo() {
 
 	// agents[agentNum - 1].tempTargetsFound.positive = 0;
 	// agents[agentNum - 1].tempTargetsFound.negative = 0;
-	human.tempTargetsFound.positive = 0;
-	human.tempTargetsFound.negative = 0;
+	human.tempTargetsFound.positive = [];
+	human.tempTargetsFound.negative = [];
 
 	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
 

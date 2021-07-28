@@ -240,8 +240,8 @@ nav {
 	align-items: center;
 }
 
-#intervalSurvey .questionContainer {
-	margin: 10px 0;
+.questionContainer {
+	padding: 1em 0;
 	width: 100%;
 }
 
