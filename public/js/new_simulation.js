@@ -82,15 +82,15 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ score:  100, positive: 2, negative: 1 },
-	{ score: -100, positive: 1, negative: 2 },
+	{ score: -100, positive: 2, negative: 3 },
+	{ score: -300, positive: 1, negative: 4 },
 	{ score: -100, positive: 1, negative: 2 },
 	{ score: -100, positive: 2, negative: 3 },
-	{ score:  200, positive: 4, negative: 2 },
-	{ score:  300, positive: 3, negative: 0 },
-	{ score:  200, positive: 3, negative: 1 },
-	{ score:  100, positive: 2, negative: 1 },
-	{ score: -100, positive: 1, negative: 2 },
+	{ score: -200, positive: 0, negative: 2 },
+	{ score: -100, positive: 0, negative: 1 },
+	{ score: -100, positive: 0, negative: 1 },
+	{ score: -200, positive: 0, negative: 2 },
+	{ score: -100, positive: 2, negative: 3 },
 	{ score: -100, positive: 1, negative: 2 }
 ];
 
@@ -356,7 +356,7 @@ class Obstacle {
 // GAME BEGINS
 $(document).ready(async () => {
 	// if on small screen
-	if (window.location.pathname != '/mobile' && window.innerWidth < 1200) window.location.href = '/mobile';
+	if (window.location.pathname != '/mobile' && window.innerWidth < 1000) window.location.href = '/mobile';
 	
 	// if not uuid
 	if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
