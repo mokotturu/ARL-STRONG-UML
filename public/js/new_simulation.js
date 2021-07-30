@@ -108,7 +108,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 1, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
