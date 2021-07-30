@@ -69,16 +69,16 @@ var obstacleLocs = [
 ];
 
 var fakeBotImageScales = [
-	{ left:  96, right: 192, top: 158, bottom: 202 },
-	{ left:  96, right: 192, top: 197, bottom: 242 },
-	{ left: 166, right: 369, top: 198, bottom: 410 },
-	{ left: 272, right: 369, top: 405, bottom: 454 },
-	{ left: 272, right: 369, top: 213, bottom: 483 },
-	{ left: 281, right: 381, top:  49, bottom: 214 },
-	{ left: 281, right: 381, top:  84, bottom: 128 },
-	{ left: 281, right: 431, top:  92, bottom: 286 },
-	{ left: 335, right: 431, top: 281, bottom: 330 },
-	{ left: 335, right: 431, top: 325, bottom: 370 }
+	{ left:  96, right: 192, top: 158, bottom: 242 },
+	{ left:  96, right: 319, top: 201, bottom: 349 },
+	{ left: 166, right: 369, top: 345, bottom: 414 },
+	{ left: 272, right: 369, top: 207, bottom: 483 },
+	{ left: 281, right: 381, top:  49, bottom: 208 },
+	{ left: 281, right: 431, top:  92, bottom: 330 },
+	{ left: 331, right: 435, top: 264, bottom: 374 },
+	{ left:  96, right: 192, top: 158, bottom: 242 },
+	{ left:  96, right: 319, top: 201, bottom: 349 },
+	{ left: 166, right: 369, top: 345, bottom: 414 }
 ];
 
 var fakeAgentScores = [
