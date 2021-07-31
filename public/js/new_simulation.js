@@ -538,8 +538,6 @@ function showTrustPrompt() {
 	cancelAnimationFrame(currentFrame);
 	// clearInterval(currentFrame);
 
-	initialTimeStamp = performance.now();
-
 	if (agentNum == 1) {
 		$map.clearCanvas();
 		human.drawCells(human.tempExplored, false);
@@ -553,6 +551,8 @@ function showTrustPrompt() {
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
 	$trustConfirmModal.css('opacity', '1');
+
+	initialTimeStamp = performance.now();
 }
 
 function showPostIntegratePrompt(){
