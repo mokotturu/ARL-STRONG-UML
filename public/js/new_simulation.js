@@ -7,6 +7,8 @@ const $trustConfirmModal = $('#trust-confirm-modal');
 
 const $endRoundModal = $('#endRoundQContainer');
 
+const $trustCueModal = $('#trust-cue-modal');
+
 const $minimapImage = $('#minimap');
 const $humanImage = $('#human-image');
 const $botImage = $('#bot-image');
@@ -115,6 +117,14 @@ var victimMarker = new Image();
 var hazardMarker = new Image();
 victimMarker.src = 'img/victim-marker-big.png';
 hazardMarker.src = 'img/hazard-marker-big.png';
+
+/* Trust cue messages to add to the game below.
+   Note: Not all rounds in the game will need a trust cue message.
+   Leave blank strings for rounds which do not need a trust cue. 
+   This behavior of selecting trust cue messages may change in later versions of the game.
+*/
+
+const trustCues = ["Cue 1", "Cue 2", "Cue 3", "Cue 4", "Cue 5", "Cue 6", "Cue 7", "Cue8", "Cue9", "Cue10"];
 
 class Player {
 	constructor (x, y, dir, fovSize) {
@@ -548,6 +558,8 @@ function showTrustPrompt() {
 		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 	}
 
+	updateTrustMessage();
+
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
 	$trustConfirmModal.css('opacity', '1');
@@ -725,6 +737,25 @@ function updateResults(){
 		$('#agentPositive').css('width', `0`);
 		$('#agentScorePositive').text(``);
 	}
+}
+
+function updateTrustMessage(){
+
+	let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 26px;">' + trustCues[intervalCount] +'</h2>';
+	
+	$("div.trustCueMessage").html(cueMessage);
+
+	$trustCueModal.css('visibility', 'visible');
+	$trustCueModal.css('display', 'flex');
+	$trustCueModal.css('opacity', '1');
+	$trustCueModal.css('z-index','999');
+
+}
+
+function hideTrustMessage(){
+	$trustCueModal.css('visibility', 'hidden');
+	$trustCueModal.css('display', 'none');
+	$trustCueModal.css('opacity', '0');
 }
 
 function confirmExploration() {
