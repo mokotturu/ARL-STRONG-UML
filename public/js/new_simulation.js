@@ -110,7 +110,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 1, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -124,7 +124,13 @@ hazardMarker.src = 'img/hazard-marker-big.png';
    This behavior of selecting trust cue messages may change in later versions of the game.
 */
 
-const trustCues = ["Cue 1", "Cue 2", "Cue 3", "Cue 4", "Cue 5", "Cue 6", "Cue 7", "Cue8", "Cue9", "Cue10"];
+
+const c1_m1 = "I am sorry, I was having difficulty identifying the correct target. I will do better next round.";
+
+const c2_m2 = "I am sorry, I am still having trouble with identification. Let me try something different to see if that will help."
+
+const trustCues = ["X", "X", c1_m1, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, "X"];
+
 
 class Player {
 	constructor (x, y, dir, fovSize) {
@@ -741,6 +747,8 @@ function updateResults(){
 
 function updateTrustMessage(){
 
+	if (trustCues[intervalCount] != "X"){
+
 	let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 26px;">' + trustCues[intervalCount] +'</h2>';
 	
 	$("div.trustCueMessage").html(cueMessage);
@@ -749,6 +757,14 @@ function updateTrustMessage(){
 	$trustCueModal.css('display', 'flex');
 	$trustCueModal.css('opacity', '1');
 	$trustCueModal.css('z-index','999');
+
+	}
+
+	else if (trustCues[intervalCount] == "X"){
+		$trustCueModal.css('visibility', 'hidden');
+		$trustCueModal.css('display', 'none');
+		$trustCueModal.css('opacity', '0');
+	}
 
 }
 
