@@ -497,12 +497,19 @@ function preTerminationPrompt() {
 }
 
 function terminate() {
+	// data.endGame = $('#endGameSurvey').serializeArray();
+	let endGameData = $('#endGameSurvey').serializeArray();
+	if (endGameData.length != 2) {
+		console.error('All fields are required.')
+		$('#endGameSurveyRQMsg').css('display', 'initial');
+		return;
+	}
+	data.endGame = endGameData;
+	
 	$('.body-container').css('visibility', 'hidden');
 	$('.body-container').css('opacity', '0');
 	$('.loader').css('visibility', 'visible');
 	$('.loader').css('opacity', '1');
-
-	data.endGame = $('#endGameSurvey').serializeArray();
 	sessionStorage.setItem('finishedGame', true);
 
 	$.ajax({
@@ -557,8 +564,8 @@ function showTrustPrompt() {
 
 function showPostIntegratePrompt(){
 	$('#intervalSurvey')[0].reset();
-	$('#q3Option5Text').css('display', 'none');
-	$('#q3Option5Text').val('');
+	$('#decisionInfluenceText').css('display', 'none');
+	$('#decisionInfluenceText').val('');
 	$endRoundModal.css('display', 'flex');
 	$endRoundModal.css('visibility', 'visible');
 	$endRoundModal.css('opacity', '1');
@@ -733,7 +740,7 @@ function confirmExploration() {
 	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
 	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
 	currAgentScore = fakeAgentScores[fakeAgentNum].score;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: true, timeTaken: finalTimeStamp - initialTimeStamp });
+	log[agentNum - 1].push({ interval: intervalCount, trusted: 1, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
 
 	$trustConfirmModal.css('visibility', 'hidden');
@@ -749,7 +756,7 @@ function undoExploration() {
 	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
 	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
 	currAgentScore = 0;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: false, timeTaken: finalTimeStamp - initialTimeStamp });
+	log[agentNum - 1].push({ interval: intervalCount, trusted: 0, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
 	for (const agent of agents) {
 		agent.tempExplored.forEach(cell => {
@@ -766,6 +773,17 @@ function undoExploration() {
 
 // redraw the map and hide pop-up
 function hideExploredInfo() {
+	// log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
+	$('#intervalSurveyRQMsg').css('display', 'none');
+	let intervalSurveyData = $('#intervalSurvey').serializeArray();
+	console.log(intervalSurveyData)
+	if (intervalSurveyData[0].name != 'performanceRating' || intervalSurveyData[1].name != 'teammateRating' || intervalSurveyData[2].name != 'decisionInfluence' || (intervalSurveyData[2].value == '5'  && intervalSurveyData[3].value == '')) {
+		console.error('This field is required.')
+		$endRoundModal.scrollTop(-10000);
+		$('#intervalSurveyRQMsg').css('display', 'initial');
+		return;
+	}
+	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = intervalSurveyData;
 	if (agentNum < agents.length) {
 		// agents[agentNum - 1].tempTargetsFound.positive = 0;
 		// agents[agentNum - 1].tempTargetsFound.negative = 0;
@@ -779,7 +797,6 @@ function hideExploredInfo() {
 	human.tempTargetsFound.positive = [];
 	human.tempTargetsFound.negative = [];
 
-	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
 
 	if (intervalCount == Math.floor(intervals / 2)) {
 		$.ajax({
@@ -1365,7 +1382,7 @@ function difference(setA, setB) {
 }
 
 function toggleTextInput() {
-	if ($('input[name="optradioQ3"]:checked').val() == 5) {
+	if ($('input[name="decisionInfluence"]:checked').val() == 5) {
 		$('.hideTextArea').css('display', 'inline-block');
 		$('.hideTextArea').prop('required', true);
 	} else {

@@ -361,6 +361,10 @@ footer a:hover {
 	background-color: #6e7681;
 }
 
+div, input, button, select {
+	font-family: 'Montserrat', 'sans-serif';
+}
+
 ::placeholder {
 	color: #777777;
 }

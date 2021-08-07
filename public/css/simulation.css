@@ -274,7 +274,13 @@ nav {
 	margin-bottom: 0.5em;
 }
 
-#q3Option5Text {
+.requiredMessage {
+	color: red;
+	text-align: center;
+	display: none;
+}
+
+#decisionInfluenceText {
 	margin: 0 0.5em 0 1em;
 	transition: 0.3s;
 	display: none;

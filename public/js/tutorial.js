@@ -715,12 +715,12 @@ function nextInstruction() {
 }
 
 function validateUser() {
-	if ($('#intervalSurvey').serialize() == 'optradioQ1=-100') {
+	if ($('#intervalSurvey').serialize() == 'performanceRating=-100') {
 		// proceed to game
 		nextInstruction();
 	} else if ($('#intervalSurvey').serialize() == '') {
 		// what
-		$('#intervalSurvey').append(`<p style="font-size=14px; color: #ff4848;">Please select at least one option.</p>`);
+		$('#intervalSurvey').append(`<p style="font-size=14px; color: red;">Please select at least one option.</p>`);
 	} else {
 		// oops
 		$.ajax({
