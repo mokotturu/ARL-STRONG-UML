@@ -197,6 +197,24 @@ nav {
 	text-align: center;
 }
 
+/* .trustCueMessage{
+	margin-top: 5em;
+} */
+
+#trust-cue-modal {
+	width: 45em !important;
+	height: 25em !important;
+	padding: 0 50px;
+	overflow: hidden;
+}
+
+#trust-cue-modal-content {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	text-align: center;
+}
+
 #endRoundQContainer {
 	width: 45em !important;
 	height: 40em !important;

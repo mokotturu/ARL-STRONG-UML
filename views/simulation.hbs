@@ -17,6 +17,18 @@
 	<div class="loader"></div>
 	<div class="progressbar"><div class="progress background"><p>0%</p></div></div>
 	<div class="body-container">
+		<div class = "popup-modal-container" id = "trust-cue-modal">
+			<div class = "popup-modal" id = "trust-cue-modal-content">
+				<h2 style="color: white;font-size: 26px;">Agent 1 says:</h2>
+				<div class = "trustCueMessage">
+					Testing...
+				</div>
+				<div class = "userInputButtons">
+					<button onclick = "hideTrustMessage()">OK</button>
+				</div>
+			</div>
+		</div>
+
 		<div class="popup-modal-container" id="trust-confirm-modal">
 			<div class="popup-modal" id="trust-confirm-modal-content">
 				<h2 id="trustConfirmQuestion" style="color: white;font-size: 26px;">Do you want to integrate the map and score of the robot to the overall score?</h2>
@@ -27,6 +39,7 @@
 				</div>
 			</div>
 		</div>
+		
 		<div class="popup-modal-container" id="exploration-details-modal">
 			<div class="popup-modal" id="exploration-details-modal-content">
 				<div class="map-info">
