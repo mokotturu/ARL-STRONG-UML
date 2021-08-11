@@ -571,7 +571,7 @@ function showTrustPrompt() {
 		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 	}
 
-	updateTrustMessage();
+	// updateTrustMessage();
 
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
