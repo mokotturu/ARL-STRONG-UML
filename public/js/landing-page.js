@@ -3,9 +3,11 @@ $('#instructionsContent > video').on('play', () => startPlaying());
 $('#instructionsContent > video').on('pause', () => pausePlaying());
 
 $(document).ready(() => {
-	$.get("/user/:uuid", data => {
-		sessionStorage.setItem('uuid', data);
-	});
+	if (localStorage.getItem('failedTutorial') != "true") {
+		$.get("/user/:uuid", data => {
+			sessionStorage.setItem('uuid', data);
+		});
+	}
 });
 
 /* $(window).scroll(() => {

@@ -7,6 +7,10 @@
 		width: initial;
 	}
 
+	.popup-modal {
+		width: 30em;
+	}
+
 	.main-content h1 {
 		font-size: 26px;
 	}
@@ -17,7 +21,7 @@
 </div>
 <div class="popup-modal-container">
 	<div class="popup-modal">
-		<p>This site is not designed to be used on a mobile device.</p>
+		<p>This site is not designed to be used on mobile devices or small screen sizes.<br><br>If you are not on a mobile device, please maximize your window and refresh the page.</p>
 		<div id="userInputButtons">
 			<button onclick="closePopup()">OK</button>
 		</div>
@@ -26,6 +30,8 @@
 
 <script>
 	$(document).ready(() => {
+		if (window.innerWidth >= 1000) window.location.href = '/';
+
 		$(".popup-modal-container").css('visibility', 'visible');
 		$(".popup-modal-container").css('opacity', '1');
 	});

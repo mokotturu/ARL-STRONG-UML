@@ -787,7 +787,7 @@ function confirmExploration() {
 	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
 	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
 	currAgentScore = fakeAgentScores[fakeAgentNum].score;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: 1, timeTaken: finalTimeStamp - initialTimeStamp });
+	log[agentNum - 1].push({ interval: intervalCount, trusted: 1, timeTaken: finalTimeStamp - initialTimeStamp, humanPosTargetsCollected: human.tempTargetsFound.positive.length, humanNegTargetsCollected: human.tempTargetsFound.negative.length });
 	initialTimeStamp = 0, finalTimeStamp = 0;
 
 	$trustConfirmModal.css('visibility', 'hidden');
@@ -803,7 +803,7 @@ function undoExploration() {
 	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
 	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
 	currAgentScore = 0;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: 0, timeTaken: finalTimeStamp - initialTimeStamp });
+	log[agentNum - 1].push({ interval: intervalCount, trusted: 0, timeTaken: finalTimeStamp - initialTimeStamp, humanPosTargetsCollected: human.tempTargetsFound.positive.length, humanNegTargetsCollected: human.tempTargetsFound.negative.length });
 	initialTimeStamp = 0, finalTimeStamp = 0;
 	for (const agent of agents) {
 		agent.tempExplored.forEach(cell => {
@@ -855,7 +855,8 @@ function hideExploredInfo() {
 				movement: data[half].movement,
 				humanTraversal: data[half].human,
 				agent1Traversal: [],
-				agent2Traversal: []
+				agent2Traversal: [],
+				failedTutorial: localStorage.getItem('failedTutorial')
 			}),
 			contentType: "application/json; charset=utf-8"
 		});

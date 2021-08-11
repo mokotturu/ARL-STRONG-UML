@@ -53,8 +53,8 @@ const SimulationResultSchema = new mongoose.Schema({
 		selfDescribeText: String,
 		age: String,
 		education: String,
-		techEd: Number,
-		roboticsExp: Number
+		techEd: String,
+		roboticsExp: String
 	},
 	createdAt: {
 		type: Date,

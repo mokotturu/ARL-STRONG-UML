@@ -28,6 +28,7 @@
 	$(document).ready(() => {
 		// if (!sessionStorage.getItem('uuid')) window.location.href = '/';
 		showCode();
+		localStorage.setItem('failedTutorial', false);
 	});
 
 	$(window).on('click', e => {

@@ -723,6 +723,7 @@ function validateUser() {
 		$('#intervalSurvey').append(`<p style="font-size=14px; color: red;">Please select at least one option.</p>`);
 	} else {
 		// oops
+		localStorage.setItem('failedTutorial', true);
 		$.ajax({
 			url: "/tutorial/failed",
 			type: "POST",

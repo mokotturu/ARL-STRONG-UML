@@ -52,17 +52,32 @@ router.get('/simulation', (req, res) => {
 router.post('/simulation/1', async (req, res) => {
 	console.log(req.body);
 	try {
-		const result = new SimulationResult({
-			map: req.body.map,
-			uuid: req.body.uuid,
-			section1: {
-				movement: req.body.movement,
-				humanTraversal: req.body.humanTraversal,
-				agent1Traversal: req.body.agent1Traversal,
-				agent2Traversal: req.body.agent2Traversal
-			}
-		});
-		await result.save();
+		if (req.body.failedTutorial == 'true') {
+			const result = await SimulationResult.updateOne(
+				{ uuid: req.body.uuid },
+				{
+					map: req.body.map,
+					section1: {
+						movement: req.body.movement,
+						humanTraversal: req.body.humanTraversal,
+						agent1Traversal: req.body.agent1Traversal,
+						agent2Traversal: req.body.agent2Traversal
+					}
+				}
+			);
+		} else {
+			const result = new SimulationResult({
+				map: req.body.map,
+				uuid: req.body.uuid,
+				section1: {
+					movement: req.body.movement,
+					humanTraversal: req.body.humanTraversal,
+					agent1Traversal: req.body.agent1Traversal,
+					agent2Traversal: req.body.agent2Traversal
+				}
+			});
+			await result.save();
+		}
 		res.sendStatus(200);
 	} catch (err) {
 		console.log(err);
