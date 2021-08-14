@@ -173,7 +173,7 @@ nav {
 	border-radius: 7px;
 	transition: visibility 0.2s linear, opacity 0.2s linear;
 	scroll-behavior: smooth;
-	box-shadow: 0 0 0 9999px #000000AA;
+	box-shadow: 0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .popup-modal {

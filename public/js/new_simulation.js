@@ -822,15 +822,23 @@ function undoExploration() {
 function hideExploredInfo() {
 	// log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
 	$('#intervalSurveyRQMsg').css('display', 'none');
-	let intervalSurveyData = $('#intervalSurvey').serializeArray();
-	console.log(intervalSurveyData)
+	let rawIntervalSurveyData = $('#intervalSurvey').serializeArray();
+	/* console.log(intervalSurveyData)
 	if (intervalSurveyData[0].name != 'performanceRating' || intervalSurveyData[1].name != 'teammateRating' || intervalSurveyData[2].name != 'decisionInfluence' || (intervalSurveyData[2].value == '5'  && intervalSurveyData[3].value == '')) {
 		console.error('This field is required.')
 		$endRoundModal.scrollTop(-10000);
 		$('#intervalSurveyRQMsg').css('display', 'initial');
 		return;
-	}
-	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = intervalSurveyData;
+	} */
+
+	let updatedIntervalSurveyData = [
+		rawIntervalSurveyData.find(data => data.name == 'performanceRating')     || { name: 'performanceRating',     value: '' },
+		rawIntervalSurveyData.find(data => data.name == 'teammateRating')        || { name: 'teammateRating',        value: '' },
+		rawIntervalSurveyData.find(data => data.name == 'decisionInfluence')     || { name: 'decisionInfluence',     value: '' },
+		rawIntervalSurveyData.find(data => data.name == 'decisionInfluenceText') || { name: 'decisionInfluenceText', value: '' }
+	];
+	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = updatedIntervalSurveyData;
+
 	if (agentNum < agents.length) {
 		// agents[agentNum - 1].tempTargetsFound.positive = 0;
 		// agents[agentNum - 1].tempTargetsFound.negative = 0;
@@ -843,7 +851,6 @@ function hideExploredInfo() {
 	// agents[agentNum - 1].tempTargetsFound.negative = 0;
 	human.tempTargetsFound.positive = [];
 	human.tempTargetsFound.negative = [];
-
 
 	if (intervalCount == Math.floor(intervals / 2)) {
 		$.ajax({
