@@ -4,6 +4,7 @@ const SimulationResultSchema = new mongoose.Schema({
 	uuid: String,
 	failedTutorial: Boolean,
 	map: Number,
+	gameMode: String,
 	section1: {
 		movement: [],
 		humanTraversal: [],

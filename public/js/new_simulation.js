@@ -22,6 +22,8 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
+const gameMode = 'No TCC Base Game';
+
 const colors = {
 	human: '#3333ff',
 	lightHuman: '#9999ff',
@@ -859,6 +861,7 @@ function hideExploredInfo() {
 			data: JSON.stringify({
 				uuid: uuid,
 				map: pathIndex,
+				gameMode: gameMode,
 				movement: data[half].movement,
 				humanTraversal: data[half].human,
 				agent1Traversal: [],

@@ -57,6 +57,7 @@ router.post('/simulation/1', async (req, res) => {
 				{ uuid: req.body.uuid },
 				{
 					map: req.body.map,
+					gameMode: req.body.gameMode,
 					section1: {
 						movement: req.body.movement,
 						humanTraversal: req.body.humanTraversal,
@@ -68,6 +69,7 @@ router.post('/simulation/1', async (req, res) => {
 		} else {
 			const result = new SimulationResult({
 				map: req.body.map,
+				gameMode: req.body.gameMode,
 				uuid: req.body.uuid,
 				section1: {
 					movement: req.body.movement,
