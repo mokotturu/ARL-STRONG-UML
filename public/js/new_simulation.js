@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'TCC Base Game';
+const gameMode = 'Lowering expectations TCC';
 
 const colors = {
 	human: '#3333ff',
@@ -86,16 +86,16 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -300, positive: 1, negative: 4 },
-	{ score: -100, positive: 1, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -100, positive: 1, negative: 2 }
+	{ score: 100, positive: 3, negative: 2 },
+	{ score: 300, positive: 4, negative: 1 },
+	{ score: 100, positive: 2, negative: 1 },
+	{ score: 100, positive: 3, negative: 2 },
+	{ score: 200, positive: 2, negative: 0 },
+	{ score: 100, positive: 1, negative: 0 },
+	{ score: 100, positive: 1, negative: 0 },
+	{ score: 200, positive: 2, negative: 0 },
+	{ score: 100, positive: 3, negative: 2 },
+	{ score: 100, positive: 2, negative: 1 }
 ];
 
 var fakeAgentNum = 0;
@@ -127,9 +127,9 @@ hazardMarker.src = 'img/hazard-marker-big.png';
 */
 
 
-const c1_m1 = "I am sorry, I was having difficulty identifying the correct target. I will do better next round.";
+const c1_m1 = "I am not going to be able to accurately identify targets next round.";
 
-const c2_m2 = "I am sorry, I am still having trouble with identification. Let me try something different to see if that will help."
+const c2_m2 = "I am still having trouble identifying targets.";
 
 const trustCues = ["X", "X", c1_m1, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, "X"];
 
