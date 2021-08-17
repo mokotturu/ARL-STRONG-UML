@@ -1,0 +1,33 @@
+<div class="main-content">
+	<div class="btnContainer">
+		<button id="enableDevModeBtn" onclick="triggerDevMode()">Enable developer mode</button>
+	</div>
+</div>
+
+<style>
+	.btnContainer {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+</style>
+
+<script>
+	const $popupModal = $(".popup-modal-container");
+
+	$(document).ready(() => {
+		if (localStorage.getItem('devMode') != 'true') $('#enableDevModeBtn').text('Enable developer mode');
+		else $('#enableDevModeBtn').text('Disable developer mode');
+	})
+
+	function triggerDevMode() {
+		if (localStorage.getItem('devMode') != 'true') {
+			localStorage.setItem('devMode', 'true');
+			$('#enableDevModeBtn').text('Disable developer mode');
+		} else {
+			localStorage.setItem('devMode', 'false');
+			$('#enableDevModeBtn').text('Enable developer mode');
+		}
+	}
+</script>

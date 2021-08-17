@@ -235,6 +235,13 @@ router.post('/survey-2-submit', async (req, res) => {
 	}
 });
 
+router.get('/dev', (req, res) => {
+	res.render('dev', {
+		title: 'ARL STRONG UML | Developer Mode',
+		layout: 'main.hbs'
+	});
+});
+
 /*
 router.post('/survey-3-submit', async (req, res) => {
 	console.log(req.body);

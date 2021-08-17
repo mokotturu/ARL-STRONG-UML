@@ -8,6 +8,14 @@ $(document).ready(() => {
 			sessionStorage.setItem('uuid', data);
 		});
 	}
+	
+	if (localStorage.getItem('devMode') == 'true') {
+		$('#begin').css('display', 'none');
+		$('#skip').css('display', 'initial');
+	} else {
+		$('#begin').css('display', 'initial');
+		$('#skip').css('display', 'none');
+	}
 });
 
 /* $(window).scroll(() => {
