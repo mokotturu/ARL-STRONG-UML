@@ -204,7 +204,7 @@ router.post('/survey-2-submit', async (req, res) => {
 	}
 }); */
 
- router.get('/survey-2', (req, res) => {
+router.get('/survey-2', (req, res) => {
 	res.render('survey-3', {
 		title: 'ARL STRONG UML | Survey 2',
 		layout: 'survey.hbs'
@@ -233,6 +233,13 @@ router.post('/survey-2-submit', async (req, res) => {
 		console.log(err);
 		res.redirect(500, 'error/500');
 	}
+});
+
+router.get('/dev', (req, res) => {
+	res.render('dev', {
+		title: 'ARL STRONG UML | Developer Mode',
+		layout: 'main.hbs'
+	});
 });
 
 /*

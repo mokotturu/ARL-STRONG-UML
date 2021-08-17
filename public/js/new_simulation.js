@@ -379,6 +379,8 @@ $(document).ready(async () => {
 	// if not uuid
 	if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
 
+	if (localStorage.getItem('devMode') == 'true') duration = 5;
+
 	startTime = new Date();
 	uuid = sessionStorage.getItem('uuid');
 

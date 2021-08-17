@@ -8,6 +8,9 @@ $(document).ready(() => {
 			sessionStorage.setItem('uuid', data);
 		});
 	}
+
+	if (localStorage.getItem('devMode') == 'true') $('#begin').css('display', 'none');
+	else $('#skip').css('display', 'none');
 });
 
 /* $(window).scroll(() => {
