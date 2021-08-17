@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'TCC Base Game';
+const gameMode = 'Game Slide Six';
 
 const colors = {
 	human: '#3333ff',
