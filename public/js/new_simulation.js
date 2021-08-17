@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'TCC Base Game';
+const gameMode = 'TCC Game Slide 3';
 
 const colors = {
 	human: '#3333ff',
@@ -127,11 +127,15 @@ hazardMarker.src = 'img/hazard-marker-big.png';
 */
 
 
-const c1_m1 = "I am sorry, I was having difficulty identifying the correct target. I will do better next round.";
+//const c1_m1 = "I am sorry, I was having difficulty identifying the correct target. I will do better next round.";
 
-const c2_m2 = "I am sorry, I am still having trouble with identification. Let me try something different to see if that will help."
+//const c2_m2 = "I am sorry, I am still having trouble with identification. Let me try something different to see if that will help.";
 
-const trustCues = ["X", "X", c1_m1, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, "X"];
+const c3_m3 = "I am sorry, I was not sure which targets to count. I know what to do now.";
+
+const c4_m4 = "I just noticed that I was wrong about which targets to count."; 
+
+const trustCues = ["X", "X", "X", c3_m3, "X", "X", "X", c4_m4, "X", "X"];
 
 
 class Player {
