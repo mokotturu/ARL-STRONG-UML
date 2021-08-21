@@ -3,7 +3,8 @@ $('#instructionsContent > video').on('play', () => startPlaying());
 $('#instructionsContent > video').on('pause', () => pausePlaying());
 
 $(document).ready(() => {
-	if (localStorage.getItem('failedTutorial') != "true") {
+	if (localStorage.getItem('failedTutorial') != "true" || sessionStorage.getItem('uuid') === null) {
+		localStorage.setItem('failedTutorial', false);
 		$.get("/user/:uuid", data => {
 			sessionStorage.setItem('uuid', data);
 		});
