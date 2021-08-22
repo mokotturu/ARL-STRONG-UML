@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'No TCC Base Game';
+const gameMode = '10 positive 30 negative game';
 
 const colors = {
 	human: '#3333ff',
@@ -410,10 +410,13 @@ $(document).ready(async () => {
 		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.badTarget, 'negative', -100));
 	}
 
-	for (let i = 0; i < 20; ++i) {
+	for (let i = 0; i < 10; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goodTarget, 'positive', 100));
-		tempObstLoc = getRandomLoc(grid);
+	}
+
+	for (let i = 0; i < 30; ++i) {
+		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.badTarget, 'negative', -100));
 	}
 
