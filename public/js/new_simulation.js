@@ -93,7 +93,7 @@ var fakeAgentScores = [
 	{ score:  400, positive: 4, negative: 0 },
 	{ score:  100, positive: 4, negative: 3 },
 	{ score:  100, positive: 1, negative: 0 },
-	{ score:  200, positive: 2, negative: 0 }, //Need to update fake image to match this score
+	{ score:  200, positive: 2, negative: 0 },
 	{ score:  100, positive: 3, negative: 2 },
 	{ score:  100, positive: 4, negative: 3 }
 ];
