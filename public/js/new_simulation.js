@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'No TCC Base Game';
+const gameMode = 'High Magnitude No TCC';
 
 const colors = {
 	human: '#3333ff',
@@ -86,16 +86,16 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -300, positive: 1, negative: 4 },
-	{ score: -100, positive: 1, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -100, positive: 1, negative: 2 }
+	{ score:  100, positive: 3, negative: 2 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  200, positive: 2, negative: 0 },
+	{ score:  100, positive: 2, negative: 1 },
+	{ score: -400, positive: 0, negative: 4 },
+	{ score:  100, positive: 4, negative: 3 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  200, positive: 2, negative: 0 },
+	{ score:  100, positive: 3, negative: 2 },
+	{ score:  100, positive: 2, negative: 1 }
 ];
 
 var fakeAgentNum = 0;
