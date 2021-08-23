@@ -112,7 +112,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 1, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -765,7 +765,7 @@ function updateTrustMessage(){
 
 	if (trustCues[tcc_index] != "X"){
 		
-		let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 20px;">' + trustCues[intervalCount] +'</h2>';
+		let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 20px;">' + trustCues[tcc_index] +'</h2>';
 		$("div.trustCueMessage").html(cueMessage);
 		$trustCueModal.css('visibility', 'visible');
 		$trustCueModal.css('display', 'flex');
