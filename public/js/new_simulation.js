@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'TCC Repair After Results';
+const gameMode = 'TCC repair after results for dampening effectiveness and fatigue';
 
 const colors = {
 	human: '#3333ff',
@@ -86,16 +86,16 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -300, positive: 1, negative: 4 },
-	{ score: -100, positive: 1, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -100, positive: 1, negative: 2 }
+	{ score:  100, positive: 3, negative: 2 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  200, positive: 2, negative: 0 },
+	{ score:  300, positive: 4, negative: 1 },
+	{ score:  400, positive: 4, negative: 0 },
+	{ score:  100, positive: 4, negative: 3 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  200, positive: 2, negative: 0 }, //Need to update fake image to match this score
+	{ score:  100, positive: 3, negative: 2 },
+	{ score:  100, positive: 4, negative: 3 }
 ];
 
 var fakeAgentNum = 0;
