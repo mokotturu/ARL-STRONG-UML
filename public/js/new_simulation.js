@@ -112,7 +112,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 1, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -127,9 +127,9 @@ hazardMarker.src = 'img/hazard-marker-big.png';
 */
 
 
-const c1_m1 = "I am sorry, I was having difficulty identifying the correct target. I will do better next round.";
+const c1_m1 = "I am not going to be able to accurately identify targets next round.";
 
-const c2_m2 = "I am sorry, I am still having trouble with identification. Let me try something different to see if that will help."
+const c2_m2 = "I am still having trouble identifying targets.";
 
 const trustCues = ["X", "X", c1_m1, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, "X"];
 
