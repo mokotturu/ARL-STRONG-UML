@@ -765,7 +765,7 @@ function updateTrustMessage(){
 
 	if (trustCues[tcc_index] != "X"){
 		
-		let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 20px;">' + trustCues[intervalCount] +'</h2>';
+		let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 20px;">' + trustCues[tcc_index] +'</h2>';
 		$("div.trustCueMessage").html(cueMessage);
 		$trustCueModal.css('visibility', 'visible');
 		$trustCueModal.css('display', 'flex');
