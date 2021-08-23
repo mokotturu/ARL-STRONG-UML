@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'Game Slide Six';
+const gameMode = 'TCC Repair After Results';
 
 const colors = {
 	human: '#3333ff',
@@ -112,7 +112,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 1, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -132,6 +132,8 @@ const c1_m1 = "I am sorry, I was having difficulty identifying the correct targe
 const c2_m2 = "I am sorry, I am still having trouble with identification. Let me try something different to see if that will help."
 
 const trustCues = ["X", "X", c1_m1, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, "X"];
+
+var tcc_index = 0; //Index iterator used for trustCueMessages; 
 
 
 class Player {
@@ -575,11 +577,14 @@ function showTrustPrompt() {
 		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 	}
 
-	updateTrustMessage();
+	
+	//updateTrustMessage();
 
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
 	$trustConfirmModal.css('opacity', '1');
+
+	
 
 	initialTimeStamp = performance.now();
 }
@@ -758,23 +763,22 @@ function updateResults(){
 
 function updateTrustMessage(){
 
-	if (trustCues[intervalCount] != "X"){
-
-	let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 20px;">' + trustCues[intervalCount] +'</h2>';
-	
-	$("div.trustCueMessage").html(cueMessage);
-
-	$trustCueModal.css('visibility', 'visible');
-	$trustCueModal.css('display', 'flex');
-	$trustCueModal.css('opacity', '1');
-	$trustCueModal.css('z-index','999');
-
+	if (trustCues[tcc_index] != "X"){
+		
+		let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 20px;">' + trustCues[intervalCount] +'</h2>';
+		$("div.trustCueMessage").html(cueMessage);
+		$trustCueModal.css('visibility', 'visible');
+		$trustCueModal.css('display', 'flex');
+		$trustCueModal.css('opacity', '1');
+		$trustCueModal.css('z-index','999');
+		++tcc_index; //Iterate the message index 
 	}
 
-	else if (trustCues[intervalCount] == "X"){
+	else if (trustCues[tcc_index] == "X"){
 		$trustCueModal.css('visibility', 'hidden');
 		$trustCueModal.css('display', 'none');
 		$trustCueModal.css('opacity', '0');
+		++tcc_index; //Iterate the message index 
 	}
 
 }
@@ -824,6 +828,14 @@ function undoExploration() {
 
 // redraw the map and hide pop-up
 function hideExploredInfo() {
+
+	
+	//Display trust cue message after submitting 3 questions
+	updateTrustMessage();
+	
+
+
+
 	// log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
 	$('#intervalSurveyRQMsg').css('display', 'none');
 	let rawIntervalSurveyData = $('#intervalSurvey').serializeArray();
