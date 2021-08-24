@@ -743,14 +743,14 @@ function updateResults(){
 		$('#humanScorePositive').text(``);
 	}
 
-	if (currAgentScore >= 0) {
-		$('#agentPositive').css('width', `${currAgentScore/100 * 8}`);
-		$('#agentScorePositive').text(`${currAgentScore} pts`);
+	if (fakeAgentScores[fakeAgentNum - 1].score >= 0) {
+		$('#agentPositive').css('width', `${fakeAgentScores[fakeAgentNum - 1].score/100 * 8}`);
+		$('#agentScorePositive').text(`${fakeAgentScores[fakeAgentNum - 1].score} pts`);
 		$('#agentNegative').css('width', `0`);
 		$('#agentScoreNegative').text(``);
 	} else {
-		$('#agentNegative').css('width', `${Math.abs(currAgentScore/100 * 8)}`);
-		$('#agentScoreNegative').text(`${currAgentScore} pts`);
+		$('#agentNegative').css('width', `${Math.abs(fakeAgentScores[fakeAgentNum - 1].score/100 * 8)}`);
+		$('#agentScoreNegative').text(`${fakeAgentScores[fakeAgentNum - 1].score} pts`);
 		$('#agentPositive').css('width', `0`);
 		$('#agentScorePositive').text(``);
 	}
