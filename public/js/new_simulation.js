@@ -91,9 +91,9 @@ var fakeAgentScores = [
 	{ score:  200, positive: 2, negative: 0 },
 	{ score:  100, positive: 2, negative: 1 },
 	{ score: -400, positive: 0, negative: 4 },
-	{ score:  100, positive: 4, negative: 3 },
-	{ score:  100, positive: 1, negative: 0 },
 	{ score:  200, positive: 2, negative: 0 },
+	{ score:  200, positive: 4, negative: 2 },
+	{ score:  200, positive: 3, negative: 1 },
 	{ score:  100, positive: 3, negative: 2 },
 	{ score:  100, positive: 2, negative: 1 }
 ];
