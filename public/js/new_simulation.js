@@ -89,8 +89,9 @@ var fakeBotImageScales = [
 
 var fakeAgentScores = [
 	{ score:  100, positive: 3, negative: 2 },
+	{ score:  100, positive: 1, negative: 0 },
 	{ score:  200, positive: 2, negative: 0 },
-	{ score:  200, positive: 3, negative: 1 },
+	{ score:  100, positive: 2, negative: 1 },
 	{ score: -100, positive: 1, negative: 2 },
 	{ score: -100, positive: 0, negative: 1 },
 	{ score: -100, positive: 3, negative: 4 },
@@ -116,7 +117,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 12, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 13, duration = 40, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
