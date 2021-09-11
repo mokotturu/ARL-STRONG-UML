@@ -84,7 +84,8 @@ var fakeBotImageScales = [
 	{ left:  96, right: 319, top: 201, bottom: 349 },
 	{ left: 166, right: 369, top: 345, bottom: 414 },
 	{ left: 272, right: 369, top: 207, bottom: 483 },
-	{ left: 281, right: 381, top:  49, bottom: 208 }
+	{ left: 281, right: 381, top:  49, bottom: 208 },
+	{ left: 281, right: 431, top:  92, bottom: 330 }
 ];
 
 var fakeAgentScores = [
