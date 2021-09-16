@@ -191,9 +191,9 @@
 		<div id="simulation">
 			<div id="info">
 				<div id="legend">
-					<div class="icon"><span style="width: 40px; height: 20px; background-color: #9999ff; border-radius: 7px;"></span></div>
+					<div class="icon"><span class="fillSpan" style="background-color: #9999ff; border-radius: 7px;"></span></div>
 					<p>Human explored region</p>
-					<div class="icon"><span style="width: 40px; height: 20px; background-color: #99ffb7; border-radius: 7px;"></span></div>
+					<div class="icon"><span class="fillSpan" style="background-color: #99ffb7; border-radius: 7px;"></span></div>
 					<p>Agent explored region</p>
 					{{!-- <div class="icon"><span style="width: 40px; height: 20px; background-color: #ffbf7f; border-radius: 7px;"></span></div>
 					<p>Agent 2 explored region in the current interval</p>
@@ -202,9 +202,11 @@
 					<div class="icon"><span style="width: 40px; height: 20px; background-color: #ffff7f; border-radius: 7px;"></span></div>
 					<p>Region explored by both human and agent</p> --}}
 					<div class="icon"><span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span></div>
-					<p>Positive reward (+100)</p>
+					<p>+100 Team, +100 Individual</p>
+					<div class="icon"><svg id="triangle" viewBox="0 0 30 30"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg></div>
+					<p>-100 Team, +100 Individual</p>
 					<div class="icon"><span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span></div>
-					<p>Negative reward (-100)</p>
+					<p>-100 Team, 0 Individual</p>
 				</div>
 				<div id="gameDetails">
 					<div id="timer">Time elapsed: 0s</div>

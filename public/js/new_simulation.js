@@ -39,7 +39,8 @@ const colors = {
 	victim: 'red',
 	hazard: 'yellow',
 	goodTarget: '#ffc72c',
-	badTarget: '#ff4848'
+	badTarget: '#ff4848',
+	selfishTarget: '#ff48ff'
 };
 
 var grid;
@@ -69,6 +70,9 @@ var obstacleLocs = [
 	],
 	[
 		[232, 338],
+	],
+	[
+		[242, 348],
 	]
 ];
 
@@ -366,6 +370,16 @@ class Obstacle {
 					x: this.x * boxWidth + boxWidth/2, y: this.y * boxHeight + boxHeight/2,
 					width: boxWidth*3, height: boxHeight*3
 				});
+			} else if (this.variant == 'selfish') {
+				$map.drawPolygon({
+					fromCenter: true,
+					fillStyle: this.color,
+					strokeStyle: (this.isPicked) ? '#39ff14' : 'white',
+					strokeWidth: (this.isPicked) ? 3 : 1,
+					x: this.x * boxWidth + boxWidth/2, y: this.y * boxHeight + boxHeight/2,
+					radius: boxWidth*2,
+					sides: 3
+				});
 			}
 		}
 	}
@@ -410,11 +424,17 @@ $(document).ready(async () => {
 		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.badTarget, 'negative', -100));
 	}
 
+	for (let i = 0; i < obstacleLocs[2].length; ++i) {
+		obstacles.targets.push(new Obstacle(obstacleLocs[2][i][0], obstacleLocs[2][i][1], colors.selfishTarget, 'selfish', -100));
+	}
+
 	for (let i = 0; i < 20; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goodTarget, 'positive', 100));
 		tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.badTarget, 'negative', -100));
+		tempObstLoc = getRandomLoc(grid);
+		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.selfishTarget, 'selfish', -100));
 	}
 
 	$('.loader').css('visibility', 'hidden');

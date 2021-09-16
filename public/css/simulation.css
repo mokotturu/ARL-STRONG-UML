@@ -686,6 +686,11 @@ nav {
 	margin-right: 10px;
 }
 
+#legend .icon svg, #legend .icon .fillSpan {
+	width: 30px;
+	height: 30px;
+}
+
 #legend > p {
 	display: flex;
 	align-items: center;
