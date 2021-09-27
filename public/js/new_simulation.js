@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'No TCC Base Game';
+const gameMode = 'Performance Trust and Moral Trust Base Game';
 
 const colors = {
 	human: '#3333ff',
@@ -90,7 +90,7 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ gold: 2, red: 3, pink: 0 },
+	{ gold: 2, red: 3, pink: 5 },
 	{ gold: 1, red: 4, pink: 2 },
 	{ gold: 1, red: 2, pink: 3 },
 	{ gold: 2, red: 3, pink: 1 },
@@ -609,9 +609,9 @@ function showPostIntegratePrompt(){
 // *** CLEAN UP THIS FUNCTION ***
 function showExploredInfo() {
 	// NEW STUFF
-	pastHumanIndScore = (human.totalTargetsFound.gold.length + human.totalTargetsFound.pink.length) * 100;
+	pastHumanIndScore = (human.totalTargetsFound.pink.length) * 100;
 	pastHumanTeamScore = (human.totalTargetsFound.gold.length - human.totalTargetsFound.pink.length - human.totalTargetsFound.red.length) * 100;
-	currHumanIndScore = (human.tempTargetsFound.gold.length + human.tempTargetsFound.pink.length) * 100;
+	currHumanIndScore = (human.tempTargetsFound.pink.length) * 100;
 	currHumanTeamScore = (human.tempTargetsFound.gold.length - human.tempTargetsFound.pink.length - human.tempTargetsFound.red.length) * 100;
 
 	// CALCULATIONS
@@ -719,7 +719,7 @@ function updateResults(){
 	}
 
 	
-	let tempCurrAgentIndScore = ((fakeAgentScores[fakeAgentNum - 1].gold + fakeAgentScores[fakeAgentNum - 1].pink) * 100);
+	let tempCurrAgentIndScore = ((fakeAgentScores[fakeAgentNum - 1].pink) * 100);
 	let tempCurrAgentTeamScore = (fakeAgentScores[fakeAgentNum - 1].gold - fakeAgentScores[fakeAgentNum - 1].pink - fakeAgentScores[fakeAgentNum - 1].red) * 100;
 
 	if (tempCurrAgentIndScore >= 0) {
@@ -769,6 +769,30 @@ function updateResults(){
 		$('#humanTeamScorePositiveGraph').css('width', `0`);
 		$('#humanTeamScorePositive').text(``);
 	}
+
+	if (pastHumanIndScore >= 0) {
+		$('#overallHumanIndScorePositiveGraph').css('width', `${pastHumanIndScore/100 * 8}`);
+		$('#overallHumanIndScorePositive').text(`${pastHumanIndScore} pts`);
+		$('#overallHumanIndScoreNegativeGraph').css('width', `0`);
+		$('#overallHumanIndScoreNegative').text(``);
+	} else {
+		$('#overallHumanIndScoreNegativeGraph').css('width', `${Math.abs(pastHumanIndScore/100 * 8)}`);
+		$('#overallHumanIndScoreNegative').text(`${pastHumanIndScore} pts`);
+		$('#overallHumanIndScorePositiveGraph').css('width', `0`);
+		$('#overallHumanIndScorePositive').text(``);
+	}
+
+	if (totalAgentIndScore >= 0) {
+		$('#overallAgentIndScorePositiveGraph').css('width', `${totalAgentIndScore/100 * 8}`);
+		$('#overallAgentIndScorePositive').text(`${totalAgentIndScore} pts`);
+		$('#overallAgentIndScoreNegativeGraph').css('width', `0`);
+		$('#overallAgentIndScoreNegative').text(``);
+	} else {
+		$('#overallAgentIndScoreNegativeGraph').css('width', `${Math.abs(totalAgentIndScore/100 * 8)}`);
+		$('#overallAgentIndScoreNegative').text(`${totalAgentIndScore} pts`);
+		$('#overallAgentIndScorePositiveGraph').css('width', `0`);
+		$('#overallAgentIndScorePositive').text(``);
+	}
 }
 
 function updateTrustMessage(){
@@ -806,7 +830,7 @@ function confirmExploration() {
 	human.totalTargetsFound.gold.push(...human.tempTargetsFound.gold);
 	human.totalTargetsFound.red.push(...human.tempTargetsFound.red);
 	human.totalTargetsFound.pink.push(...human.tempTargetsFound.pink);
-	currAgentIndScore = (fakeAgentScores[fakeAgentNum].gold + fakeAgentScores[fakeAgentNum].pink) * 100;
+	currAgentIndScore = (fakeAgentScores[fakeAgentNum].pink) * 100;
 	currAgentTeamScore = (fakeAgentScores[fakeAgentNum].gold - fakeAgentScores[fakeAgentNum].pink - fakeAgentScores[fakeAgentNum].red) * 100;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: 1, timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length, humanRedTargetsCollected: human.tempTargetsFound.red.length, humanPinkTargetsCollected: human.tempTargetsFound.pink.length });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -825,7 +849,7 @@ function undoExploration() {
 	human.totalTargetsFound.red.push(...human.tempTargetsFound.red);
 	human.totalTargetsFound.pink.push(...human.tempTargetsFound.pink);
 	currAgentIndScore = 0, currAgentTeamScore = 0;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: 0, timeTaken: finalTimeStamp - initialTimeStamp, humanPosTargetsCollected: human.tempTargetsFound.gold.length, humanNegTargetsCollected: human.tempTargetsFound.red.length, humanPinkTargetsCollected: human.tempTargetsFound.pink.length });
+	log[agentNum - 1].push({ interval: intervalCount, trusted: 0, timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length, humanRedTargetsCollected: human.tempTargetsFound.red.length, humanPinkTargetsCollected: human.tempTargetsFound.pink.length });
 	initialTimeStamp = 0, finalTimeStamp = 0;
 	for (const agent of agents) {
 		agent.tempExplored.forEach(cell => {

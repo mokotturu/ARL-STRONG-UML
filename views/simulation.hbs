@@ -70,62 +70,66 @@
 					{{!-- Team score block --}}
 					<div id="oScore" class="scoreBlock">
 						<div>
-							<p style="margin-bottom: 1em;">Overall score of current round</p>
-							<div class="graphResultsBlockItemWrapper">
-								<div class="negativeScoreGraph resultsBlockItemLeft">
-									<p id="currTeamScoreNegative" class="scoreText"></p>
-									<div id="currTeamScoreNegativeGraph" class="negativeScore graph"></div>
-								</div>
-								<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
-									<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
-								</svg>
-								<div class="positiveScoreGraph resultsBlockItemRight">
-									<div id="currTeamScorePositiveGraph" class="positiveScore graph"></div>
-									<p id="currTeamScorePositive" class="scoreText"></p>
+							<p style="margin-bottom: 1em;">Overall Team Performance Score</p>
+							<div class="resultsBlockItemWrapper">
+								<div class="graphResultsBlockItemWrapper">
+									<div class="negativeScoreGraph resultsBlockItemLeft">
+										<p id="overallTeamScoreNegative" class="scoreText"></p>
+										<div id="overallTeamScoreNegativeGraph" class="negativeScore graph"></div>
+									</div>
+									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+									</svg>
+									<div class="positiveScoreGraph resultsBlockItemRight">
+										<div id="overallTeamScorePositiveGraph" class="positiveScore graph"></div>
+										<p id="overallTeamScorePositive" class="scoreText"></p>
+									</div>
 								</div>
 							</div>
 						</div>
 						<div>
-							<p style="margin-bottom: 1em;">Overall team score</p>
-							<div class="graphResultsBlockItemWrapper">
-								<div class="negativeScoreGraph resultsBlockItemLeft">
-									<p id="overallTeamScoreNegative" class="scoreText"></p>
-									<div id="overallTeamScoreNegativeGraph" class="negativeScore graph"></div>
+							<p style="margin-bottom: 1em;">Overall Individual Performance Scores</p>
+							<div class="resultsBlockItemWrapper">
+								<p>Agent</p>
+								<div class="graphResultsBlockItemWrapper">
+									<div class="negativeScoreGraph resultsBlockItemLeft">
+										<p id="overallAgentIndScoreNegative" class="scoreText"></p>
+										<div id="overallAgentIndScoreNegativeGraph" class="negativeScore graph"></div>
+									</div>
+									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+									</svg>
+									<div class="positiveScoreGraph resultsBlockItemRight">
+										<div id="overallAgentIndScorePositiveGraph" class="positiveScore graph"></div>
+										<p id="overallAgentIndScorePositive" class="scoreText"></p>
+									</div>
 								</div>
-								<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
-									<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
-								</svg>
-								<div class="positiveScoreGraph resultsBlockItemRight">
-									<div id="overallTeamScorePositiveGraph" class="positiveScore graph"></div>
-									<p id="overallTeamScorePositive" class="scoreText"></p>
+								<p>Human</p>
+								<div class="graphResultsBlockItemWrapper">
+									<div class="negativeScoreGraph resultsBlockItemLeft">
+										<p id="overallHumanIndScoreNegative" class="scoreText"></p>
+										<div id="overallHumanIndScoreNegativeGraph" class="negativeScore graph"></div>
+									</div>
+									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+									</svg>
+									<div class="positiveScoreGraph resultsBlockItemRight">
+										<div id="overallHumanIndScorePositiveGraph" class="positiveScore graph"></div>
+										<p id="overallHumanIndScorePositive" class="scoreText"></p>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					{{!-- Agent score block --}}
 					<div id="aScore" class="scoreBlock">
-						<p>Targets collected by agent in this round</p>
+						<p>Agent targets and scores</p>
 						<div class="resultsBlockItemWrapper">
 							<div class="aYellowStar resultsBlockItemLeft"></div>
 							<div class="aRedCircle resultsBlockItemRight"></div>
 							<div class="aPinkTriangle resultsBlockItemRight"></div>
 						</div>
-						<p>Scores</p>
 						<div class="resultsBlockItemWrapper">
-							<p>Agent individual score</p>
-							<div class="graphResultsBlockItemWrapper">
-								<div class="negativeScoreGraph resultsBlockItemLeft">
-									<p id="agentIndScoreNegative" class="scoreText"></p>
-									<div id="agentIndScoreNegativeGraph" class="negativeScore graph"></div>
-								</div>
-								<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
-									<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
-								</svg>
-								<div class="positiveScoreGraph resultsBlockItemRight">
-									<div id="agentIndScorePositiveGraph" class="positiveScore graph"></div>
-									<p id="agentIndScorePositive" class="scoreText"></p>
-								</div>
-							</div>
 							<p>Agent team score</p>
 							<div class="graphResultsBlockItemWrapper">
 								<div class="negativeScoreGraph resultsBlockItemLeft">
@@ -140,32 +144,31 @@
 									<p id="agentTeamScorePositive" class="scoreText"></p>
 								</div>
 							</div>
-						</div>
-					</div>
-					{{!-- Human score block --}}
-					<div id="hScore" class="scoreBlock">
-						<p>Targets collected by human in this round</p>
-						<div class="resultsBlockItemWrapper">
-							<div class="hYellowStar resultsBlockItemLeft"></div>
-							<div class="hRedCircle resultsBlockItemRight"></div>
-							<div class="hPinkTriangle resultsBlockItemRight"></div>
-						</div>
-						<p>Scores</p>
-						<div class="resultsBlockItemWrapper">
-							<p>Human individual score</p>
+							<p>Agent individual score</p>
 							<div class="graphResultsBlockItemWrapper">
 								<div class="negativeScoreGraph resultsBlockItemLeft">
-									<p id="humanIndScoreNegative" class="scoreText"></p>
-									<div id="humanIndScoreNegativeGraph" class="negativeScore graph"></div>
+									<p id="agentIndScoreNegative" class="scoreText"></p>
+									<div id="agentIndScoreNegativeGraph" class="negativeScore graph"></div>
 								</div>
 								<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
 									<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
 								</svg>
 								<div class="positiveScoreGraph resultsBlockItemRight">
-									<div id="humanIndScorePositiveGraph" class="positiveScore graph"></div>
-									<p id="humanIndScorePositive" class="scoreText"></p>
+									<div id="agentIndScorePositiveGraph" class="positiveScore graph"></div>
+									<p id="agentIndScorePositive" class="scoreText"></p>
 								</div>
 							</div>
+						</div>
+					</div>
+					{{!-- Human score block --}}
+					<div id="hScore" class="scoreBlock">
+						<p>Human targets and scores</p>
+						<div class="resultsBlockItemWrapper">
+							<div class="hYellowStar resultsBlockItemLeft"></div>
+							<div class="hRedCircle resultsBlockItemRight"></div>
+							<div class="hPinkTriangle resultsBlockItemRight"></div>
+						</div>
+						<div class="resultsBlockItemWrapper">
 							<p>Human team score</p>
 							<div class="graphResultsBlockItemWrapper">
 								<div class="negativeScoreGraph resultsBlockItemLeft">
@@ -180,6 +183,20 @@
 									<p id="humanTeamScorePositive" class="scoreText"></p>
 								</div>
 							</div>
+							<p>Human individual score</p>
+							<div class="graphResultsBlockItemWrapper">
+								<div class="negativeScoreGraph resultsBlockItemLeft">
+									<p id="humanIndScoreNegative" class="scoreText"></p>
+									<div id="humanIndScoreNegativeGraph" class="negativeScore graph"></div>
+								</div>
+								<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+									<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+								</svg>
+								<div class="positiveScoreGraph resultsBlockItemRight">
+									<div id="humanIndScorePositiveGraph" class="positiveScore graph"></div>
+									<p id="humanIndScorePositive" class="scoreText"></p>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -192,12 +209,12 @@
 		<div id="simulation">
 			<div id="info">
 				<div id="legend">
-					<div class="icon"><span class="fillSpan" style="background-color: #9999ff; border-radius: 7px;"></span></div>
+					{{!-- <div class="icon"><span class="fillSpan" style="background-color: #9999ff; border-radius: 7px;"></span></div>
 					<p>Human explored region</p>
 					<div class="icon"><span class="fillSpan" style="background-color: #99ffb7; border-radius: 7px;"></span></div>
-					<p>Agent explored region</p>
+					<p>Agent explored region</p> --}}
 					<div class="icon"><span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span></div>
-					<p>+100 Team, +100 Individual</p>
+					<p>+100 Team, 0 Individual</p>
 					<div class="icon"><svg id="triangle" viewBox="0 0 30 30"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg></div>
 					<p>-100 Team, +100 Individual</p>
 					<div class="icon"><span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span></div>
@@ -205,10 +222,10 @@
 				</div>
 				<div id="gameDetails">
 					<div id="timer">Time elapsed: 0s</div>
-					<hr style="width: 90%;">
+					{{!-- <hr style="width: 90%;">
 					<div id="teamScoreMain" style="font-size: 18px;">Team Score: 0</div>
 					<div id="humanIndMain" style="font-size: 18px;">Human Individual Score: 0</div>
-					<div id="agentIndMain" style="font-size: 18px;">Agent Individual Score: 0</div>
+					<div id="agentIndMain" style="font-size: 18px;">Agent Individual Score: 0</div> --}}
 				</div>
 			</div>
 			<div id="map-container">
