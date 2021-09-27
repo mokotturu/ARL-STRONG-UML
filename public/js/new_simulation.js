@@ -385,7 +385,7 @@ $(document).ready(async () => {
 	// if not uuid
 	if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
 
-	if (localStorage.getItem('devMode') == 'true') duration = 10;
+	if (localStorage.getItem('devMode') == 'true') duration = 5;
 
 	startTime = new Date();
 	uuid = sessionStorage.getItem('uuid');
@@ -660,37 +660,37 @@ function showExploredInfo() {
 function updateResults(){
 	let tempString = human.tempTargetsFound.gold.length > 0 ? `` : `No gold targets found`;
 	for (let i = 0; i < human.tempTargetsFound.gold.length; i++){
-		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
+		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
 	}
 	$("div.hYellowStar").html(tempString);
 
 	tempString = human.tempTargetsFound.red.length > 0 ? `` : `No red targets found`;
 	for (let j = 0; j < human.tempTargetsFound.red.length; j++){
-		tempString += `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
+		tempString += `<span class="material-icons" style="color: #ff4848; font-size: 25px;";>circle</span>`;
 	}
 	$("div.hRedCircle").html(tempString);
 
 	tempString = human.tempTargetsFound.pink.length > 0 ? `` : `No pink targets found`;
 	for (let j = 0; j < human.tempTargetsFound.pink.length; j++){
-		tempString += `<svg id="triangle" viewBox="0 0 30 30" style="width: 30px; height: 30px; padding: 0 1px; border-radius: 2px;"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg>`;
+		tempString += `<svg id="triangle" viewBox="0 0 30 30" style="width: 25px; height: 25px; padding: 0 1px; border-radius: 2px;"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg>`;
 	}
 	$("div.hPinkTriangle").html(tempString);
 
 	tempString = fakeAgentScores[fakeAgentNum - 1].gold > 0 ? `` : `No gold targets found`; 
 	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].gold; k++){
-		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
+		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
 	}
 	$("div.aYellowStar").html(tempString);
 
 	tempString = fakeAgentScores[fakeAgentNum - 1].red > 0 ? `` : `No red targets found`;
 	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].red; l++){
-		tempString += `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
+		tempString += `<span class="material-icons" style="color: #ff4848; font-size: 25px;";>circle</span>`;
 	}
 	$("div.aRedCircle").html(tempString);
 
 	tempString = fakeAgentScores[fakeAgentNum - 1].pink > 0 ? `` : `No pink targets found`;
 	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].pink; l++){
-		tempString += `<svg id="triangle" viewBox="0 0 30 30" style="width: 30px; height: 30px; padding: 0 1px; border-radius: 2px;"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg>`;
+		tempString += `<svg id="triangle" viewBox="0 0 30 30" style="width: 25px; height: 25px; padding: 0 1px; border-radius: 2px;"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg>`;
 	}
 	$("div.aPinkTriangle").html(tempString);
 
