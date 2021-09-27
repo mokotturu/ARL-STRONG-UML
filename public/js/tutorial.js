@@ -632,12 +632,34 @@ function showInstructions13() {
 		$endRoundModal.css('display', 'flex');
 		$endRoundModal.css('visibility', 'visible');
 		$endRoundModal.css('opacity', '1');
-		$endRoundModal.css('z-index',1000);
+		$endRoundModal.css('z-index', 1000);
 		$endRoundModal.addClass('animate__animated animate__zoomIn');
 	}, 500);
 }
 
 function showInstructions14() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$endRoundModal.removeClass('animate__zoomIn');
+	$endRoundModal.addClass('animate__zoomOut');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	setTimeout(() => {
+		$('#endRoundQH4').html('If you find 2 yellow targets and 2 pink targets in one round of the game, what will be your team performance score and individual performance score in this round?<sup style="font-size: 11px;color: red;">*</sup>');
+		$('#oneOneLabel').html('<input id="oneOneInput"   type="radio" name="performanceRating"  value="200_200"  required>Team Performance Score: 200, Individual Performance Score: 200');
+		$('#oneTwoLabel').html('<input id="oneTwoInput"   type="radio" name="performanceRating"  value="0_100"  required>Team Performance Score: 0, Individual Performance Score: 100');
+		$('#oneThreeLabel').html('<input id="oneThreeInput" type="radio" name="performanceRating" value="200_0" required>Team Performance Score: 200, Individual Performance Score: 0');
+		$('#oneFourLabel').html('<input id="oneFourInput"  type="radio" name="performanceRating" value="0_0" required>Team Performance Score: 0, Individual Performance Score: 0');
+		$endRoundModal.css('display', 'flex');
+		$endRoundModal.css('visibility', 'visible');
+		$endRoundModal.css('opacity', '1');
+		$endRoundModal.css('z-index', 1000);
+		$endRoundModal.removeClass('animate__zoomOut');
+		$endRoundModal.addClass('animate__animated animate__zoomIn');
+	}, 500);
+}
+
+function showInstructions15() {
 	$('#instructions-heading').removeClass('animate__zoomIn');
 	$('#instructions-content').removeClass('animate__zoomIn');
 	$endRoundModal.removeClass('animate__zoomIn');
@@ -706,6 +728,9 @@ function nextInstruction() {
 		case 14:
 			showInstructions14();
 			break;
+		case 15:
+			showInstructions15();
+			break;
 		default:
 			console.error('No instructions found with that ID.');
 			break;
@@ -715,8 +740,8 @@ function nextInstruction() {
 }
 
 function validateUser() {
-	if ($('#intervalSurvey').serialize() == 'performanceRating=-100') {
-		// proceed to game
+	if (($instructionsModal.attr('data-id') == '13' && $('#intervalSurvey').serialize() == 'performanceRating=-100_0') || ($instructionsModal.attr('data-id') == '14' && $('#intervalSurvey').serialize() == 'performanceRating=0_100')) {
+		// proceed to next q or game
 		nextInstruction();
 	} else if ($('#intervalSurvey').serialize() == '') {
 		// what

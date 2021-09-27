@@ -173,19 +173,15 @@
 				<h1 id="q3PromptTitle">Please respond to the following question below:</h1>
 				<form name="intervalSurvey" id="intervalSurvey" onsubmit="return false;">
 					<div class="questionContainer">
-						<h4>
-							If you find two yellow targets and three red targets in one round, what will be your overall score?
+						<h4 id="endRoundQH4">
+							If you find 2 red targets and 1 yellow target in one round of the game, what will be your team performance score and individual performance score in this round?
 							<sup style="font-size: 11px;color: red;">*</sup>
 						</h4>
 						<div class="optionsContainer">
-							<label for="oneOne"   class="radio-inline grid-item"><input id="oneOne"   type="radio" name="performanceRating"  value="100"  required>100</label>
-							<label for="oneTwo"   class="radio-inline grid-item"><input id="oneTwo"   type="radio" name="performanceRating"  value="200"  required>200</label>
-							<label for="oneThree" class="radio-inline grid-item"><input id="oneThree" type="radio" name="performanceRating" value="-100" required>-100</label>
-							<label for="oneFour"  class="radio-inline grid-item"><input id="oneFour"  type="radio" name="performanceRating" value="-300" required>-300</label>
-							<label for="oneFive"  class="radio-inline grid-item"><input id="oneFive"  type="radio" name="performanceRating"  value="500"  required>500</label>
-							<label for="oneSix"   class="radio-inline grid-item"><input id="oneSix"   type="radio" name="performanceRating" value="-500" required>-500</label>
-							<label for="oneSeven" class="radio-inline grid-item"><input id="oneSeven" type="radio" name="performanceRating" value="-200" required>-200</label>
-							<label for="oneEight" class="radio-inline grid-item"><input id="oneEight" type="radio" name="performanceRating"  value="300"  required>300</label>
+							<label for="oneOneInput"   class="radio-inline grid-item" id="oneOneLabel"><input id="oneOneInput"   type="radio" name="performanceRating"  value="200_-100"  required>Team Performance Score: 200, Individual Performance Score: -100</label>
+							<label for="oneTwoInput"   class="radio-inline grid-item" id="oneTwoLabel"><input id="oneTwoInput"   type="radio" name="performanceRating"  value="-200_100"  required>Team Performance Score: -200, Individual Performance Score: 100</label>
+							<label for="oneThreeInput" class="radio-inline grid-item" id="oneThreeLabel"><input id="oneThreeInput" type="radio" name="performanceRating" value="-100_0" required>Team Performance Score: -100, Individual Performance Score: 0</label>
+							<label for="oneFourInput"  class="radio-inline grid-item" id="oneFourLabel"><input id="oneFourInput"  type="radio" name="performanceRating" value="100_0" required>Team Performance Score: 100, Individual Performance Score: 0</label>
 						</div>
 					</div>
 				</form>
