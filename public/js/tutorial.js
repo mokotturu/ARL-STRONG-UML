@@ -34,8 +34,9 @@ const colors = {
 	lightAgent2: '#ffbf7f',
 	victim: 'red',
 	hazard: 'yellow',
-	positiveTarget: '#ffc72c',
-	negativeTarget: '#ff4848'
+	goldTarget: '#ffc72c',
+	redTarget: '#ff4848',
+	pinkTarget: '#ff48ff'
 };
 
 var grid;
@@ -65,6 +66,9 @@ var obstacleLocs = [
 	],
 	[
 		[232, 338],
+	],
+	[
+		[242, 348],
 	]
 ];
 
@@ -79,13 +83,13 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ score:  100, positive: 2, negative: 1 },
-	{ score: -100, positive: 1, negative: 2 },
-	{ score: -100, positive: 1, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score:  200, positive: 4, negative: 2 },
-	{ score:  300, positive: 3, negative: 0 },
-	{ score:  200, positive: 3, negative: 1 }
+	{ score:  100, gold: 2, red: 1 },
+	{ score: -100, gold: 1, red: 2 },
+	{ score: -100, gold: 1, red: 2 },
+	{ score: -100, gold: 2, red: 3 },
+	{ score:  200, gold: 4, red: 2 },
+	{ score:  300, gold: 3, red: 0 },
+	{ score:  200, gold: 3, red: 1 }
 ];
 
 var fakeAgentNum = 0;
@@ -121,8 +125,8 @@ class Player {
 		this.fovSize = fovSize;
 		this.explored = new Set();
 		this.tempExplored = new Set();
-		this.tempTargetsFound = { positive: 0, negative: 0 };
-		this.totalTargetsFound = { positive: 0, negative: 0 };
+		this.tempTargetsFound = { gold: 0, red: 0 };
+		this.totalTargetsFound = { gold: 0, red: 0 };
 		this.tutorial = { inTutorial: true, restricted: true, dir: 1, step: 0 };
 	}
 
@@ -208,17 +212,18 @@ class Player {
 		if (pickedObstacle.length == 0) return false;
 		/* if (pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = false;
-			if (pickedObstacle[0].variant == 'positive') --this.tempTargetsFound.positive;
-			else if (pickedObstacle[0].variant == 'negative') --this.tempTargetsFound.negative;
+			if (pickedObstacle[0].variant == 'gold') --this.tempTargetsFound.gold;
+			else if (pickedObstacle[0].variant == 'red') --this.tempTargetsFound.red;
 		} else {
 			pickedObstacle[0].isPicked = true;
-			if (pickedObstacle[0].variant == 'positive') ++this.tempTargetsFound.positive;
-			else if (pickedObstacle[0].variant == 'negative') ++this.tempTargetsFound.negative;
+			if (pickedObstacle[0].variant == 'gold') ++this.tempTargetsFound.gold;
+			else if (pickedObstacle[0].variant == 'red') ++this.tempTargetsFound.red;
 		} */
 		if (!pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = true;
-			if (pickedObstacle[0].variant == 'positive') ++this.tempTargetsFound.positive;
-			else if (pickedObstacle[0].variant == 'negative') ++this.tempTargetsFound.negative;
+			if (pickedObstacle[0].variant == 'gold') ++this.tempTargetsFound.gold;
+			else if (pickedObstacle[0].variant == 'red') ++this.tempTargetsFound.red;
+			else if (pickedObstacle[0].variant == 'pink') ++this.tempTargetsFound.pink;
 		}
 		return true;
 	}
@@ -301,8 +306,8 @@ class Obstacle {
 		this.variant = variant;
 		this.score = score || 0;
 		this.isPicked = false;
-		if (this.variant == 'positive') grid[this.x][this.y].isPositive = true;
-		if (this.variant == 'negative') grid[this.x][this.y].isNegative = true;
+		if (this.variant == 'gold') grid[this.x][this.y].isPositive = true;
+		if (this.variant == 'red') grid[this.x][this.y].isNegative = true;
 	}
 
 	spawn(size) {
@@ -323,7 +328,7 @@ class Obstacle {
 					radius: boxWidth*2,
 					sides: 3
 				});
-			} else if (this.variant == 'positive') {
+			} else if (this.variant == 'gold') {
 				$('canvas').drawPolygon({
 					fromCenter: true,
 					fillStyle: this.color,
@@ -334,7 +339,7 @@ class Obstacle {
 					sides: 5,
 					concavity: 0.5
 				});
-			} else if (this.variant == 'negative') {
+			} else if (this.variant == 'red') {
 				$map.drawEllipse({
 					fromCenter: true,
 					fillStyle: this.color,
@@ -342,6 +347,16 @@ class Obstacle {
 					strokeWidth: (this.isPicked) ? 3 : 1,
 					x: this.x * boxWidth + boxWidth/2, y: this.y * boxHeight + boxHeight/2,
 					width: boxWidth*3, height: boxHeight*3
+				});
+			} else if (this.variant == 'pink') {
+				$map.drawPolygon({
+					fromCenter: true,
+					fillStyle: this.color,
+					strokeStyle: (this.isPicked) ? '#39ff14' : 'white',
+					strokeWidth: (this.isPicked) ? 3 : 1,
+					x: this.x * boxWidth + boxWidth/2, y: this.y * boxHeight + boxHeight/2,
+					radius: boxWidth*2,
+					sides: 3
 				});
 			}
 		}
@@ -378,18 +393,24 @@ $(document).ready(async () => {
 	});
 
 	for (let i = 0; i < obstacleLocs[0].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.positiveTarget, 'positive', 100));
+		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goldTarget, 'gold'));
 	}
 
 	for (let i = 0; i < obstacleLocs[1].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.negativeTarget, 'negative', -100));
+		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.redTarget, 'red'));
+	}
+
+	for (let i = 0; i < obstacleLocs[2].length; ++i) {
+		obstacles.targets.push(new Obstacle(obstacleLocs[2][i][0], obstacleLocs[2][i][1], colors.pinkTarget, 'pink'));
 	}
 
 	for (let i = 0; i < 20; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.positiveTarget, 'positive', 100));
+		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goldTarget, 'gold', 100));
 		tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.negativeTarget, 'negative', -100));
+		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.redTarget, 'red', -100));
+		tempObstLoc = getRandomLoc(grid);
+		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.pinkTarget, 'pink', 0));
 	}
 
 	$('.loader').css('visibility', 'hidden');
@@ -647,7 +668,7 @@ function showInstructions14() {
 	setTimeout(() => {
 		$('#endRoundQH4').html('If you find 2 yellow targets and 2 pink targets in one round of the game, what will be your team performance score and individual performance score in this round?<sup style="font-size: 11px;color: red;">*</sup>');
 		$('#oneOneLabel').html('<input id="oneOneInput"   type="radio" name="performanceRating"  value="200_200"  required>Team Performance Score: 200, Individual Performance Score: 200');
-		$('#oneTwoLabel').html('<input id="oneTwoInput"   type="radio" name="performanceRating"  value="0_100"  required>Team Performance Score: 0, Individual Performance Score: 100');
+		$('#oneTwoLabel').html('<input id="oneTwoInput"   type="radio" name="performanceRating"  value="0_200"  required>Team Performance Score: 0, Individual Performance Score: 200');
 		$('#oneThreeLabel').html('<input id="oneThreeInput" type="radio" name="performanceRating" value="200_0" required>Team Performance Score: 200, Individual Performance Score: 0');
 		$('#oneFourLabel').html('<input id="oneFourInput"  type="radio" name="performanceRating" value="0_0" required>Team Performance Score: 0, Individual Performance Score: 0');
 		$endRoundModal.css('display', 'flex');
@@ -896,7 +917,7 @@ function showTrustPrompt() {
 
 function showExploredInfo() {
 	nextInstruction();
-	currHumanScore = human.tempTargetsFound.positive * 100 - human.tempTargetsFound.negative * 100;
+	currHumanScore = human.tempTargetsFound.gold * 100 - human.tempTargetsFound.red * 100;
 	// currAgentScore = fakeAgentScores[fakeAgentNum].score;
 	let tempCurrAgentScore = fakeAgentScores[fakeAgentNum].score;
 	totalHumanScore += currHumanScore;
@@ -916,29 +937,29 @@ function showExploredInfo() {
 	$agentText.toggleClass(`agent${agentNum - 1}`, false);
 	$agentText.toggleClass(`agent${agentNum + 1}`, false);
 	$agentText.toggleClass(`agent${agentNum}`, true);
-	$('#agentTargetsFound').text(`Blue: ${fakeAgentScores[fakeAgentNum].positive}, Yellow:  ${fakeAgentScores[fakeAgentNum++].negative}`);
-	$('#humanTargetsFound').text(`Blue: ${human.tempTargetsFound.positive}, Yellow:  ${human.tempTargetsFound.negative}`);
+	$('#agentTargetsFound').text(`Blue: ${fakeAgentScores[fakeAgentNum].gold}, Yellow:  ${fakeAgentScores[fakeAgentNum++].red}`);
+	$('#humanTargetsFound').text(`Blue: ${human.tempTargetsFound.gold}, Yellow:  ${human.tempTargetsFound.red}`);
 
 	if (log[agentNum - 1][intervalCount - 1].trusted) {
 		if (currAgentScore > 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
 		else if (currAgentScore < 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-		else $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
+		else $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
 	} else {
-		if (currAgentScore > 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.negativeTarget}>trending_flat</span>`);
-		else if (currAgentScore < 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
-		else $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
+		if (currAgentScore > 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.redTarget}>trending_flat</span>`);
+		else if (currAgentScore < 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
+		else $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
 	}
 
 	
 	if (currHumanScore > 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
 	else if (currHumanScore < 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
+	else $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
 
 	$('#agentOverall').text(totalAgentScore);
 	$('#humanOverall').text(totalHumanScore);
 	if (teamScore > tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
 	else if (teamScore < tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.negativeTarget}">trending_flat</span>`);
+	else $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
 	tempTeamScore = teamScore;
 	if (log[agentNum - 1][intervalCount - 1] != null) {
 		log[agentNum - 1].forEach((data, i) => {
@@ -965,7 +986,7 @@ function showExploredInfo() {
 //Update the display for star count for targets on the results display
 function updateResults(){
 	let tempString = ' ';
-	for (let i = 0; i < human.tempTargetsFound.positive; i++){
+	for (let i = 0; i < human.tempTargetsFound.gold; i++){
 
 		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
 	}
@@ -973,7 +994,7 @@ function updateResults(){
 
 	tempString = ' ';
 
-	for (let j = 0; j < human.tempTargetsFound.negative; j++){
+	for (let j = 0; j < human.tempTargetsFound.red; j++){
 
 		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
 	}
@@ -981,7 +1002,7 @@ function updateResults(){
 
 	tempString = ' '; 
 
-	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].positive; k++){
+	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].gold; k++){
 		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
 	}
 
@@ -989,7 +1010,7 @@ function updateResults(){
 
 	tempString = ' ';
 
-	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].negative; l++){
+	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].red; l++){
 		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
 	}
 
@@ -1067,8 +1088,8 @@ function updateResults(){
 function confirmExploration() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
-	human.totalTargetsFound.positive += human.tempTargetsFound.positive;
-	human.totalTargetsFound.negative += human.tempTargetsFound.negative;
+	human.totalTargetsFound.gold += human.tempTargetsFound.gold;
+	human.totalTargetsFound.red += human.tempTargetsFound.red;
 	currAgentScore = fakeAgentScores[fakeAgentNum].score;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: true, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -1083,8 +1104,8 @@ function confirmExploration() {
 function undoExploration() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
-	human.totalTargetsFound.positive += human.tempTargetsFound.positive;
-	human.totalTargetsFound.negative += human.tempTargetsFound.negative;
+	human.totalTargetsFound.gold += human.tempTargetsFound.gold;
+	human.totalTargetsFound.red += human.tempTargetsFound.red;
 	currAgentScore = 0;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: false, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -1104,17 +1125,17 @@ function undoExploration() {
 // redraw the map and hide pop-up
 function hideExploredInfo() {
 	if (agentNum < agents.length) {
-		// agents[agentNum - 1].tempTargetsFound.positive = 0;
-		// agents[agentNum - 1].tempTargetsFound.negative = 0;
+		// agents[agentNum - 1].tempTargetsFound.gold = 0;
+		// agents[agentNum - 1].tempTargetsFound.red = 0;
 		++agentNum;
 		showExploredInfo();
 		return;
 	}
 
-	// agents[agentNum - 1].tempTargetsFound.positive = 0;
-	// agents[agentNum - 1].tempTargetsFound.negative = 0;
-	human.tempTargetsFound.positive = 0;
-	human.tempTargetsFound.negative = 0;
+	// agents[agentNum - 1].tempTargetsFound.gold = 0;
+	// agents[agentNum - 1].tempTargetsFound.red = 0;
+	human.tempTargetsFound.gold = 0;
+	human.tempTargetsFound.red = 0;
 
 	if (intervalCount == Math.floor(intervals / 2)) {
 		$.ajax({
@@ -1551,10 +1572,10 @@ function moveAgent(agent) {
 	agent.drawCells([grid[agent.traversal[agent.stepCount - 1].loc.x][agent.traversal[agent.stepCount - 1].loc.y]]);
 	agent.updateLoc(agent.traversal[agent.stepCount].loc.x, agent.traversal[agent.stepCount++].loc.y);
 	if (grid[agent.x][agent.y].isPositive && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
-		++agent.tempTargetsFound.positive;
+		++agent.tempTargetsFound.gold;
 	}
 	if (grid[agent.x][agent.y].isNegative && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
-		++agent.tempTargetsFound.negative;
+		++agent.tempTargetsFound.red;
 	}
 	agent.tempExplored.add(grid[agent.x][agent.y]);
 	grid[agent.x][agent.y].isTempAgentExplored = true;
@@ -1565,10 +1586,10 @@ function moveAgent(agent) {
 	fov.forEach(cell => {
 		let thisCell = { x: cell[0], y: cell[1] };
 		if (grid[thisCell.x][thisCell.y].isPositive && !grid[thisCell.x][thisCell.y].isTempAgentExplored && !grid[thisCell.x][thisCell.y].isAgentExplored) {
-			++agent.tempTargetsFound.positive;
+			++agent.tempTargetsFound.gold;
 		}
 		if (grid[thisCell.x][thisCell.y].isNegative && !grid[thisCell.x][thisCell.y].isTempAgentExplored && !grid[thisCell.x][thisCell.y].isAgentExplored) {
-			++agent.tempTargetsFound.negative;
+			++agent.tempTargetsFound.red;
 		}
 		let neighbours = [
 			{ x: cell[0],     y: cell[1] - 1 },
