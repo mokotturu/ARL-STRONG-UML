@@ -170,7 +170,8 @@
 				</div>
 			</div>
 			<div id="map-container">
-				<canvas width="4000" height="4000" id="map" oncontextmenu="return false;"></canvas>
+				<canvas width="4000" height="4000" class="map" id="map1" oncontextmenu="return false;"></canvas>
+				<canvas width="4000" height="4000" class="map" id="map2" oncontextmenu="return false;"></canvas>
 			</div>
 		</div>
 		<div class="popup-modal-container" id="endRoundQContainer">
@@ -203,6 +204,20 @@
 					<button id="tutorialRedirectButton" onclick="tutorialRedirect()">Replay Tutorial</button>
 				</div>	
 			</div>
+		</div>
+
+		<div class="notificationsContainer">
+			{{!-- <div class="notification" id="targetPickup">
+				<div class="notificationContent">
+					<div class="icon notificationIcon">
+						<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>
+					</div>
+					<div class="notificationText">
+						<p class="notificationHeading">You picked up a gold target!</p>
+						<p class="notificationNormalText">This will <u>increase</u> the team score by 100 points and have no effect on your individual score.</p>
+					</div>
+				</div>
+			</div> --}}
 		</div>
 	</div>
 

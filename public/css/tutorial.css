@@ -6,6 +6,8 @@ html, body {
 	margin: 0;
 	padding: 0;
 	width: 100%;
+	height: 100%;
+	overflow: hidden;
 	font-family: 'Montserrat', 'sans-serif';
 }
 
@@ -178,7 +180,7 @@ nav {
 	border-radius: 7px;
 	transition: visibility 0.2s linear, opacity 0.2s linear;
 	scroll-behavior: smooth;
-	box-shadow: 0 0 0 9999px #000000AA;
+	box-shadow: 0 0 0 9999px #000000EA;
 }
 
 .popup-modal {
@@ -197,7 +199,7 @@ nav {
 	visibility: visible;
 	opacity: 1;
 	width: 0;
-	box-shadow: 0 0 0 9999px #000000AA;
+	box-shadow: 0 0 0 9999px #000000EA;
 	overflow: visible;
 	z-index: 999;
 }
@@ -270,10 +272,11 @@ nav {
 
 #endRoundQContainer {
 	width: 45em !important;
-	height: 30em !important;
+	height: 35em !important;
 	padding: 35px 50px;
+	margin-right: 15em;
 	visibility: visible;
-	opacity: 1; 
+	opacity: 1;
 }
 
 #endRoundQContent {
@@ -701,6 +704,7 @@ nav {
 #map-container {
 	width: 97vh;
 	height: 97vh;
+	position: relative;
 	margin-left: 1em;
 	overflow: hidden;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
@@ -720,6 +724,51 @@ nav {
 
 #map {
 	background-color: #252525;
+}
+
+.map {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.notificationsContainer {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0.5em 1.5em;
+	/* display: none; */
+}
+
+.notification {
+	margin: 0.5em 0;
+	padding: 1em;
+	color: white;
+	background-color: #454545;
+	border-radius: 7px;
+	width: 22vw;
+	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.notificationIcon {
+	padding-right: 1em;
+}
+
+.notificationIcon svg {
+	width: 30px;
+	height: 30px;
+	padding-left: 3px;
+}
+
+.notificationHeading {
+	font-size: 16px;
+	padding-bottom: 0.5em;
+}
+
+.notificationContent {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 input {

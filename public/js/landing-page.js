@@ -1,4 +1,4 @@
-var timer = null, timeWatched = 0, totalTime = 107;
+var timer = null, timeWatched = 0, totalTime = 129;
 $('#instructionsContent > video').on('play', () => startPlaying());
 $('#instructionsContent > video').on('pause', () => pausePlaying());
 

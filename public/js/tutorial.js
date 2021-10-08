@@ -1,5 +1,6 @@
 const $mapContainer = $('#map-container');
-const $map = $('#map');
+const $map = $('#map1');
+const $map2 = $('#map2');
 var context = $map[0].getContext('2d', { alpha: false });
 const $timer = $('#timer');
 const $detailsModal = $('#exploration-details-modal');
@@ -107,6 +108,7 @@ var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
 var intervalCount = 0, half = 0, intervals = 10, duration = 4000, agentNum = 1;
+var highlightTargets = false, targetCount = 0, ringCounter = 0, delayCounter = 0, notificationCounter = 0;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -221,9 +223,17 @@ class Player {
 		} */
 		if (!pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = true;
-			if (pickedObstacle[0].variant == 'gold') ++this.tempTargetsFound.gold;
-			else if (pickedObstacle[0].variant == 'red') ++this.tempTargetsFound.red;
-			else if (pickedObstacle[0].variant == 'pink') ++this.tempTargetsFound.pink;
+			if (pickedObstacle[0].variant == 'gold') {
+				++this.tempTargetsFound.gold;
+				showNotification('<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>', 'You picked up a gold target!', 'This will <u>increase</u> the team score by 100 points and have no effect on your individual score.');
+			} else if (pickedObstacle[0].variant == 'red') {
+				++this.tempTargetsFound.red;
+				showNotification('<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>', 'You picked up a red target!', 'This will <u>decrease</u> the team score by 100 points and have no effect on your individual score.');
+			} else if (pickedObstacle[0].variant == 'pink') {
+				++this.tempTargetsFound.pink;
+				showNotification('<svg id="triangle" viewBox="0 0 30 30"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg>', 'You picked up a pink target!', 'This will decrease the team score by 100 points and add it to your individual score.');
+			}
+			++targetCount;
 		}
 		return true;
 	}
@@ -329,7 +339,7 @@ class Obstacle {
 					sides: 3
 				});
 			} else if (this.variant == 'gold') {
-				$('canvas').drawPolygon({
+				$map.drawPolygon({
 					fromCenter: true,
 					fillStyle: this.color,
 					strokeStyle: (this.isPicked) ? '#39ff14' : 'white',
@@ -392,26 +402,14 @@ $(document).ready(async () => {
 		width: canvasWidth, height: canvasHeight
 	});
 
-	for (let i = 0; i < obstacleLocs[0].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goldTarget, 'gold'));
-	}
-
-	for (let i = 0; i < obstacleLocs[1].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.redTarget, 'red'));
-	}
-
-	for (let i = 0; i < obstacleLocs[2].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[2][i][0], obstacleLocs[2][i][1], colors.pinkTarget, 'pink'));
-	}
-
-	for (let i = 0; i < 20; ++i) {
+	/* for (let i = 0; i < 20; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goldTarget, 'gold', 100));
 		tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.redTarget, 'red', -100));
 		tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.pinkTarget, 'pink', 0));
-	}
+	} */
 
 	$('.loader').css('visibility', 'hidden');
 	$('.body-container').css('visibility', 'visible');
@@ -613,7 +611,7 @@ function showInstructions11() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Picking up targets:');
-		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of a target (yellow star or red circle) and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
+		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of each of the highlighted targets and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
 		$('#instructions-content').css('display', 'initial');
 		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
@@ -625,6 +623,19 @@ function showInstructions11() {
 		human.tutorial.inTutorial = true;
 		human.tutorial.restricted = false;
 		human.tutorial.step = 0;
+		highlightTargets = true;
+
+		for (let i = 0; i < obstacleLocs[0].length; ++i) {
+			obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goldTarget, 'gold'));
+		}
+	
+		for (let i = 0; i < obstacleLocs[1].length; ++i) {
+			obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.redTarget, 'red'));
+		}
+	
+		for (let i = 0; i < obstacleLocs[2].length; ++i) {
+			obstacles.targets.push(new Obstacle(obstacleLocs[2][i][0], obstacleLocs[2][i][1], colors.pinkTarget, 'pink'));
+		}
 	}, 500);
 }
 
@@ -655,6 +666,12 @@ function showInstructions13() {
 		$endRoundModal.css('opacity', '1');
 		$endRoundModal.css('z-index', 1000);
 		$endRoundModal.addClass('animate__animated animate__zoomIn');
+
+		$('.notificationsContainer').addClass("animate__animated animate__fadeOutRight");
+		$('#legend').css({
+			'z-index': 100000,
+			'position': 'absolute',
+		});
 	}, 500);
 }
 
@@ -693,9 +710,16 @@ function showInstructions15() {
 		$endRoundModal.css('opacity', '0');
 		$endRoundModal.css('z-index', 0);
 		$('#instructions-heading').text('End of Tutorial');
-		$('#instructions-content').text('Congrats! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
+		$('#instructions-content').text('Congratulations! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
 		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
-		$('#instructions-content').css('display', 'initial');
+		$('#legend').css({
+			'z-index': 0,
+			'position': 'initial',
+		});
+		$('#instructions-content').css({
+			'display': 'initial',
+			'text-align': 'center'
+		});
 		$('#instructions-modal-content > .userInputButtons button').css('margin', '10px');
 		$instructionsModal.css({
 			'margin': 'auto',
@@ -761,7 +785,7 @@ function nextInstruction() {
 }
 
 function validateUser() {
-	if (($instructionsModal.attr('data-id') == '13' && $('#intervalSurvey').serialize() == 'performanceRating=-100_0') || ($instructionsModal.attr('data-id') == '14' && $('#intervalSurvey').serialize() == 'performanceRating=0_100')) {
+	if (($instructionsModal.attr('data-id') == '13' && $('#intervalSurvey').serialize() == 'performanceRating=-100_0') || ($instructionsModal.attr('data-id') == '14' && $('#intervalSurvey').serialize() == 'performanceRating=0_200')) {
 		// proceed to next q or game
 		nextInstruction();
 	} else if ($('#intervalSurvey').serialize() == '') {
@@ -853,18 +877,52 @@ function spawn(members, size) {
 function refreshMap() {
 	// compute human FOV
 	let fov = new Set(getFOV(human));
+
+	/* $map.drawRect({
+		fillStyle: '#252525',
+		x: 0, y: 0,
+		width: canvasWidth, height: canvasHeight
+	});
+
+	for (const cell of fov) {
+		human.explored.add(cell);
+	} */
+
 	human.drawCells(fov);
 
 	// compute agent FOV
-	for (const agent of agents) {
+	/* for (const agent of agents) {
 		if (agent.shouldCalcFOV) {
 			fov = new Set(getFOV(agent));
 			agent.drawCells(fov);
 		}
-	}
+	} */
 
 	// spawn players
+	// if (highlightTargets) spawn(obstacles.targets, 1);
 	spawn([...obstacles.targets, human/* , ...agents */], 1);
+
+	if (highlightTargets && ++delayCounter > 7) {
+		// draw attention to targets
+		$map2.clearCanvas();
+		delayCounter = 0;
+		for (let i = 0; i < obstacles.targets.length; ++i) {
+			$map2.drawArc({
+				fromCenter: true,
+				strokeStyle: String('#ff0') + Math.round(9 - ringCounter/2),
+				strokeWidth: 3,
+				x: obstacles.targets[i].x * boxWidth + boxWidth/2, y: obstacles.targets[i].y * boxHeight + boxHeight/2,
+				radius: 10 + boxWidth+(++ringCounter),
+				start: 0, end: 360
+			});
+			// ringCounter %= 20;
+			if (ringCounter == 21) {
+				ringCounter = 0;
+				delayCounter = -50;
+				$map2.clearCanvas();
+			}
+		}
+	}
 }
 
 function terminate() {
@@ -896,6 +954,23 @@ function terminate() {
 			alert(err);
 		}
 	});
+}
+
+// icon as html, heading and text as strings
+function showNotification(icon, heading, text) {
+	$('.notificationsContainer').append(`
+		<div class="notification" id="targetPickup${++notificationCounter}">
+			<div class="notificationContent">
+				<div class="icon notificationIcon">
+					${icon}
+				</div>
+				<div class="notificationText">
+					<p class="notificationHeading">${heading}</p>
+					<p class="notificationNormalText">${text}</p>
+				</div>
+		</div>
+	`);
+	$(`#targetPickup${notificationCounter}`).addClass('animate__animated animate__fadeInRight');
 }
 
 function showTrustPrompt() {
@@ -1522,7 +1597,7 @@ function eventKeyHandlers(e) {
 				break;
 			case 32:	// space bar
 				e.preventDefault();
-				if (human.tutorial.inTutorial && human.pickTarget()) {
+				if (human.tutorial.inTutorial && human.pickTarget() && targetCount >= 3) {
 					human.tutorial.inTutorial = false;
 					nextInstruction();
 				}
