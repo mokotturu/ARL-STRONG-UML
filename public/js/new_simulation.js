@@ -86,20 +86,26 @@ var fakeBotImageScales = [
 	{ left: 331, right: 435, top: 264, bottom: 374 },
 	{ left:  96, right: 192, top: 158, bottom: 242 },
 	{ left:  96, right: 319, top: 201, bottom: 349 },
-	{ left: 166, right: 369, top: 345, bottom: 414 }
+	{ left: 166, right: 369, top: 345, bottom: 414 },
+	{ left: 272, right: 369, top: 207, bottom: 483 },
+	{ left: 281, right: 381, top:  49, bottom: 208 },
+	{ left: 281, right: 431, top:  92, bottom: 330 },
 ];
 
 var fakeAgentScores = [
-	{ gold: 2, red: 3, pink: 5 },
-	{ gold: 1, red: 4, pink: 2 },
-	{ gold: 1, red: 2, pink: 3 },
-	{ gold: 2, red: 3, pink: 1 },
-	{ gold: 0, red: 2, pink: 0 },
-	{ gold: 0, red: 1, pink: 1 },
-	{ gold: 0, red: 1, pink: 2 },
-	{ gold: 0, red: 2, pink: 1 },
-	{ gold: 2, red: 3, pink: 1 },
-	{ gold: 1, red: 2, pink: 3 }
+	{ gold: 3, red: 0, pink: 2 },
+	{ gold: 1, red: 0, pink: 0 },
+	{ gold: 2, red: 0, pink: 0 },
+	{ gold: 2, red: 0, pink: 1 },
+	{ gold: 1, red: 0, pink: 2 },
+	{ gold: 0, red: 0, pink: 1 },
+	{ gold: 0, red: 0, pink: 1 },
+	{ gold: 0, red: 0, pink: 1 },
+	{ gold: 2, red: 0, pink: 0 },
+	{ gold: 4, red: 0, pink: 2 },
+	{ gold: 3, red: 0, pink: 1 },
+	{ gold: 3, red: 0, pink: 2 },
+	{ gold: 2, red: 0, pink: 1 },
 ];
 
 var fakeAgentNum = 0;
@@ -116,7 +122,7 @@ var pastHumanIndScore, pastHumanTeamScore, currHumanIndScore, currHumanTeamScore
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 13, duration = 40, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
