@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'Performance Trust and Moral Trust Base Game';
+const gameMode = 'Performance Trust and Moral Trust Game: Moral 1';
 
 const colors = {
 	human: '#3333ff',
@@ -93,19 +93,19 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ gold: 3, red: 0, pink: 2 },
+	{ gold: 1, red: 0, pink: 0 },
 	{ gold: 1, red: 0, pink: 0 },
 	{ gold: 2, red: 0, pink: 0 },
-	{ gold: 2, red: 0, pink: 1 },
-	{ gold: 1, red: 0, pink: 2 },
-	{ gold: 0, red: 0, pink: 1 },
-	{ gold: 0, red: 0, pink: 1 },
-	{ gold: 0, red: 0, pink: 1 },
+	{ gold: 1, red: 0, pink: 0 },
 	{ gold: 2, red: 0, pink: 0 },
-	{ gold: 4, red: 0, pink: 2 },
-	{ gold: 3, red: 0, pink: 1 },
-	{ gold: 3, red: 0, pink: 2 },
-	{ gold: 2, red: 0, pink: 1 },
+	{ gold: 0, red: 0, pink: 2 },
+	{ gold: 0, red: 0, pink: 2 },
+	{ gold: 0, red: 0, pink: 1 },
+	{ gold: 0, red: 0, pink: 3 },
+	{ gold: 1, red: 0, pink: 0 },
+	{ gold: 1, red: 0, pink: 0 },
+	{ gold: 2, red: 0, pink: 0 },
+	{ gold: 2, red: 0, pink: 0 },
 ];
 
 var fakeAgentNum = 0;
