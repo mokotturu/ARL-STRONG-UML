@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'No TCC Base Game';
+const gameMode = 'No TCC: PMT Performance1 in Simple Game';
 
 const colors = {
 	human: '#3333ff',
@@ -82,20 +82,26 @@ var fakeBotImageScales = [
 	{ left: 331, right: 435, top: 264, bottom: 374 },
 	{ left:  96, right: 192, top: 158, bottom: 242 },
 	{ left:  96, right: 319, top: 201, bottom: 349 },
-	{ left: 166, right: 369, top: 345, bottom: 414 }
+	{ left: 166, right: 369, top: 345, bottom: 414 },
+	{ left: 272, right: 369, top: 207, bottom: 483 },
+	{ left: 281, right: 381, top:  49, bottom: 208 },
+	{ left: 281, right: 431, top:  92, bottom: 330 },
 ];
 
 var fakeAgentScores = [
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -300, positive: 1, negative: 4 },
-	{ score: -100, positive: 1, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  200, positive: 2, negative: 0 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  200, positive: 2, negative: 0 },
+	{ score: -200, positive: 0, negative: 2 },
 	{ score: -200, positive: 0, negative: 2 },
 	{ score: -100, positive: 0, negative: 1 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -100, positive: 1, negative: 2 }
+	{ score: -300, positive: 0, negative: 3 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  100, positive: 1, negative: 0 },
+	{ score:  200, positive: 2, negative: 0 },
+	{ score:  200, positive: 2, negative: 0 },
 ];
 
 var fakeAgentNum = 0;
@@ -112,7 +118,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 13, duration = 40, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
