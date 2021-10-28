@@ -671,19 +671,32 @@ nav {
 #gameDetails {
 	border-radius: 7px;
 	background-color: #303030;
+	/* color: black; */
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-	display: flex;
+	/* display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: center;
+	align-items: center; */
 	padding: 20px;
 	margin-top: 10px;
+	border-collapse: separate;
+	border-spacing: 0 1em;
 }
 
-#gameDetails > div {
-	margin: 10px 0;
-	text-align: center;
+#gameDetails p {
+	text-align: left;
+	margin: 0 0.5em;
+	font-size: 16px;
 }
+
+#gameDetails tr {
+	margin: 0.5em 0;
+}
+
+/* #gameDetails div {
+	margin: 10px 0;
+	font-size: 16px;
+} */
 
 #map-container {
 	width: 97vh;
@@ -692,6 +705,7 @@ nav {
 	overflow: hidden;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 	border-radius: 7px;
+	/* background-color: white; */
 }
 
 #map-container::-webkit-scrollbar {

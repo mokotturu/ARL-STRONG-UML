@@ -17,8 +17,9 @@ const $agentText = $('.agent-text');
 $.jCanvas.defaults.fromCenter = false;
 
 var rows, columns, boxWidth, boxHeight;
-const canvasWidth = $map.width();
-const canvasHeight = $map.height();
+// const canvasWidth = $map.width();
+// const canvasHeight = $map.height();
+var canvasWidth, canvasHeight;
 
 const colors = {
 	human: '#3333ff',
@@ -38,7 +39,7 @@ const colors = {
 	badTarget: '#ff4848'
 };
 
-var grid;
+var grid, exploredCells, emptyCellCount, timeStep;
 var uuid;
 var data = [{ movement: [], human: [], agents: [] }, { movement: [], human: [], agents: [], endGame: [] }];
 var obstacles = { victims: [], hazards: [], targets: [] };
@@ -101,20 +102,24 @@ var currentFrame;
 
 var initialTimeStamp = 0, finalTimeStamp = 0;
 
-var human, agent1;
+var human, agent0, agent1;
 var agents = [];
 var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, currHumanScore = 0, currAgentScore = 0;
 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 40000, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
 var hazardMarker = new Image();
 victimMarker.src = 'img/victim-marker-big.png';
 hazardMarker.src = 'img/hazard-marker-big.png';
+
+var agent0Path = [606,605,604,603,602,601,600,575,550,525,500,475,450,451,452,453,428,403,378,353,328,303,278,253,228,203,178,153,154,155,156,131,130,129,104,105,106,81,56,31,6,5,4,29,28,3,2,1,26,51,52,77,52,51,26,1,2,3,28,29,30,55,80,81,82,83,84,85,86,87,88,89,90,91,92,93,68,43,18,19,44,69,70,45,20,21,22,23,24,49,74,99,124,149,174,173,148,123,98,73,48,47,46,71,72,73,98,123,148,173,172,171,196,221,246,271,296,321,346,371,396,421,446,471,470,469,468,493,494,495,496,521,546,571,570,545,520,519,544,569,544,544,-1]
+var agent1Path = [606,581,556,531,506,481,456,455,454,479,480,479,478,503,502,501,526,527,526,501,476,477,452,453,428,403,378,353,328,303,278,253,228,203,178,153,152,151,150,125,100,75,50,25,26,51,76,101,126,127,102,77,52,51,26,1,2,3,28,29,30,55,80,81,82,83,84,85,86,87,88,89,90,91,92,93,118,143,168,169,170,145,144,119,94,95,120,121,96,97,122,147,146,171,196,221,246,271,296,321,346,371,396,421,446,471,472,473,474,499,524,549,574,599,624,623,598,573,548,523,498,497,522,547,572,597,622,621,596,595,620,619,594,593,618,593,568,543,518,543,-1]
+var agent2Path = [606,581,580,555,530,505,504,529,554,579,578,577,576,551,552,553,528,527,526,501,476,477,452,453,428,403,378,353,328,303,278,253,228,203,178,153,128,103,78,79,54,53,28,27,2,1,0,1,2,3,28,29,30,55,80,81,82,83,84,85,86,87,112,137,162,187,212,237,238,239,240,265,290,315,340,365,390,389,364,339,314,289,264,263,288,313,338,363,388,387,362,337,312,287,262,261,236,235,234,259,284,309,334,359,384,385,360,335,310,285,260,285,286,311,336,361,386,387,412,437,462,487,512,537,536,535,534,533,532,533,534,535,536,537,538,539,540,541,542,543,544,-1]
 
 class Player {
 	constructor (x, y, dir, fovSize) {
@@ -134,7 +139,7 @@ class Player {
 	spawn(size) {
 		$map.drawRect({
 			fillStyle: this.darkColor,
-			x: this.x * boxWidth, y: this.y * boxHeight,
+			x: this.x * boxWidth + 1, y: this.y * boxHeight + 1,
 			width: (boxWidth - 1) * size, height: (boxHeight - 1) * size
 		});
 
@@ -173,10 +178,22 @@ class Player {
 		});
 	}
 
+	/**
+	 * DIRECTIONS:
+	 * 
+	 *  -----------
+	 * | 7   0   1 |
+	 * |   \ | /   |
+	 * | 6 - A - 2 |
+	 * |   / | \   |
+	 * | 5   4   3 |
+	 *  -----------
+	 */
+
 	moveLeft() {
 		if (this.x != 1 && !grid[this.x - 1][this.y].isWall) {
 			--this.x;
-			this.dir = 4;
+			this.dir = 6;
 			updateScrollingPosition(this.x, this.y);
 		}
 		refreshMap();
@@ -194,7 +211,7 @@ class Player {
 	moveUp() {
 		if (this.y != 1 && !grid[this.x][this.y - 1].isWall) {
 			--this.y;
-			this.dir = 1;
+			this.dir = 0;
 			updateScrollingPosition(this.x, this.y);
 		}
 		refreshMap();
@@ -203,7 +220,7 @@ class Player {
 	moveDown() {
 		if (this.y != rows - 1 && !grid[this.x][this.y + 1].isWall) {
 			++this.y;
-			this.dir = 3;
+			this.dir = 4;
 			updateScrollingPosition(this.x, this.y);
 		}
 		refreshMap();
@@ -232,6 +249,12 @@ class Player {
 class Agent extends Player {
 	constructor (id, x, y, dir, speed, fovSize, shouldCalcFOV, lightColor, darkColor) {
 		super(x, y, dir, fovSize);
+		this.prevX = x;
+		this.prevY = y;
+		this.prevDir = dir;
+		this.nextX = x;
+		this.nextY = y;
+		this.nextDir = dir;
 		this.shouldCalcFOV = shouldCalcFOV;
 		this.id = id;
 		this.speed = speed;
@@ -241,11 +264,16 @@ class Agent extends Player {
 		this.darkColor = darkColor;
 		this.traversal = [];
 		this.stepCount = 0;
+		this.mode = 'search';
 	}
 
-	updateLoc(x, y) {
+	updateLoc(x, y, dir) {
+		this.prevX = this.x;
+		this.prevY = this.y;
+		this.prevDir = this.dir;
 		this.x = x;
 		this.y = y;
+		this.dir = dir;
 	}
 
 	spawn(size) {
@@ -356,7 +384,7 @@ class Obstacle {
 // GAME BEGINS
 $(document).ready(async () => {
 	// if on small screen
-	if (window.location.pathname != '/mobile' && window.innerWidth < 1000) window.location.href = '/mobile';
+	if (window.location.pathname != '/mobile' && window.innerWidth < 800) window.location.href = '/mobile';
 	
 	// if not uuid
 	if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
@@ -368,21 +396,91 @@ $(document).ready(async () => {
 	$('.body-container').css('opacity', '0');
 	$('.loader').css('visibility', 'visible');
 	$('.loader').css('opacity', '1');
-
-	human = new Player(232, 348, 1, 10);
-	data.forEach(obj => {
-		obj.agents.push([], []);
-	});
+	$map.prop('width', $mapContainer.width());
+	$map.prop('height', $mapContainer.height());
+	canvasWidth = $map.width();
+	canvasHeight = $map.height();
 	
-	await initMaps(currentPath);
+	await initMaps('src/map_50x50.json');
+	// grid[7][7].poi = true;
+	// // grid[24][7].poi = true;
+	// grid[42][7].poi = true;
+	// grid[7][24].poi = true;
+	// grid[24][24].poi = true;
+	// grid[42][24].poi = true;
+	// grid[7][42].poi = true;
+	// grid[24][42].poi = true;
+	// grid[42][42].poi = true;
+
+	// let tempLoc = [0, 49];
+	let tempLoc = getRandomLoc(grid);
+	// let tempLoc = [0,0]
+	console.log(tempLoc)
+	human = new Player(/* 232, 348, */...tempLoc, 1, 10);
+	agent1  = new Agent('1', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#4c61fe', '#0000ff');
+	agent2  = new Agent('2', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#f44cfe', '#ff00ff');
+	agent3  = new Agent('3', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#ffef6c', '#ffff00');
+	agent4  = new Agent('4', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#9df35b', '#74ee15');
+	agent5  = new Agent('5', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#82f3f0', '#4deeea');
+	agent6  = new Agent('6', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#4c61fe', '#0000ff');
+	agent7  = new Agent('7', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#f44cfe', '#ff00ff');
+	agent8  = new Agent('8', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#ffef6c', '#ffff00');
+	agent9  = new Agent('9', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#9df35b', '#74ee15');
+	agent10 = new Agent('10', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#82f3f0', '#4deeea');
+	agent11 = new Agent('11', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#4c61fe', '#0000ff');
+	agent12 = new Agent('12', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#f44cfe', '#ff00ff');
+	agent13 = new Agent('13', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#ffef6c', '#ffff00');
+	agent14 = new Agent('14', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#9df35b', '#74ee15');
+	agent15 = new Agent('15', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#82f3f0', '#4deeea');
+	agent16 = new Agent('16', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#4c61fe', '#0000ff');
+	agent17 = new Agent('17', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#f44cfe', '#ff00ff');
+	agent18 = new Agent('18', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#ffef6c', '#ffff00');
+	agent19 = new Agent('19', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#9df35b', '#74ee15');
+	agent20 = new Agent('20', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#82f3f0', '#4deeea');
+
+	agents.push(
+		agent1,
+		// agent2,
+		// agent3,
+		// agent4,
+		// agent5,
+		// agent6,
+		// agent7,
+		// agent8,
+		// agent9,
+		// agent10,
+		// agent11,
+		// agent12,
+		// agent13,
+		// agent14,
+		// agent15,
+		// agent16,
+		// agent17,
+		// agent18,
+		// agent19,
+		// agent20,
+	);
+
+	data.forEach(obj => {
+		obj.agents.push([], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []);
+	});
+
 	// initialize the canvas with a plain grey background
 	$map.drawRect({
 		fillStyle: '#252525',
+		// strokeStyle: '#000',
+		// strokeWidth: 1,
 		x: 0, y: 0,
 		width: canvasWidth, height: canvasHeight
 	});
+	drawMap();
 
-	for (let i = 0; i < obstacleLocs[0].length; ++i) {
+	// mark initial location with its step counter
+	for (const agent of agents) {
+		grid[agent.x][agent.y].stepMarking = agent.stepCount;
+	}
+
+	/* for (let i = 0; i < obstacleLocs[0].length; ++i) {
 		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goodTarget, 'positive', 100));
 	}
 
@@ -395,7 +493,7 @@ $(document).ready(async () => {
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goodTarget, 'positive', 100));
 		tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.badTarget, 'negative', -100));
-	}
+	} */
 
 	$('.loader').css('visibility', 'hidden');
 	$('.body-container').css('visibility', 'visible');
@@ -412,12 +510,191 @@ $(document).ready(async () => {
 		}
 	});
 
+	// doFigureStuff();
+	// doPathStuff();
+
 	updateScrollingPosition(human.x, human.y);
 	timeout = setInterval(updateTime, 1000);
+	// spawn([human], 1)
 
 	currentFrame = requestAnimationFrame(loop);
 	// currentFrame = setInterval(loop, 100);
 });
+
+function doPathStuff() {
+	let lineThickness = 2;
+
+	let penX = Math.floor(agent0Path[0]/25), penY = agent0Path[0]%25;
+
+	for (let i = 0; i < agent0Path.length; ++i) {
+		if (agent0Path[i + 1] == -1) break
+
+		console.log(`${Math.floor(agent0Path[i]/25)}, ${agent0Path[i]%25} to ${Math.floor(agent0Path[i + 1]/25)}, ${agent0Path[i + 1]%25}`)
+
+		$map.drawLine({
+			strokeStyle: '#f00',
+			strokeWidth: lineThickness,
+			rounded: true,
+			endArrow: true,
+			arrowRadius: 5,
+			arrowAngle: 90,
+			x1: Math.floor(agent0Path[i]/25) * boxWidth + boxWidth/2 + 1 - boxWidth/6, y1: agent0Path[i]%25 * boxHeight + boxHeight/2 + 1 - boxWidth/6,
+			x2: Math.floor(agent0Path[i + 1]/25) * boxWidth + boxWidth/2 + 1 - boxWidth/6, y2: agent0Path[i + 1]%25 * boxHeight + boxHeight/2 + 1 - boxWidth/6
+		})
+	}
+
+	
+	for (let i = 0; i < agent1Path.length; ++i) {
+		if (agent1Path[i + 1] == -1) break
+
+		console.log(`${Math.floor(agent1Path[i]/25)}, ${agent1Path[i]%25} to ${Math.floor(agent1Path[i + 1]/25)}, ${agent1Path[i + 1]%25}`)
+
+		$map.drawLine({
+			strokeStyle: '#0f0',
+			strokeWidth: lineThickness,
+			rounded: true,
+			endArrow: true,
+			arrowRadius: 5,
+			arrowAngle: 90,
+			x1: Math.floor(agent1Path[i]/25) * boxWidth + boxWidth/2 + 1, y1: agent1Path[i]%25 * boxHeight + boxHeight/2 + 1,
+			x2: Math.floor(agent1Path[i + 1]/25) * boxWidth + boxWidth/2 + 1, y2: agent1Path[i + 1]%25 * boxHeight + boxHeight/2 + 1
+		})
+	}
+
+	
+	for (let i = 0; i < agent2Path.length; ++i) {
+		if (agent2Path[i + 1] == -1) break
+
+		console.log(`${Math.floor(agent2Path[i]/25)}, ${agent2Path[i]%25} to ${Math.floor(agent2Path[i + 1]/25)}, ${agent2Path[i + 1]%25}`)
+
+		$map.drawLine({
+			strokeStyle: '#00f',
+			strokeWidth: lineThickness,
+			rounded: true,
+			endArrow: true,
+			arrowRadius: 5,
+			arrowAngle: 90,
+			x1: Math.floor(agent2Path[i]/25) * boxWidth + boxWidth/2 + 1 + boxWidth/6, y1: agent2Path[i]%25 * boxHeight + boxHeight/2 + 1 + boxWidth/6,
+			x2: Math.floor(agent2Path[i + 1]/25) * boxWidth + boxWidth/2 + 1 + boxWidth/6, y2: agent2Path[i + 1]%25 * boxHeight + boxHeight/2 + 1 + boxWidth/6
+		})
+	}
+}
+
+function doFigureStuff() {
+	let yellowArr = [
+		// { x: 3, y: 9 },
+		// { x: 4, y: 8 },
+		{ x: 5, y: 9 },
+		// { x: 2, y: 9 },
+		// { x: 4, y: 7 },
+		{ x: 6, y: 9 },
+		// { x: 1, y: 9 },
+		// { x: 4, y: 6 },
+		// { x: 6, y: 8 },
+		{ x: 7, y: 9 },
+		// { x: 0, y: 9 },
+		// { x: 4, y: 5 },
+		// { x: 6, y: 7 },
+		{ x: 8, y: 9 },
+	]
+
+	for (const cell of yellowArr) {
+		$map.drawRect({
+			strokeStyle: '#FFCD56',
+			strokeWidth: 4,
+			fillStyle: '#FFE19A',
+			x: cell.x*boxWidth + 6, y: cell.y*boxHeight + 6,
+			width: boxWidth - 8, height: boxHeight - 8
+		});
+	}
+	
+	$map.drawPolygon({
+		fromCenter: true,
+		strokeStyle: '#36A2EB',
+		strokeWidth: 4,
+		fillStyle: '#9AD0F5',
+		x: 4 * boxWidth + boxWidth/2 + 2, y: 9 * boxHeight + boxHeight/2 + 2,
+		radius: boxWidth/3,
+		sides: 5,
+		concavity: 0.5
+	});
+
+	$map.drawEllipse({
+		fromCenter: true,
+		strokeStyle: '#ff6363',
+		strokeWidth: 4,
+		fillStyle: '#ffb1b1',
+		x: 6 * boxWidth + boxWidth/2 + 2, y: 8 * boxHeight + boxHeight/2 + 2,
+		width: boxWidth/1.5, height: boxHeight/1.5
+	});
+
+	$map.drawEllipse({
+		fromCenter: true,
+		strokeStyle: '#ff6363',
+		strokeWidth: 4,
+		fillStyle: '#ffb1b1',
+		x: 7 * boxWidth + boxWidth/2 + 2, y: 9 * boxHeight + boxHeight/2 + 2,
+		width: boxWidth/1.5, height: boxHeight/1.5
+	});
+}
+
+function drawMap() {
+	for (const column of grid) {
+		for (const rowCell of column) {
+			if (rowCell.isWall) {
+				$map.drawRect({
+					// fillStyle: Math.random() > 0.5 ? colors.wall : '#151515',
+					fillStyle: colors.wall,
+					x: (rowCell.x)*boxWidth + 1, y: (rowCell.y)*boxHeight + 1,
+					width: boxWidth - 1, height: boxHeight - 1
+				});
+				/* $map.drawText({
+					fromCenter: true,
+					strokeStyle: '#000',
+					strokeWidth: 1,
+					fillStyle: '#000',
+					x: rowCell.x * boxWidth + boxWidth/2 + 1, y: rowCell.y * boxHeight + boxHeight/2 + 1,
+					fontSize: boxWidth/1.5,
+					fontFamily: 'Arial, sans-serif',
+					text: '×'
+				}) */
+			} else {
+				$map.drawRect({
+					// fillStyle: Math.random() > 0.5 ? 'white' : '#eeeeee',
+					fillStyle: 'white',
+					x: (rowCell.x)*boxWidth + 1, y: (rowCell.y)*boxHeight + 1,
+					width: boxWidth - 1, height: boxHeight - 1
+				});
+				/* $map.drawEllipse({
+					fromCenter: true,
+					strokeStyle: '#000',
+					strokeWidth: 1,
+					fillStyle: '#fff',
+					x: rowCell.x * boxWidth + boxWidth/2 + 1, y: rowCell.y * boxHeight + boxHeight/2 + 1,
+					width: boxWidth/3, height: boxHeight/3
+				}) */
+
+				/* if (rowCell.y - 1 > -1 && !grid[rowCell.x][rowCell.y - 1].isWall) {
+					$map.drawLine({
+						strokeStyle: '#000',
+						strokeWidth: 1,
+						x1: rowCell.x * boxWidth + boxWidth/2 + 1, y1: rowCell.y  * boxHeight + boxHeight/2 + 1 - boxWidth/6,
+						x2: rowCell.x * boxWidth + boxWidth/2 + 1, y2: rowCell.y  * boxHeight + boxHeight/2 + 1 - boxWidth + boxWidth/6
+					})
+				}
+				
+				if (rowCell.x - 1 > -1 && !grid[rowCell.x - 1][rowCell.y].isWall) {
+					$map.drawLine({
+						strokeStyle: '#000',
+						strokeWidth: 1,
+						x1: rowCell.x * boxWidth + boxWidth/2 + 1 - boxWidth/6, y1: rowCell.y  * boxHeight + boxHeight/2 + 1,
+						x2: rowCell.x * boxWidth + boxWidth/2 + 1 - boxWidth + boxWidth/6, y2: rowCell.y  * boxHeight + boxHeight/2 + 1
+					})
+				} */
+			}
+		}
+	}
+}
 
 function updateTime() {
 	if (++seconds % duration == 0) {
@@ -428,14 +705,53 @@ function updateTime() {
 		// showExploredInfo();
 		showTrustPrompt();
 	}
-	$timer.text(`Time elapsed: ${seconds}s`);
+	$timer.text(`${seconds}s`);
 }
 
 // game loop
 function loop() {
 	if (!pause) {
 		if (intervalCount >= intervals) preTerminationPrompt();
+		for (const agent of agents) {
+			floodFill(agent);
+		}
+
+		for (const agent of agents) {
+			agent.updateLoc(agent.nextX, agent.nextY, agent.nextDir);
+		}
+		++timeStep;
+
+		$('#timeSteps').text(timeStep);
+		$('#exploredCells').text(exploredCells);
+		$('#emptyCells').text(emptyCellCount);
+		$('#ninFiveMap').text(0.95 * emptyCellCount);
+		
+		if (timeStep >= rows * columns || exploredCells >= 0.95 * emptyCellCount) {
+			pause = true;
+			clearInterval(timeout);
+			console.log('------------------------------------');
+			console.log(`Time steps: ${timeStep}`);
+			console.log(`Explored cells: ${exploredCells}`);
+			console.log(`Empty cells: ${emptyCellCount}`);
+			console.log(`95% of empty cells: ${0.95 * emptyCellCount}`);
+			console.log('------------------------------------');
+
+			let runCount = sessionStorage.getItem('runCount');
+			if (!runCount) {
+				runCount = 1;
+				sessionStorage.setItem('runCount', runCount);
+			} else sessionStorage.setItem('runCount', ++runCount);
+
+			if (runCount < 31) {
+				location.reload();
+				return;
+			}
+
+			sessionStorage.setItem('runCount', 0);
+			alert(`Finished running ${runCount} simulations.`);
+		}
 		refreshMap();
+		// updateScrollingPosition(agent0.x, agent0.y);
 		currentFrame = requestAnimationFrame(loop);
 	}
 }
@@ -443,16 +759,22 @@ function loop() {
 // initialize the grid array with map data from json
 async function initMaps(path) {
 	grid = [];
+	exploredCells = 0;
+	emptyCellCount = 0;
+	timeStep = 0;
 	await $.getJSON(path, data => {
 		rows = data.dimensions[0].rows;
 		columns = data.dimensions[0].columns;
 		boxWidth = Math.floor(canvasWidth/rows);
 		boxHeight = Math.floor(canvasHeight/columns);
+		// boxWidth = canvasWidth/rows;
+		// boxHeight = canvasHeight/columns;
 
 		for (let x = 0; x < columns; ++x) {
 			grid.push([]);
 			for (let y = 0; y < rows; ++y) {
-				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", isHumanExplored: false, isAgentExplored: false, isTempAgentExplored: false, isPositive: false, isNegative: false });
+				if (data.map[x * columns + y].isWall != "true") ++emptyCellCount;
+				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", isHumanExplored: false, isAgentExplored: false, isTempAgentExplored: false, isPositive: false, isNegative: false, stepMarking: -1, poi: false });
 			}
 		}
 	}).fail(() => {
@@ -468,19 +790,40 @@ function spawn(members, size) {
 
 function refreshMap() {
 	// compute human FOV
-	let fov = new Set(getFOV(human));
-	human.drawCells(fov);
+	// let fov = new Set(getFOV(human));
+	// human.drawCells(fov);
+	// let fov;
 
-	// compute agent FOV
-	for (const agent of agents) {
-		if (agent.shouldCalcFOV) {
-			fov = new Set(getFOV(agent));
-			agent.drawCells(fov);
-		}
-	}
+	// // compute agent FOV
+	// for (const agent of agents) {
+	// 	if (agent.shouldCalcFOV) {
+	// 		fov = new Set(getFOV(agent));
+	// 		agent.drawCells(fov);
+	// 	}
+	// }
 
 	// spawn players
-	spawn([...obstacles.targets, human/* , ...agents */], 1);
+	spawn([/* ...obstacles.targets, */ /* human, */ ...agents], 1);
+
+	/* for (const row of grid) {
+		for (const rowCell of row) {
+			$map.drawText({
+				fromCenter: true,
+				fillStyle: 'black',
+				x: rowCell.x * boxWidth + boxWidth/2, y: rowCell.y * boxHeight + boxHeight/2,
+				fontSize: boxWidth/1.5,
+				fontFamily: 'Montserrat, sans-serif',
+				text: String(rowCell.stepMarking)
+			});
+		}
+	} */
+	/* if (coveredMostMap()) {
+		pause = true
+	} */
+}
+
+function coveredMostMap() {
+	return false
 }
 
 function preTerminationPrompt() {
@@ -1159,6 +1502,22 @@ function eventKeyHandlers(e) {
 				e.preventDefault();
 				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
 				updateScrollingPosition(agent2.x, agent2.y);
+				break;
+			case 51:	// 3
+				e.preventDefault();
+				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
+				updateScrollingPosition(agent3.x, agent3.y);
+				break;
+			case 52:	// 4
+				e.preventDefault();
+				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
+				updateScrollingPosition(agent4.x, agent4.y);
+				break;
+			case 53:	// 5
+				e.preventDefault();
+				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
+				updateScrollingPosition(agent5.x, agent5.y);
+				break;
 			default:	// nothing
 				break;
 		}
@@ -1189,6 +1548,117 @@ function randomWalk(agent) {
 
 	agent.x += dx;
 	agent.y += dy;
+}
+
+function floodFill(agent) {
+	// if (++agent.currentTick < agent.speed) return;
+	// agent.currentTick = 0;
+	$map.drawRect({
+		fillStyle: agent.lightColor,
+		x: agent.x * boxWidth + 1, y: agent.y * boxHeight + 1,
+		width: boxWidth - 2, height: boxHeight - 2
+	});
+	
+	let neighbours = [
+		{ x: agent.x,     y: agent.y - 1, dir: 0 },
+		{ x: agent.x + 1, y: agent.y - 1, dir: 1 },
+		{ x: agent.x + 1, y: agent.y    , dir: 2 },
+		{ x: agent.x + 1, y: agent.y + 1, dir: 3 },
+		{ x: agent.x,     y: agent.y + 1, dir: 4 },
+		{ x: agent.x - 1, y: agent.y + 1, dir: 5 },
+		{ x: agent.x - 1, y: agent.y    , dir: 6 },
+		{ x: agent.x - 1, y: agent.y - 1, dir: 7 }
+	];
+	neighbours = neighbours.filter(cell => (cell.x >= 0 && cell.x < grid.length) && (cell.y >= 0 && cell.y < grid[0].length)/*  && (cell.x != agent.prevX || cell.y != agent.prevY) */);
+	if (agent.mode == 'search') {
+		// search mode
+		neighbours = neighbours.filter(cell => !grid[cell.x][cell.y].isWall);
+		// poi = point of interest
+		let poi = neighbours.find(cell => grid[cell.x][cell.y].poi);
+		if (!poi) {
+			// no poi found
+			let unmarkedCells = neighbours.filter(cell => grid[cell.x][cell.y].stepMarking < 0);
+			if (unmarkedCells.length > 0) {
+				// found unmarked cells
+				// check if the one in front of the agent is unmarked and free to move into
+				let cellInFront = unmarkedCells.find(cell => cell.dir == agent.dir);
+				if (cellInFront && Math.random() < 0.95) {
+					// facing same direction - direction remains the same after moving
+					// agent.updateLoc(cellInFront.x, cellInFront.y, agent.dir);
+					// CAUTIONCAUTIONCAUTIONCAUTION
+					agent.nextX = cellInFront.x, agent.nextY = cellInFront.y, agent.nextDir = agent.dir;
+				} else {
+					// changing direction - pick randomly between neighbouring unmarked cells
+					let randomDirCell = unmarkedCells[Math.floor(Math.random() * unmarkedCells.length)];
+					// agent.updateLoc(randomDirCell.x, randomDirCell.y, randomDirCell.dir);
+					// CAUTIONCAUTIONCAUTIONCAUTION
+					agent.nextX = randomDirCell.x, agent.nextY = randomDirCell.y, agent.nextDir = randomDirCell.dir;
+				}
+				grid[agent.x][agent.y].stepMarking = ++agent.stepCount;
+				++exploredCells;
+			} else {
+				// no unmarked cells found
+				let highestMarkedCell = findHighestMarkedCell(neighbours.filter(cell => grid[cell.x][cell.y].stepMarking < grid[agent.x][agent.y].stepMarking)/* .filter(cell => cell.dir != agent.dir + 4 % 8) *//* [...neighbours, { x: agent.x, y: agent.y, dir: agent.dir }] */);
+				if (highestMarkedCell && Math.random() < 0.95) {
+					// pick highest marked cell
+					// agent.updateLoc(highestMarkedCell.x, highestMarkedCell.y, highestMarkedCell.dir);
+					// CAUTIONCAUTIONCAUTIONCAUTION
+					agent.nextX = highestMarkedCell.x, agent.nextY = highestMarkedCell.y, agent.nextDir = highestMarkedCell.dir;
+				} else {
+					// pick randomly between neighbouring non-highest marked cells
+					let nonHighestMarkedCells = neighbours.filter(cell => cell != highestMarkedCell);
+					let randomMarkedCell = nonHighestMarkedCells[Math.floor(Math.random() * nonHighestMarkedCells.length)] || neighbours[Math.floor(Math.random() * neighbours.length)];
+					// agent.updateLoc(randomMarkedCell.x, randomMarkedCell.y, randomMarkedCell.dir);
+					// CAUTIONCAUTIONCAUTIONCAUTION
+					agent.nextX = randomMarkedCell.x, agent.nextY = randomMarkedCell.y, agent.nextDir = randomMarkedCell.dir;
+				}
+				/* if (grid[agent.x][agent.y].stepMarking > agent.stepCount) grid[agent.x][agent.y].stepMarking = */ ++agent.stepCount;
+				if (grid[agent.x][agent.y].stepMarking > agent.stepCount || grid[agent.x][agent.y].stepMarking == -1) grid[agent.x][agent.y].stepMarking = agent.stepCount;
+			}
+		} else {
+			console.log("OUTSIDE")
+			// found poi -- change direction and move
+			agent.updateLoc(poi.x, poi.y, agent.dir);	// update dir properly
+			if (grid[poi.x][poi.y].stepMarking == -1) ++exploredCells;
+			agent.mode = 'return';
+		}
+	} else if (agent.mode == 'return') {
+		console.log("OUTSIDE")
+		// return mode
+		if (grid[agent.x][agent.y].stepMarking == 1) {
+			agent.mode = 'search';
+			return;
+		}
+		neighbours = neighbours.filter(cell => grid[cell.x][cell.y].stepMarking > 0);
+		let lowestMarkedCell = findLowestMarkedCell(neighbours);
+		agent.updateLoc(lowestMarkedCell.x, lowestMarkedCell.y, lowestMarkedCell.dir);
+	}
+	// console.log(grid[agent.x][agent.y].stepMarking)
+	// console.log(`%cCurrent cell: ${grid[agent.x][agent.y].stepMarking} %c Agent: ${agent.stepCount}`, 'color:red;', 'color:green;')
+	// console.log(agent.stepCount)
+}
+
+function findHighestMarkedCell(cells) {
+	let tempMarking = -2, highestMarkedCell;
+	if (cells.length <= 0) return null;
+	for (const cell of cells) {
+		if (grid[cell.x][cell.y].stepMarking > tempMarking) {
+			tempMarking = grid[cell.x][cell.y].stepMarking;
+			highestMarkedCell = cell;
+		}
+	}
+	return highestMarkedCell;
+}
+
+function findLowestMarkedCell(cells) {
+	let tempMarking = grid[cells[0].x][cells[0].y].stepMarking, lowestMarkedCell = cells[0];
+	for (let i = 1; i < cells.length; ++i) {
+		if (grid[cells[i].x][cells[i].y].stepMarking < tempMarking) {
+			tempMarking = grid[cells[i].x][cells[i].y].stepMarking;
+			lowestMarkedCell = cells[i];
+		}
+	}
+	return lowestMarkedCell;
 }
 
 function moveAgent(agent) {
@@ -1342,9 +1812,123 @@ function getRandomLoc(grid) {
 	do {
 		x = Math.floor(Math.random() * grid.length);
 		y = Math.floor(Math.random() * grid[x].length);
-	} while (grid[x][y].isWall);
+	} while (grid[x][y].isWall/*  || getNeighbours(x, y).filter(cell => grid[cell.x][cell.y].isWall).length <= 0 */);
 	return [x, y];
 }
+
+function getNeighbours(x, y) {
+	let neighbours = [
+		{ x: x    , y: y - 1 },
+		{ x: x + 1, y: y - 1 },
+		{ x: x + 1, y: y     },
+		{ x: x + 1, y: y + 1 },
+		{ x: x    , y: y + 1 },
+		{ x: x - 1, y: y + 1 },
+		{ x: x - 1, y: y     },
+		{ x: x - 1, y: y - 1 }
+	];
+
+	return neighbours.filter(cell => (cell.x >= 0 && cell.x < grid.length) && (cell.y >= 0 && cell.y < grid[0].length))
+}
+
+$map.on('click', e => {
+	let rect = $map[0].getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+
+	let cellX = Math.floor(x / boxWidth);
+	let cellY = Math.floor(y / boxHeight);
+	console.log(`%cx: ${cellX}, y: ${cellY}, stepMarking: ${grid[cellX][cellY].stepMarking}, poi: ${grid[cellX][cellY].poi}`, 'background-color: #121212; color: white;')
+	// console.log(`realX: ${cellX * boxWidth}, realY: ${cellY * boxHeight} - (${cellX}, ${cellY})`)
+})
+
+var watching = false;
+var startLineX = 0, startLineY = 0;
+var lineThickness = 5;
+var lineColor = '#f00'
+
+/* $map.click(e => {
+	if (!watching) {
+		watching = true;
+	
+		let rect = $map[0].getBoundingClientRect();
+		let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+	
+		let cellX = Math.floor(x / boxWidth);
+		let cellY = Math.floor(y / boxHeight);
+
+		console.log(`x: ${x}, y: ${y}, cellX: ${cellX*boxWidth + boxWidth/2 + 1}, cellY: ${cellY*boxHeight + boxWidth/2 + 1}`)
+		let centerX = cellX*boxWidth + boxWidth/2 + 1, centerY = cellY*boxHeight + boxWidth/2 + 1
+	
+		if (x < centerX && y < centerY) {
+			// topleft
+			console.log('topLeft')
+			startLineX = centerX - boxWidth/3
+			startLineY = centerY - boxHeight/3
+		} else if (x > centerX && y < centerY) {
+			// topright
+			console.log('topRight')
+			startLineX = centerX + boxWidth/3
+			startLineY = centerY - boxHeight/3
+		} else if (x > centerX && y > centerY) {
+			// bottomright
+			console.log('bottomRight')
+			startLineX = centerX + boxWidth/3
+			startLineY = centerY + boxHeight/3
+		} else if (x < centerX && y > centerY) {
+			// bottomleft
+			console.log('bottomLeft')
+			startLineX = centerX - boxWidth/3
+			startLineY = centerY + boxHeight/3
+		}
+		console.log(`computedX: ${startLineX}, computedY: ${startLineY}`)
+
+		return;
+	}
+	
+	let rect = $map[0].getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+
+	let cellX = Math.floor(x / boxWidth);
+	let cellY = Math.floor(y / boxHeight);
+
+	let endLineX, endLineY;
+	let centerX = cellX*boxWidth + boxWidth/2 + 1, centerY = cellY*boxHeight + boxWidth/2 + 1
+	
+	if (x < centerX && y < centerY) {
+		// topleft
+		console.log('topLeft')
+		endLineX = centerX - boxWidth/3
+		endLineY = centerY - boxHeight/3
+	} else if (x > centerX && y < centerY) {
+		// topright
+		console.log('topRight')
+		endLineX = centerX + boxWidth/3
+		endLineY = centerY - boxHeight/3
+	} else if (x > centerX && y > centerY) {
+		// bottomright
+		console.log('bottomRight')
+		endLineX = centerX + boxWidth/3
+		endLineY = centerY + boxHeight/3
+	} else if (x < centerX && y > centerY) {
+		// bottomleft
+		console.log('bottomLeft')
+		endLineX = centerX - boxWidth/3
+		endLineY = centerY + boxHeight/3
+	}
+
+	$map.drawLine({
+		strokeStyle: lineColor,
+		strokeWidth: lineThickness,
+		rounded: true,
+		x1: startLineX, y1: startLineY,
+		x2: endLineX, y2: endLineY
+	})
+
+	watching = false;
+}) */
 
 // SET METHODS
 
