@@ -58,11 +58,27 @@ var mapPaths = [
 ];
 var obstacleLocs = [
 	[
+		[105, 205],
+		[98, 222],
+		[158, 251],
+		[194, 214],
+		[270, 207],
+		[287, 207],
+		[288, 213],
+		[227, 212],
 		[213, 210],
-		[153, 256],
-		[289, 202]
+		[245, 214],
 	],
 	[
+		[100, 256],
+		[120, 251],
+		[191, 236],
+		[186, 202],
+		[233, 202],
+		[325, 200],
+		[268, 208],
+		[249, 211],
+		[295, 210],
 		/* [203, 194],
 		[143, 241],
 		[279, 192] */
@@ -79,7 +95,8 @@ var teamScore = 0;
 var seconds = 0, timeout, startTime;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 60, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 100, duration = 20, agentNum = 1;
+var timeStep = 10;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -320,7 +337,7 @@ $(document).ready(async () => {
 	$('.loader').css('opacity', '1');
 
 	human = new Player(232, 348, 1, 10);
-	agent1 = new Agent(1, -69, -69, 1, 10, 5, false, colors.lightAgent1, colors.agent1);
+	agent1 = new Agent(1, -69, -69, 1, 5, 5, false, colors.lightAgent1, colors.agent1);
 	// agent1 = new Agent(1, 232, 345, 1, 10, 5, true, colors.lightAgent1, colors.agent1);
 	// agent2 = new Agent(2, 251, 337, 1, 10, 5, colors.lightAgent2, colors.agent2);
 	agents.push(agent1/* , agent2 */);
@@ -338,18 +355,22 @@ $(document).ready(async () => {
 		width: canvasWidth, height: canvasHeight
 	});
 
-	for (let i = 0; i < obstacleLocs[0].length; ++i) {
+	/* for (let i = 0; i < obstacleLocs[0].length; ++i) {
 		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.blueTarget, 'blue', 100));
 	}
 
-	for (let i = 0; i < 20; ++i) {
+	for (let i = 0; i < obstacleLocs[1].length; ++i) {
+		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.yellowTarget, 'yellow', 100));
+	} */
+
+	/* for (let i = 0; i < 20; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.blueTarget, 'blue', 100));
 		// grid[tempObstLoc[0]][tempObstLoc[1]].isBlue = true;
 		tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.yellowTarget, 'yellow', -100));
 		// grid[tempObstLoc[0]][tempObstLoc[1]].isYellow = true;
-	}
+	} */
 
 	$('.loader').css('visibility', 'hidden');
 	$('.body-container').css('visibility', 'visible');
@@ -362,8 +383,8 @@ $(document).ready(async () => {
 	updateScrollingPosition(human.x, human.y);
 	timeout = setInterval(updateTime, 1000);
 
-	currentFrame = requestAnimationFrame(loop);
-	// currentFrame = setInterval(loop, 100);
+	// currentFrame = requestAnimationFrame(loop);
+	currentFrame = setInterval(loop, timeStep);
 });
 
 function updateTime() {
@@ -385,7 +406,7 @@ function loop() {
 		// randomWalk(agent1);
 		moveAgent(agent1);
 		refreshMap();
-		currentFrame = requestAnimationFrame(loop);
+		// currentFrame = requestAnimationFrame(loop);
 	}
 }
 
@@ -408,7 +429,7 @@ async function initMaps(path) {
 		alert('An error has occured while loading the map.');
 	});
 
-	await $.getJSON('src/data10_5x5.json', data => {
+	await $.getJSON('src/data10_human2.json', data => {
 		Object.entries(data).forEach(([key, value]) => {
 			agent1.traversal.push({ loc: { x: value.current[0][0], y: value.current[0][1] }, explored: [value.current[0], ...value.visited] });
 		});
@@ -471,8 +492,8 @@ function terminate() {
 
 function showTrustPrompt() {
 	$(document).off();
-	cancelAnimationFrame(currentFrame);
-	// clearInterval(currentFrame);
+	// cancelAnimationFrame(currentFrame);
+	clearInterval(currentFrame);
 
 	if (agentNum == 1) {
 		$humanImage.attr("src", $map.getCanvasImage());
@@ -528,6 +549,7 @@ function showExploredInfo() {
 
 	getSetBoundaries(agents[agentNum - 1].tempExplored, 1);
 	scaleImages();
+	console.log(`Round ${intervalCount} - botLeft: ${botLeft}, botRight: ${botRight}, botTop: ${botTop}, botBottom: ${botBottom}`);
 
 	setTimeout(() => { $detailsModal.scrollTop(-10000) }, 500);
 	setTimeout(() => { $log.scrollLeft(10000) }, 500);
@@ -631,8 +653,8 @@ function hideExploredInfo() {
 	clearInterval(timeout);
 	timeout = setInterval(updateTime, 1000);
 	pause = false;
-	// currentFrame = setInterval(loop, 100);
-	currentFrame = requestAnimationFrame(loop);
+	currentFrame = setInterval(loop, timeStep);
+	// currentFrame = requestAnimationFrame(loop);
 }
 
 // divides the square field of view around the human/agent into 4 distinct "quadrants"
@@ -918,6 +940,16 @@ function bresenhamdsQuad4Helper(cell1, cell2) {
 	return arr;
 }
 
+$map.on('click', e => {
+	let rect = $map[0].getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+
+	let cellX = Math.floor(x / boxWidth);
+	let cellY = Math.floor(y / boxHeight);
+	console.log(cellX, cellY)
+});
+
 // human controls
 function eventKeyHandlers(e) {
 	switch (e.keyCode) {
@@ -958,6 +990,10 @@ function eventKeyHandlers(e) {
 			e.preventDefault();
 			// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
 			updateScrollingPosition(agent2.x, agent2.y);
+			break;
+		case 88: 	// x
+			console.log(`(${human.x}, ${human.y})`);
+			break;
 		default:	// nothing
 			break;
 	}
@@ -989,6 +1025,9 @@ function randomWalk(agent) {
 }
 
 function moveAgent(agent) {
+	// if (++agent.currentTick < agent.speed) return;
+	// agent.currentTick = 0;
+
 	agent.drawCells([grid[agent.traversal[agent.stepCount - 1].loc.x][agent.traversal[agent.stepCount - 1].loc.y]]);
 	agent.updateLoc(agent.traversal[agent.stepCount].loc.x, agent.traversal[agent.stepCount++].loc.y);
 	if (grid[agent.x][agent.y].isBlue && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
