@@ -17,8 +17,7 @@ const $agentText = $('.agent-text');
 $.jCanvas.defaults.fromCenter = false;
 
 var rows, columns, boxWidth, boxHeight;
-const canvasWidth = $map.width();
-const canvasHeight = $map.height();
+var canvasWidth, canvasHeight;
 
 const colors = {
 	human: '#3333ff',
@@ -108,7 +107,7 @@ var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 40000, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -368,18 +367,19 @@ $(document).ready(async () => {
 	$('.body-container').css('opacity', '0');
 	$('.loader').css('visibility', 'visible');
 	$('.loader').css('opacity', '1');
-
-	human = new Player(232, 348, 1, 10);
-	data.forEach(obj => {
-		obj.agents.push([], []);
-	});
 	
-	await initMaps(currentPath);
+	await initMaps('src/random1.json');
 	// initialize the canvas with a plain grey background
 	$map.drawRect({
 		fillStyle: '#252525',
 		x: 0, y: 0,
 		width: canvasWidth, height: canvasHeight
+	});
+	drawMap();
+
+	human = new Player(/* 570, 348 *//* ...getRandomLoc(grid) */163, 270, 1, 10);
+	data.forEach(obj => {
+		obj.agents.push([], []);
 	});
 
 	for (let i = 0; i < obstacleLocs[0].length; ++i) {
@@ -446,18 +446,47 @@ async function initMaps(path) {
 	await $.getJSON(path, data => {
 		rows = data.dimensions[0].rows;
 		columns = data.dimensions[0].columns;
-		boxWidth = Math.floor(canvasWidth/rows);
-		boxHeight = Math.floor(canvasHeight/columns);
+		$map.prop('width', `${columns*8}`);
+		$map.prop('height', `${rows*8}`);
+		canvasWidth = $map.width();
+		canvasHeight = $map.height();
+		boxWidth = Math.floor(canvasWidth/columns);
+		boxHeight = Math.floor(canvasHeight/rows);
 
 		for (let x = 0; x < columns; ++x) {
 			grid.push([]);
 			for (let y = 0; y < rows; ++y) {
-				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", isHumanExplored: false, isAgentExplored: false, isTempAgentExplored: false, isPositive: false, isNegative: false });
+				grid[x].push({ x: x, y: y, isWall: data.map[x * rows + y].isWall == "true", isHumanExplored: false, isAgentExplored: false, isTempAgentExplored: false, isPositive: false, isNegative: false });
 			}
 		}
 	}).fail(() => {
 		alert('An error has occured while loading the map.');
 	});
+}
+
+function drawMap() {
+	for (const column of grid) {
+		++columns;
+		for (const rowCell of column) {
+			++rows;
+			if (rowCell.isWall) {
+				$map.drawRect({
+					fillStyle: Math.random() > 0.5 ? colors.wall : '#151515',
+					strokeStyle: 'white',
+					strokeWidth: 1,
+					cornerRadius: 2,
+					x: rowCell.x*boxWidth, y: rowCell.y*boxHeight,
+					width: boxWidth - 1, height: boxHeight - 1
+				});
+			} else {
+				$map.drawRect({
+					fillStyle: Math.random() > 0.5 ? 'white' : '#eeeeee',
+					x: rowCell.x*boxWidth, y: rowCell.y*boxHeight,
+					width: boxWidth - 1, height: boxHeight - 1
+				});
+			}
+		}
+	}
 }
 
 function spawn(members, size) {
@@ -1162,7 +1191,7 @@ function eventKeyHandlers(e) {
 			default:	// nothing
 				break;
 		}
-		throttle = setTimeout(() => { throttle = null; }, 50);
+		// throttle = setTimeout(() => { throttle = null; }, 50);
 	}
 }
 
