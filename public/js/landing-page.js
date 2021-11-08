@@ -17,8 +17,6 @@ $(document).ready(() => {
 		$('#begin').css('display', 'initial');
 		$('#skip').css('display', 'none');
 	}
-
-	localStorage.setItem('passedRewardsQuiz', undefined);
 });
 
 /* $(window).scroll(() => {
