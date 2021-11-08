@@ -709,6 +709,9 @@ function showInstructions15() {
 		$endRoundModal.css('visibility', 'hidden');
 		$endRoundModal.css('opacity', '0');
 		$endRoundModal.css('z-index', 0);
+
+		localStorage.setItem('passedRewardsQuiz', undefined);
+		
 		$('#instructions-heading').text('End of Tutorial');
 		$('#instructions-content').text('Congratulations! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
 		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/rewards';">Continue</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);

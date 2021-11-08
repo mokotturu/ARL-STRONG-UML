@@ -137,7 +137,7 @@
 		// if not uuid
 		if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
 
-		if (localStorage.getItem('passedRewardsQuiz') != 'true') window.location.href = '/';
+		if (localStorage.getItem('passedRewardsQuiz') == 'false') window.location.href = '/';
 
 		$(document).scroll(() => {
 			$('nav').toggleClass('scrolled', $(this).scrollTop() > $('nav').height());
@@ -184,7 +184,7 @@
 	}
 
 	function rewardRedirect() {
-		if (localStorage.getItem('passedRewardsQuiz')) window.location.href = '/simulation';
+		if (localStorage.getItem('passedRewardsQuiz') == 'true') window.location.href = '/simulation';
 		else window.location.href = '/';
 	}
 </script>
