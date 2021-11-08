@@ -651,7 +651,7 @@ function showInstructions14() {
 		$endRoundModal.css('z-index', 0);
 		$('#instructions-heading').text('End of Tutorial');
 		$('#instructions-content').text('Congrats! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
-		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
+		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/rewards';">Continue</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-modal-content > .userInputButtons button').css('margin', '10px');
 		$instructionsModal.css({
