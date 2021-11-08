@@ -45,6 +45,12 @@ router.post('/tutorial/failed', async (req, res) => {
 	}
 });
 
+router.get('/rewards', (req, res) => {
+	res.render('rewards', {
+		layout: false
+	});
+});
+
 router.get('/simulation', (req, res) => {
 	res.render('simulation', { layout: false });
 });
