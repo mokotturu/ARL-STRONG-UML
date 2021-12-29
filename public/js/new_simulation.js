@@ -140,7 +140,7 @@ const c1_m1 = "I'm sorry I selected triangles. I thought they were stars. It's m
 
 const c2_m2 = "I'm sorry I selected more triangles. I thought they were stars. It's my fault. It won't happen again.";
 
-const trustCues = ["X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2, "X"];
+const trustCues = ["X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2, "X","X","X","X"];
 
 
 class Player {
