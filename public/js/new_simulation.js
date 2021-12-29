@@ -141,7 +141,7 @@ const c1_m1 = "We should work as a team, let's just select gold targets and maxi
 
 const c2_m2 = "Let's work as a team again. I won't pick pink triangles anymore.";
 
-const trustCues = ["X", "X", c1_m1, "X", "X", "X", c2_m2, "X", "X", "X"];
+const trustCues = ["X", "X", c1_m1, "X", "X", "X", c2_m2, "X", "X", "X","X","X","X"];
 
 
 class Player {
