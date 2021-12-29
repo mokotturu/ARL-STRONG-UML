@@ -141,7 +141,7 @@ const c1_m1 = "I'm sorry I selected circles. I thought they were stars. It's my 
 
 const c2_m2 = "I'm sorry I selected more circles. I thought they were stars. It won't happen again.";
 
-const trustCues = ["X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2, "X"];
+const trustCues = ["X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2, "X","X","X","X"];
 
 
 class Player {
