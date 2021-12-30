@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'Performance Trust and Moral Trust Base Game';
+const gameMode = 'Moral trust, slide 4';
 
 const colors = {
 	human: '#3333ff',
