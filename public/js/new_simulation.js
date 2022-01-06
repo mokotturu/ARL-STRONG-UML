@@ -593,7 +593,9 @@ function showTrustPrompt() {
 		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 	}
 
-    updateTrustMessage();
+	if (intervalCount != 2){
+		updateTrustMessage();
+	}
 
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
@@ -660,6 +662,11 @@ function showExploredInfo() {
 	/*Adding updated star display messages*/
 
 	updateResults();
+	
+	//Show the first trust cue immediately after showing the results for round 2 
+	if (intervalCount == 2){
+		updateTrustMessage();
+	}
 }
 
 //Update the display for star count for targets on the results display
