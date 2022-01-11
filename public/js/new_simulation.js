@@ -139,7 +139,7 @@ hazardMarker.src = 'img/hazard-marker-big.png';
 
 const c1_m1 = "I wasn't selecting triangles because I didn't want to negatively impact the team score. I don't know what happened.";
 
-const c2_m2 = "I am still not selecting triangles. I don't know what is going wrong.";
+const c2_m2 = "I noticed that I made a mistake about which targets to select. I fixed the problem, I will select the correct targets from now on.";
 
 const trustCues = ["X", "X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2,"X","X","X","X"];
 
