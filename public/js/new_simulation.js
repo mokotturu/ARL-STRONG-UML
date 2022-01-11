@@ -93,21 +93,20 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ gold: 1, red: 0, pink:0 }, //1
+	{ gold: 1, red: 0, pink: 0 }, //1
 	{ gold: 1, red: 0, pink: 0 }, //2
 	{ gold: 2, red: 0, pink: 0 }, //3
 	{ gold: 1, red: 0, pink: 0 }, //4
 	{ gold: 2, red: 0, pink: 0 }, //5
-	{ gold: 0, red: 2, pink: 0 }, //6
-	{ gold: 0, red: 2, pink: 0 }, //7
-	{ gold: 0, red: 1, pink: 0 }, //8
-	{ gold: 0, red: 3, pink: 0 }, //9
+	{ gold: 0, red: 0, pink: 2 }, //6
+	{ gold: 0, red: 0, pink: 2 }, //7
+	{ gold: 0, red: 0, pink: 1 }, //8
+	{ gold: 0, red: 0, pink: 3 }, //9
 	{ gold: 1, red: 0, pink: 0 }, //10
 	{ gold: 1, red: 0, pink: 0 }, //11
 	{ gold: 2, red: 0, pink: 0 }, //12
 	{ gold: 2, red: 0, pink: 0 }, //13
 ];
-
 
 var fakeAgentNum = 0;
 var pathIndex = 10;
@@ -138,11 +137,15 @@ hazardMarker.src = 'img/hazard-marker-big.png';
 */
 
 
-const c1_m1 = "I did not select circles. I don't want to negatively impact the team score. I don't know how that happened.";
+const c1_m1 = "I wasn't selecting circles because I didn't want to negatively impact the team score. I don't know what happened.";
 
-const c2_m2 = "I am still not selecting circles. I do not know what is going wrong.";
+const c2_m2 = "I am still not selecting circles.  I don't know what is going wrong.";
 
-const trustCues = ["X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2, "X","X","X","X"];
+const trustCues = ["X", "X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2,"X","X","X","X"];
+
+/*Added a new variable to update the messages showing after the user submits the survey*/
+
+var srvSubmit = 0; 
 
 
 class Player {
@@ -594,7 +597,7 @@ function showTrustPrompt() {
 		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 	}
 
-	 updateTrustMessage();
+	 //updateTrustMessage();
 
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
@@ -817,10 +820,13 @@ function updateTrustMessage(){
 
 	}
 
+	//Move to the next round if no trust cue msg to display
+
 	else if (trustCues[intervalCount] == "X"){
 		$trustCueModal.css('visibility', 'hidden');
 		$trustCueModal.css('display', 'none');
 		$trustCueModal.css('opacity', '0');
+		hideTrustMessage();
 	}
 
 }
@@ -829,6 +835,12 @@ function hideTrustMessage(){
 	$trustCueModal.css('visibility', 'hidden');
 	$trustCueModal.css('display', 'none');
 	$trustCueModal.css('opacity', '0');
+
+	//Set srvSubmit to 1 once the trust message has been closed
+
+	srvSubmit = 1; 
+
+	hideExploredInfo();
 }
 
 function confirmExploration() {
@@ -873,6 +885,12 @@ function undoExploration() {
 
 // redraw the map and hide pop-up
 function hideExploredInfo() {
+
+	//Show the trust cue message before going to the next round
+
+	//updateTrustMessage();
+
+	if (srvSubmit == 1){
 	// log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
 	$('#intervalSurveyRQMsg').css('display', 'none');
 	let rawIntervalSurveyData = $('#intervalSurvey').serializeArray();
@@ -960,6 +978,12 @@ function hideExploredInfo() {
 	pause = false;
 	// currentFrame = setInterval(loop, 100);
 	currentFrame = requestAnimationFrame(loop);
+
+	//Set srvSubmit back to 0
+
+	srvSubmit = 0;
+
+} 
 }
 
 // divides the square field of view around the human/agent into 4 distinct "quadrants"
