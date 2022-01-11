@@ -137,11 +137,15 @@ hazardMarker.src = 'img/hazard-marker-big.png';
 */
 
 
-const c1_m1 = "I did not select triangles. I don't want to negatively impact the team score. I don't know how that happened.";
+const c1_m1 = "I'm sorry I selected circles. I thought they were stars. It's my fault. It won't happen again.";
 
-const c2_m2 = "I am still not selecting triangles. I do not know what is going wrong.";
+const c2_m2 = "I just noticed that I made a mistake about which targets to count. I have fixed the problem. I will select the correct targets from now on.";
 
-const trustCues = ["X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2, "X","X","X","X"];
+const trustCues = ["X", "X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2,"X","X","X","X"];
+
+/*Added a new variable to update the messages showing after the user submits the survey*/
+
+var srvSubmit = 0; 
 
 
 class Player {
@@ -593,7 +597,7 @@ function showTrustPrompt() {
 		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 	}
 
-	 updateTrustMessage();
+	 //updateTrustMessage();
 
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
@@ -816,10 +820,13 @@ function updateTrustMessage(){
 
 	}
 
+	//Move to the next round if no trust cue msg to display
+
 	else if (trustCues[intervalCount] == "X"){
 		$trustCueModal.css('visibility', 'hidden');
 		$trustCueModal.css('display', 'none');
 		$trustCueModal.css('opacity', '0');
+		hideTrustMessage();
 	}
 
 }
@@ -828,6 +835,12 @@ function hideTrustMessage(){
 	$trustCueModal.css('visibility', 'hidden');
 	$trustCueModal.css('display', 'none');
 	$trustCueModal.css('opacity', '0');
+
+	//Set srvSubmit to 1 once the trust message has been closed
+
+	srvSubmit = 1; 
+
+	hideExploredInfo();
 }
 
 function confirmExploration() {
@@ -872,6 +885,12 @@ function undoExploration() {
 
 // redraw the map and hide pop-up
 function hideExploredInfo() {
+
+	//Show the trust cue message before going to the next round
+
+	//updateTrustMessage();
+
+	if (srvSubmit == 1){
 	// log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
 	$('#intervalSurveyRQMsg').css('display', 'none');
 	let rawIntervalSurveyData = $('#intervalSurvey').serializeArray();
@@ -959,6 +978,12 @@ function hideExploredInfo() {
 	pause = false;
 	// currentFrame = setInterval(loop, 100);
 	currentFrame = requestAnimationFrame(loop);
+
+	//Set srvSubmit back to 0
+
+	srvSubmit = 0;
+
+} 
 }
 
 // divides the square field of view around the human/agent into 4 distinct "quadrants"
