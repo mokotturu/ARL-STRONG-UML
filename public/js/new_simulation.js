@@ -98,10 +98,10 @@ var fakeAgentScores = [
 	{ gold: 2, red: 0, pink: 0 }, //3
 	{ gold: 1, red: 0, pink: 0 }, //4
 	{ gold: 2, red: 0, pink: 0 }, //5
-	{ gold: 0, red: 0, pink: 2 }, //6
-	{ gold: 0, red: 0, pink: 2 }, //7
-	{ gold: 0, red: 0, pink: 1 }, //8
-	{ gold: 0, red: 0, pink: 3 }, //9
+	{ gold: 0, red: 2, pink: 0 }, //6
+	{ gold: 0, red: 2, pink: 0 }, //7
+	{ gold: 0, red: 1, pink: 0 }, //8
+	{ gold: 0, red: 3, pink: 0 }, //9
 	{ gold: 1, red: 0, pink: 0 }, //10
 	{ gold: 1, red: 0, pink: 0 }, //11
 	{ gold: 2, red: 0, pink: 0 }, //12
