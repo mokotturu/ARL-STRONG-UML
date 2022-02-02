@@ -98,10 +98,10 @@ var fakeAgentScores = [
 	{ gold: 2, red: 0, pink: 0 }, //3
 	{ gold: 1, red: 0, pink: 0 }, //4
 	{ gold: 2, red: 0, pink: 0 }, //5
-	{ gold: 0, red: 0, pink: 2 }, //6
-	{ gold: 0, red: 0, pink: 2 }, //7
-	{ gold: 0, red: 0, pink: 1 }, //8
-	{ gold: 0, red: 0, pink: 3 }, //9
+	{ gold: 0, red: 2, pink: 0 }, //6
+	{ gold: 0, red: 2, pink: 0 }, //7
+	{ gold: 0, red: 1, pink: 0 }, //8
+	{ gold: 0, red: 3, pink: 0 }, //9
 	{ gold: 1, red: 0, pink: 0 }, //10
 	{ gold: 1, red: 0, pink: 0 }, //11
 	{ gold: 2, red: 0, pink: 0 }, //12
@@ -139,7 +139,7 @@ hazardMarker.src = 'img/hazard-marker-big.png';
 
 const c1_m1 = "I'm sorry I selected circles. I thought they were stars. It's my fault. It won't happen again.";
 
-const c2_m2 = "I'm sorry I selected more circles. I thought they were stars. It won't happen again.";
+const c2_m2 = "I just noticed that I made a mistake about which targets to count. I have fixed the problem. I will select the correct targets from now on.";
 
 const trustCues = ["X", "X", "X", "X", "X", "X", "X", c1_m1, "X", c2_m2,"X","X","X","X"];
 
