@@ -257,13 +257,12 @@ class Agent extends Player {
 		this.nextDir = dir;
 		this.shouldCalcFOV = shouldCalcFOV;
 		this.id = id;
-		this.speed = speed;
+		this.speed = speed;	// agent speed
 		this.index = 0;
-		this.currentTick = 0;
+		this.currentTick = 0;	// agent speed tick
 		this.lightColor = lightColor;
 		this.darkColor = darkColor;
-		this.traversal = [];
-		this.stepCount = 0;
+		this.stepCount = 1;
 		this.mode = 'search';
 	}
 
@@ -282,13 +281,13 @@ class Agent extends Player {
 			fromCenter: true,
 			fillStyle: 'black',
 			x: this.x * boxWidth + boxWidth/2, y: this.y * boxHeight + boxHeight/2,
-			fontSize: boxWidth,
+			fontSize: boxWidth - 8,
 			fontFamily: 'Montserrat, sans-serif',
 			text: this.id
 		});
 
-		let tracker = { x: this.x, y: this.y, t: Math.round((performance.now()/1000) * 100)/100 };
-		data[half].agents[this.id - 1].push(tracker);
+		// let tracker = { x: this.x, y: this.y, t: Math.round((performance.now()/1000) * 100)/100 };
+		// data[half].agents[this.id - 1].push(tracker);
 	}
 
 	drawCells(cells) {
@@ -297,13 +296,6 @@ class Agent extends Player {
 			this.tempExplored.add(cell);
 			grid[cell.x][cell.y].isTempAgentExplored = true;
 			tempLightColor = this.lightColor, tempDarkColor = this.darkColor;
-			if (cell.isAgentExplored && cell.isHumanExplored) {
-				tempLightColor = colors.lightTeam;
-				tempDarkColor = colors.team;
-			} else if (cell.isAgentExplored && !cell.isHumanExplored) {
-				tempLightColor = colors.lightAgent;
-				tempDarkColor = colors.agent;
-			}
 
 			if (cell.isWall) {
 				$map.drawRect({
@@ -402,64 +394,15 @@ $(document).ready(async () => {
 	canvasHeight = $map.height();
 	
 	await initMaps('src/map_50x50.json');
-	// grid[7][7].poi = true;
-	// // grid[24][7].poi = true;
-	// grid[42][7].poi = true;
-	// grid[7][24].poi = true;
-	// grid[24][24].poi = true;
-	// grid[42][24].poi = true;
-	// grid[7][42].poi = true;
-	// grid[24][42].poi = true;
-	// grid[42][42].poi = true;
 
-	// let tempLoc = [0, 49];
 	let tempLoc = getRandomLoc(grid);
-	// let tempLoc = [0,0]
-	console.log(tempLoc)
-	human = new Player(/* 232, 348, */...tempLoc, 1, 10);
-	agent1  = new Agent('1', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#4c61fe', '#0000ff');
-	agent2  = new Agent('2', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#f44cfe', '#ff00ff');
-	agent3  = new Agent('3', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#ffef6c', '#ffff00');
-	agent4  = new Agent('4', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#9df35b', '#74ee15');
-	agent5  = new Agent('5', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#82f3f0', '#4deeea');
-	agent6  = new Agent('6', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#4c61fe', '#0000ff');
-	agent7  = new Agent('7', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#f44cfe', '#ff00ff');
-	agent8  = new Agent('8', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#ffef6c', '#ffff00');
-	agent9  = new Agent('9', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#9df35b', '#74ee15');
-	agent10 = new Agent('10', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#82f3f0', '#4deeea');
-	agent11 = new Agent('11', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#4c61fe', '#0000ff');
-	agent12 = new Agent('12', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#f44cfe', '#ff00ff');
-	agent13 = new Agent('13', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#ffef6c', '#ffff00');
-	agent14 = new Agent('14', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#9df35b', '#74ee15');
-	agent15 = new Agent('15', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#82f3f0', '#4deeea');
-	agent16 = new Agent('16', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#4c61fe', '#0000ff');
-	agent17 = new Agent('17', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#f44cfe', '#ff00ff');
-	agent18 = new Agent('18', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#ffef6c', '#ffff00');
-	agent19 = new Agent('19', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#9df35b', '#74ee15');
-	agent20 = new Agent('20', /* 167, 393, */...tempLoc, 1, 10, 10, false, '#82f3f0', '#4deeea');
+	console.log(`Start location: ${tempLoc}`)
 
-	agents.push(
-		agent1,
-		// agent2,
-		// agent3,
-		// agent4,
-		// agent5,
-		// agent6,
-		// agent7,
-		// agent8,
-		// agent9,
-		// agent10,
-		// agent11,
-		// agent12,
-		// agent13,
-		// agent14,
-		// agent15,
-		// agent16,
-		// agent17,
-		// agent18,
-		// agent19,
-		// agent20,
-	);
+	let generator = genColor();
+	for (let i = 0; i < 1; ++i) {
+		let colorObj = generator.next();
+		agents.push(new Agent(i+1, ...tempLoc, 1, 10, 10, false, colorObj.value.primary, colorObj.value.secondary));
+	}
 
 	data.forEach(obj => {
 		obj.agents.push([], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []);
@@ -476,32 +419,13 @@ $(document).ready(async () => {
 	drawMap();
 
 	// mark initial location with its step counter
-	for (const agent of agents) {
+	/* for (const agent of agents) {
 		grid[agent.x][agent.y].stepMarking = agent.stepCount;
-	}
-
-	/* for (let i = 0; i < obstacleLocs[0].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goodTarget, 'positive', 100));
-	}
-
-	for (let i = 0; i < obstacleLocs[1].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.badTarget, 'negative', -100));
-	}
-
-	for (let i = 0; i < 20; ++i) {
-		let tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goodTarget, 'positive', 100));
-		tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.badTarget, 'negative', -100));
 	} */
 
 	$('.loader').css('visibility', 'hidden');
 	$('.body-container').css('visibility', 'visible');
 	$('.body-container').css('opacity', '1');
-	
-	$(document).on('keydown', e => {
-		eventKeyHandlers(e);
-	});
 	
 	$(document).on('keyup', () => {
 		if (throttle) {
@@ -513,13 +437,20 @@ $(document).ready(async () => {
 	// doFigureStuff();
 	// doPathStuff();
 
-	updateScrollingPosition(human.x, human.y);
 	timeout = setInterval(updateTime, 1000);
-	// spawn([human], 1)
 
 	currentFrame = requestAnimationFrame(loop);
-	// currentFrame = setInterval(loop, 100);
 });
+
+function* genColor() {
+	while (true) {
+		yield { primary: "#4c61fe", secondary: "#0000ff" };
+		yield { primary: "#f44cfe", secondary: "#ff00ff" };
+		yield { primary: "#ffef6c", secondary: "#ffff00" };
+		yield { primary: "#9df35b", secondary: "#74ee15" };
+		yield { primary: "#82f3f0", secondary: "#4deeea" };
+	}
+}
 
 function doPathStuff() {
 	let lineThickness = 2;
@@ -697,15 +628,13 @@ function drawMap() {
 }
 
 function updateTime() {
-	if (++seconds % duration == 0) {
+	/* if (++seconds % duration == 0) {
 		seconds = 0;
 		agentNum = 1;
 		pause = true;
 		clearInterval(timeout);
-		// showExploredInfo();
-		showTrustPrompt();
-	}
-	$timer.text(`${seconds}s`);
+	} */
+	$timer.text(`${++seconds}s`);
 }
 
 // game loop
@@ -716,9 +645,9 @@ function loop() {
 			floodFill(agent);
 		}
 
-		for (const agent of agents) {
+		/* for (const agent of agents) {
 			agent.updateLoc(agent.nextX, agent.nextY, agent.nextDir);
-		}
+		} */
 		++timeStep;
 
 		$('#timeSteps').text(timeStep);
@@ -726,7 +655,7 @@ function loop() {
 		$('#emptyCells').text(emptyCellCount);
 		$('#ninFiveMap').text(0.95 * emptyCellCount);
 		
-		if (timeStep >= rows * columns || exploredCells >= 0.95 * emptyCellCount) {
+		/* if (timeStep >= rows * columns || exploredCells >= 0.95 * emptyCellCount) {
 			pause = true;
 			clearInterval(timeout);
 			console.log('------------------------------------');
@@ -736,6 +665,7 @@ function loop() {
 			console.log(`95% of empty cells: ${0.95 * emptyCellCount}`);
 			console.log('------------------------------------');
 
+			// to automate running and logging multiple runs
 			let runCount = sessionStorage.getItem('runCount');
 			if (!runCount) {
 				runCount = 1;
@@ -749,7 +679,7 @@ function loop() {
 
 			sessionStorage.setItem('runCount', 0);
 			alert(`Finished running ${runCount} simulations.`);
-		}
+		} */
 		refreshMap();
 		// updateScrollingPosition(agent0.x, agent0.y);
 		currentFrame = requestAnimationFrame(loop);
@@ -774,7 +704,7 @@ async function initMaps(path) {
 			grid.push([]);
 			for (let y = 0; y < rows; ++y) {
 				if (data.map[x * columns + y].isWall != "true") ++emptyCellCount;
-				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", isHumanExplored: false, isAgentExplored: false, isTempAgentExplored: false, isPositive: false, isNegative: false, stepMarking: -1, poi: false });
+				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", stepMarking: 0 });
 			}
 		}
 	}).fail(() => {
@@ -789,54 +719,8 @@ function spawn(members, size) {
 }
 
 function refreshMap() {
-	// compute human FOV
-	// let fov = new Set(getFOV(human));
-	// human.drawCells(fov);
-	// let fov;
-
-	// // compute agent FOV
-	// for (const agent of agents) {
-	// 	if (agent.shouldCalcFOV) {
-	// 		fov = new Set(getFOV(agent));
-	// 		agent.drawCells(fov);
-	// 	}
-	// }
-
 	// spawn players
-	spawn([/* ...obstacles.targets, */ /* human, */ ...agents], 1);
-
-	/* for (const row of grid) {
-		for (const rowCell of row) {
-			$map.drawText({
-				fromCenter: true,
-				fillStyle: 'black',
-				x: rowCell.x * boxWidth + boxWidth/2, y: rowCell.y * boxHeight + boxHeight/2,
-				fontSize: boxWidth/1.5,
-				fontFamily: 'Montserrat, sans-serif',
-				text: String(rowCell.stepMarking)
-			});
-		}
-	} */
-	/* if (coveredMostMap()) {
-		pause = true
-	} */
-}
-
-function coveredMostMap() {
-	return false
-}
-
-function preTerminationPrompt() {
-	// end game
-	pause = true;
-	clearInterval(timeout);
-	$(document).off();
-	cancelAnimationFrame(currentFrame);
-
-	// show survey
-	$('#endGameQContainer').css('display', 'flex');
-	$('#endGameQContainer').css('visibility', 'visible');
-	$('#endGameQContainer').css('opacity', '1');
+	spawn(agents, 1);
 }
 
 function terminate() {
@@ -867,662 +751,13 @@ function terminate() {
 		contentType: "application/json; charset=utf-8",
 		success: (data, status, jqXHR) => {
 			console.log(data, status, jqXHR);
-			window.location.href = "/survey-1";
+			// window.location.href = "/survey-1";
 		},
 		error: (jqXHR, status, err) => {
 			console.log(jqXHR, status, err);
 			alert(err);
 		}
 	});
-}
-
-function showTrustPrompt() {
-	$(document).off();
-	cancelAnimationFrame(currentFrame);
-	// clearInterval(currentFrame);
-
-	if (agentNum == 1) {
-		$map.clearCanvas();
-		human.drawCells(human.tempExplored, false);
-		spawn([...human.tempTargetsFound.positive, ...human.tempTargetsFound.negative, human], 1);
-		$humanImage.attr("src", $map.getCanvasImage());
-		$botImage.attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
-		$minimapImage.attr("src", $map.getCanvasImage());
-		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
-	}
-
-	$trustConfirmModal.css('display', 'flex');
-	$trustConfirmModal.css('visibility', 'visible');
-	$trustConfirmModal.css('opacity', '1');
-
-	initialTimeStamp = performance.now();
-}
-
-function showPostIntegratePrompt(){
-	$('#intervalSurvey')[0].reset();
-	$('#q3Option5Text').css('display', 'none');
-	$('#q3Option5Text').val('');
-	$endRoundModal.css('display', 'flex');
-	$endRoundModal.css('visibility', 'visible');
-	$endRoundModal.css('opacity', '1');
-	setTimeout(() => { $endRoundModal.scrollTop(-10000) }, 500);
-}
-
-function showExploredInfo() {
-	currHumanScore = human.tempTargetsFound.positive.length * 100 - human.tempTargetsFound.negative.length * 100;
-	// currAgentScore = fakeAgentScores[fakeAgentNum].score;
-	let tempCurrAgentScore = fakeAgentScores[fakeAgentNum].score;
-	totalHumanScore += currHumanScore;
-	totalAgentScore += currAgentScore;
-	teamScore += currHumanScore + currAgentScore;
-	$('#teamScoreMain').text(`Team Score: ${teamScore} points`);
-
-	drawMarkers([...obstacles.victims, ...obstacles.hazards]);
-
-	$detailsModal.css('display', 'flex');
-	$detailsModal.css('visibility', 'visible');
-	$detailsModal.css('opacity', '1');
-
-	$log.empty();
-
-	$agentText.toggleClass(`agent${agentNum - 1}`, false);
-	$agentText.toggleClass(`agent${agentNum + 1}`, false);
-	$agentText.toggleClass(`agent${agentNum}`, true);
-	$('#agentTargetsFound').text(`positive: ${fakeAgentScores[fakeAgentNum].blue}, Yellow:  ${fakeAgentScores[fakeAgentNum++].yellow}`);
-	$('#humanTargetsFound').text(`Blue: ${human.tempTargetsFound.blue}, Yellow:  ${human.tempTargetsFound.yellow}`);
-
-	if (log[agentNum - 1][intervalCount - 1].trusted) {
-		if (currAgentScore > 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-		else if (currAgentScore < 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-		else $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-	} else {
-		if (currAgentScore > 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}>trending_flat</span>`);
-		else if (currAgentScore < 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-		else $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-	}
-
-	
-	if (currHumanScore > 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-	else if (currHumanScore < 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-
-	$('#agentOverall').text(totalAgentScore);
-	$('#humanOverall').text(totalHumanScore);
-	if (teamScore > tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-	else if (teamScore < tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-
-	tempTeamScore = teamScore;
-	if (log[agentNum - 1][intervalCount - 1] != null) {
-		log[agentNum - 1].forEach((data, i) => {
-			if (data.trusted) {
-				$log.append(`<p style='background-color: ${colors.lightAgent1};'>Interval ${i + 1}: Integrated</p>`);
-			} else {
-				$log.append(`<p style='background-color: ${colors.lightAgent};'>Interval ${i + 1}: Discarded</p>`);
-			}
-		});
-	}
-
-	getSetBoundaries(human.tempExplored, 0);
-	fakeGetSetBoundaries();
-	scaleImages();
-
-	setTimeout(() => { $detailsModal.scrollTop(-10000) }, 500);
-	setTimeout(() => { $log.scrollLeft(10000) }, 500);
-
-	/*Adding updated star display messages*/
-
-	updateResults();
-}
-
-//Update the display for star count for targets on the results display
-function updateResults(){
-	let tempString = ' ';
-	for (let i = 0; i < human.tempTargetsFound.positive.length; i++){
-		tempString+= `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
-	}
-	$("div.hBlueStar").html(tempString);
-
-	tempString = ' ';
-	for (let j = 0; j < human.tempTargetsFound.negative.length; j++){
-		tempString+= `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
-	}
-	$("div.hYellowStar").html(tempString);
-
-	tempString = ' '; 
-	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].positive; k++){
-		tempString+= `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
-	}
-	$("div.aBlueStar").html(tempString);
-
-	tempString = ' ';
-	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].negative; l++){
-		tempString+= `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
-	}
-	$("div.aYellowStar").html(tempString);
-
-	/* tempString = ' ';
-
-	let totBlue = human.tempTargetsFound.blue + fakeAgentScores[fakeAgentNum - 1].blue;
-
-	let totYellow = human.tempTargetsFound.yellow + fakeAgentScores[fakeAgentNum - 1].yellow;
-
-	for (let m = 0; m < totBlue; m++){
-		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
-	}
-
-	$("div.oBlueStar").html(tempString);
-
-	tempString = ' ';
-
-	for (let n = 0; n < totYellow; n++){
-		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
-	}
-
-	$("div.oYellowStar").html(tempString); */
-
-	if (currHumanScore + currAgentScore >= 0) {
-		$('#currTeamPositive').css('width', `${(currHumanScore + currAgentScore)/100 * 8}`);
-		$('#currTeamScorePositive').text(`${currHumanScore + currAgentScore} pts`);
-		$('#currTeamNegative').css('width', `0`);
-		$('#currTeamScoreNegative').text(``);
-	} else {
-		$('#currTeamNegative').css('width', `${Math.abs((currHumanScore + currAgentScore)/100 * 8)}`);
-		$('#currTeamScoreNegative').text(`${currHumanScore + currAgentScore} pts`);
-		$('#currTeamPositive').css('width', `0`);
-		$('#currTeamScorePositive').text(``);
-	}
-
-	if (teamScore >= 0) {
-		$('#overallPositive').css('width', `${teamScore/100 * 8}`);
-		$('#overallScorePositive').text(`${teamScore} pts`);
-		$('#overallNegative').css('width', `0`);
-		$('#overallScoreNegative').text(``);
-	} else {
-		$('#overallNegative').css('width', `${Math.abs(teamScore/100 * 8)}`);
-		$('#overallScoreNegative').text(`${teamScore} pts`);
-		$('#overallPositive').css('width', `0`);
-		$('#overallScorePositive').text(``);
-	}
-
-	if (currHumanScore >= 0) {
-		$('#humanPositive').css('width', `${currHumanScore/100 * 8}`);
-		$('#humanScorePositive').text(`${currHumanScore} pts`);
-		$('#humanNegative').css('width', `0`);
-		$('#humanScoreNegative').text(``);
-	} else {
-		$('#humanNegative').css('width', `${Math.abs(currHumanScore/100 * 8)}`);
-		$('#humanScoreNegative').text(`${currHumanScore} pts`);
-		$('#humanPositive').css('width', `0`);
-		$('#humanScorePositive').text(``);
-	}
-
-	if (currAgentScore >= 0) {
-		$('#agentPositive').css('width', `${currAgentScore/100 * 8}`);
-		$('#agentScorePositive').text(`${currAgentScore} pts`);
-		$('#agentNegative').css('width', `0`);
-		$('#agentScoreNegative').text(``);
-	} else {
-		$('#agentNegative').css('width', `${Math.abs(currAgentScore/100 * 8)}`);
-		$('#agentScoreNegative').text(`${currAgentScore} pts`);
-		$('#agentPositive').css('width', `0`);
-		$('#agentScorePositive').text(``);
-	}
-}
-
-function confirmExploration() {
-	finalTimeStamp = performance.now();
-	++intervalCount;
-	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
-	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
-	currAgentScore = fakeAgentScores[fakeAgentNum].score;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: true, timeTaken: finalTimeStamp - initialTimeStamp });
-	initialTimeStamp = 0, finalTimeStamp = 0;
-
-	$trustConfirmModal.css('visibility', 'hidden');
-	$trustConfirmModal.css('display', 'none');
-	$trustConfirmModal.css('opacity', '0');
-
-	showExploredInfo();
-}
-
-function undoExploration() {
-	finalTimeStamp = performance.now();
-	++intervalCount;
-	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
-	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
-	currAgentScore = 0;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: false, timeTaken: finalTimeStamp - initialTimeStamp });
-	initialTimeStamp = 0, finalTimeStamp = 0;
-	for (const agent of agents) {
-		agent.tempExplored.forEach(cell => {
-			grid[cell.x][cell.y].isTempAgentExplored = false;
-		});
-	}
-
-	$trustConfirmModal.css('visibility', 'hidden');
-	$trustConfirmModal.css('display', 'none');
-	$trustConfirmModal.css('opacity', '0');
-
-	showExploredInfo();
-}
-
-// redraw the map and hide pop-up
-function hideExploredInfo() {
-	if (agentNum < agents.length) {
-		// agents[agentNum - 1].tempTargetsFound.positive = 0;
-		// agents[agentNum - 1].tempTargetsFound.negative = 0;
-		++agentNum;
-		showExploredInfo();
-		return;
-	}
-
-	// agents[agentNum - 1].tempTargetsFound.positive = 0;
-	// agents[agentNum - 1].tempTargetsFound.negative = 0;
-	human.tempTargetsFound.positive = [];
-	human.tempTargetsFound.negative = [];
-
-	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
-
-	if (intervalCount == Math.floor(intervals / 2)) {
-		$.ajax({
-			url: "/simulation/1",
-			type: "POST",
-			data: JSON.stringify({
-				uuid: uuid,
-				map: pathIndex,
-				movement: data[half].movement,
-				humanTraversal: data[half].human,
-				agent1Traversal: [],
-				agent2Traversal: []
-			}),
-			contentType: "application/json; charset=utf-8"
-		});
-		++half;
-	}
-
-	$map.clearCanvas();
-	$map.drawRect({
-		fillStyle: '#252525',
-		x: 0, y: 0,
-		width: canvasWidth, height: canvasHeight
-	});
-
-	human.explored = union(human.explored, human.tempExplored);
-	human.tempExplored.clear();
-	human.drawCells(human.explored, false);
-	for (const agent of agents) {
-		agent.drawCells(agent.explored);
-		agent.tempExplored.clear();
-	}
-	
-	refreshMap();
-
-	$(document).on('keydown', e => {
-		eventKeyHandlers(e);
-	});
-
-	$endRoundModal.css('visibility', 'hidden');
-	$endRoundModal.css('display', 'none');
-	$endRoundModal.css('opacity', '0');
-
-	$detailsModal.css('visibility', 'hidden');
-	$detailsModal.css('display', 'none');
-	$detailsModal.css('opacity', '0');
-	$progressbar.css('width', `${Math.round(intervalCount*100/intervals)}%`);
-	$progressbar.html(`<p>${Math.round(intervalCount*100/intervals)}%</p>`);
-	clearInterval(timeout);
-	timeout = setInterval(updateTime, 1000);
-	pause = false;
-	// currentFrame = setInterval(loop, 100);
-	currentFrame = requestAnimationFrame(loop);
-}
-
-// divides the square field of view around the human/agent into 4 distinct "quadrants"
-function getFOV(player) {
-	let thisSurroundings = [[], [], [], []];
-	let centerX = player.x, centerY = player.y;
-	let i = 0, j = 0;
-
-	// quadrant 1 - top right
-	for (let y = centerY; y >= centerY - player.fovSize; --y) {
-		for (let x = centerX; x <= centerX + player.fovSize; ++x) {
-			thisSurroundings[0].push({ tempX: i, tempY: j, realX: x, realY: y });
-			++i;
-		}
-		i = 0;
-		++j;
-	}
-
-	i = 0, j = 0;
-
-	// quadrant 2 - top left
-	for (let y = centerY; y >= centerY - player.fovSize; --y) {
-		for (let x = centerX; x >= centerX - player.fovSize; --x) {
-			thisSurroundings[1].push({ tempX: i, tempY: j, realX: x, realY: y });
-			++i;
-		}
-		i = 0;
-		++j;
-	}
-
-	i = 0, j = 0;
-
-	// quadrant 3 - bottom left
-	for (let y = centerY; y <= centerY + player.fovSize; ++y) {
-		for (let x = centerX; x >= centerX - player.fovSize; --x) {
-			thisSurroundings[2].push({ tempX: i, tempY: j, realX: x, realY: y });
-			++i;
-		}
-		i = 0;
-		++j;
-	}
-
-	i = 0, j = 0;
-
-	//quadrant 4 - bottom right
-	for (let y = centerY; y <= centerY + player.fovSize; ++y) {
-		for (let x = centerX; x <= centerX + player.fovSize; ++x) {
-			thisSurroundings[3].push({ tempX: i, tempY: j, realX: x, realY: y });
-			++i;
-		}
-		i = 0;
-		++j;
-	}
-
-	return castRays(thisSurroundings, player.fovSize);
-}
-
-// draw lines from the center (human/agent location) to the sqaures on the border of the FOV
-// and then calculates what cells are visible and what are blocked by walls
-function castRays(arr, viewRadius) {
-	let mySurroundings = [];
-
-	// quadrant 1 - top right
-	for (let i = viewRadius; i < arr[0].length; i += viewRadius + 1) {
-		mySurroundings.push(...bresenhams(arr[0][0], arr[0][i], 1, arr[0]));
-	}
-	for (let i = arr[0].length - viewRadius - 1; i < arr[0].length - 1; ++i) {
-		mySurroundings.push(...bresenhams(arr[0][0], arr[0][i], 1, arr[0]));
-	}
-
-	// quadrant 2 - top left
-	for (let i = viewRadius; i < arr[1].length; i += viewRadius + 1) {
-		mySurroundings.push(...bresenhams(arr[1][0], arr[1][i], 2, arr[1]));
-	}
-	for (let i = arr[1].length - viewRadius - 1; i < arr[1].length - 1; ++i) {
-		mySurroundings.push(...bresenhams(arr[1][0], arr[1][i], 2, arr[1]));
-	}
-
-	// quadrant 3 - bottom left
-	for (let i = viewRadius; i < arr[2].length; i += viewRadius + 1) {
-		mySurroundings.push(...bresenhams(arr[2][0], arr[2][i], 3, arr[2]));
-	}
-	for (let i = arr[2].length - viewRadius - 1; i < arr[2].length - 1; ++i) {
-		mySurroundings.push(...bresenhams(arr[2][0], arr[2][i], 3, arr[2]));
-	}
-
-	// quadrant 4 - bottom right
-	for (let i = viewRadius; i < arr[3].length; i += viewRadius + 1) {
-		mySurroundings.push(...bresenhams(arr[3][0], arr[3][i], 4, arr[3]));
-	}
-	for (let i = arr[3].length - viewRadius - 1; i < arr[3].length - 1; ++i) {
-		mySurroundings.push(...bresenhams(arr[3][0], arr[3][i], 4, arr[3]));
-	}
-
-	return mySurroundings;
-}
-
-// draws a line between two given cells
-// the line ends if there is a wall obstructing the straight line
-// this imitates casting a ray from cell1 to cell2
-function bresenhams(cell1, cell2, quad, thisGrid) {
-	switch (quad) {
-		case 1:
-			return bresenhamdsQuad1Helper(cell1, cell2);
-		case 2:
-			return bresenhamdsQuad2Helper(cell1, cell2);
-		case 3:
-			return bresenhamdsQuad3Helper(cell1, cell2);
-		case 4:
-			return bresenhamdsQuad4Helper(cell1, cell2);
-	}
-}
-
-function bresenhamdsQuad1Helper(cell1, cell2) {
-	let x1 = cell1.realX, y1 = cell1.realY, x2 = cell2.realX, y2 = cell2.realY;
-	let dx = x2 - x1, dy = y1 - y2;
-	let m = dy/dx;
-	let p;
-	let arr = [];
-	if (m >= 0 && m <= 1) {
-		p = (2*dy) - dx;
-		while (x1 < x2) {
-			if (p < 0) {
-				++x1;
-				p += 2*dy;
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			} else {
-				++x1;
-				--y1;
-				p += 2*(dy - dx);
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			}
-		}
-	} else if (m > 1) {
-		p = (2*dx) - dy;
-		while (y2 < y1) {
-			if (p < 0) {
-				--y1;
-				p += 2*dx;
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			} else {
-				++x1;
-				--y1;
-				p += 2*(dx - dy);
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			}
-		}
-	}
-
-	return arr;
-}
-
-function bresenhamdsQuad2Helper(cell1, cell2) {
-	let x1 = cell1.realX, y1 = cell1.realY, x2 = cell2.realX, y2 = cell2.realY;
-	let dx = x1 - x2, dy = y1 - y2;
-	let m = dy/dx;
-	let p;
-	let arr = [];
-	if (m >= 0 && m <= 1) {
-		p = (2*dy) - dx;
-		while (x2 < x1) {
-			if (p < 0) {
-				--x1;
-				p += 2*dy;
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			} else {
-				--x1;
-				--y1;
-				p += 2*(dy - dx);
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			}
-		}
-	} else if (m > 1) {
-		p = (2*dx) - dy;
-		while (y2 < y1) {
-			if (p < 0) {
-				--y1;
-				p += 2*dx;
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			} else {
-				--x1;
-				--y1;
-				p += 2*(dx - dy);
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			}
-		}
-	}
-
-	return arr;
-}
-
-function bresenhamdsQuad3Helper(cell1, cell2) {
-	let x1 = cell1.realX, y1 = cell1.realY, x2 = cell2.realX, y2 = cell2.realY;
-	let dx = x1 - x2, dy = y2 - y1;
-	let m = dy/dx;
-	let p;
-	let arr = [];
-	if (m >= 0 && m <= 1) {
-		p = (2*dy) - dx;
-		while (x2 < x1) {
-			if (p < 0) {
-				--x1;
-				p += 2*dy;
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			} else {
-				--x1;
-				++y1;
-				p += 2*(dy - dx);
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			}
-		}
-	} else if (m > 1) {
-		p = (2*dx) - dy;
-		while (y1 < y2) {
-			if (p < 0) {
-				++y1;
-				p += 2*dx;
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			} else {
-				--x1;
-				++y1;
-				p += 2*(dx - dy);
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			}
-		}
-	}
-
-	return arr;
-}
-
-function bresenhamdsQuad4Helper(cell1, cell2) {
-	let x1 = cell1.realX, y1 = cell1.realY, x2 = cell2.realX, y2 = cell2.realY;
-	let dx = x2 - x1, dy = y2 - y1;
-	let m = dy/dx;
-	let p;
-	let arr = [];
-	if (m >= 0 && m <= 1) {
-		p = (2*dy) - dx;
-		while (x1 < x2) {
-			if (p < 0) {
-				++x1;
-				p += 2*dy;
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			} else {
-				++x1;
-				++y1;
-				p += 2*(dy - dx);
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			}
-		}
-	} else if (m > 1) {
-		p = (2*dx) - dy;
-		while (y1 < y2) {
-			if (p < 0) {
-				++y1;
-				p += 2*dx;
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			} else {
-				++x1;
-				++y1;
-				p += 2*(dx - dy);
-				arr.push(grid[x1][y1]);
-				if (grid[x1][y1].isWall) break;
-			}
-		}
-	}
-
-	return arr;
-}
-
-// human controls
-function eventKeyHandlers(e) {
-	if (!throttle) {
-		switch (e.keyCode) {
-			case 65:	// a
-			case 37:	// left arrow
-			case 72:	// h
-				e.preventDefault();
-				human.moveLeft();
-				break;
-			case 87:	// w
-			case 38:	// up arrow
-			case 75:	// k
-				e.preventDefault();
-				human.moveUp();
-				break;
-			case 68:	// d
-			case 39:	// right arrow
-			case 76:	// l
-				e.preventDefault();
-				human.moveRight();
-				break;
-			case 83:	// s
-			case 40:	// down arrow
-			case 74:	// j
-				e.preventDefault();
-				human.moveDown();
-				break;
-			case 32:	// space bar
-				e.preventDefault();
-				human.pickTarget();
-				break;
-			case 49:	// 1
-				e.preventDefault();
-				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-				updateScrollingPosition(agent1.x, agent1.y);
-				break;
-			case 50:	// 2
-				e.preventDefault();
-				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-				updateScrollingPosition(agent2.x, agent2.y);
-				break;
-			case 51:	// 3
-				e.preventDefault();
-				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-				updateScrollingPosition(agent3.x, agent3.y);
-				break;
-			case 52:	// 4
-				e.preventDefault();
-				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-				updateScrollingPosition(agent4.x, agent4.y);
-				break;
-			case 53:	// 5
-				e.preventDefault();
-				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-				updateScrollingPosition(agent5.x, agent5.y);
-				break;
-			default:	// nothing
-				break;
-		}
-		throttle = setTimeout(() => { throttle = null; }, 50);
-	}
 }
 
 function randomWalk(agent) {
@@ -1551,91 +786,87 @@ function randomWalk(agent) {
 }
 
 function floodFill(agent) {
-	// if (++agent.currentTick < agent.speed) return;
-	// agent.currentTick = 0;
+	if (++agent.currentTick < agent.speed) return;
+	agent.currentTick = 0;
+	
+	let neighbours = [
+		{ x: agent.x,     y: agent.y - 1, dir: 0 },	// top
+		// { x: agent.x + 1, y: agent.y - 1, dir: 1 },	// top right
+		{ x: agent.x + 1, y: agent.y    , dir: 2 },	// right
+		// { x: agent.x + 1, y: agent.y + 1, dir: 3 },	// bottom right
+		{ x: agent.x,     y: agent.y + 1, dir: 4 },	// bottom
+		// { x: agent.x - 1, y: agent.y + 1, dir: 5 },	// bottom left
+		{ x: agent.x - 1, y: agent.y    , dir: 6 },	// left
+		// { x: agent.x - 1, y: agent.y - 1, dir: 7 }	// top left
+	];
+	
+	neighbours = neighbours.filter(cell => (cell.x >= 0 && cell.x < grid.length) && (cell.y >= 0 && cell.y < grid[0].length) && (!grid[cell.x][cell.y].isWall));
+	if (agent.mode == 'search') {
+		let unmarkedCells = neighbours.filter(cell => grid[cell.x][cell.y].stepMarking <= 0);
+		if (unmarkedCells.length > 0) {
+			moveUnmarked(agent, unmarkedCells);
+		} else {
+			moveMarked(agent, neighbours);
+		}
+	}
+	
+	$map.drawText({
+		fromCenter: true,
+		fillStyle: 'black',
+		x: agent.x * boxWidth + boxWidth/2, y: agent.y * boxHeight + boxHeight/2,
+		fontSize: boxWidth - 10,
+		fontFamily: 'Montserrat, sans-serif',
+		text: grid[agent.x][agent.y].stepMarking
+	});
+
+	agent.updateLoc(agent.nextX, agent.nextY, agent.nextDir);
+}
+
+function moveUnmarked(agent, unmarkedCells) {
+	console.log("unmarked")
+	let cellInFront = unmarkedCells.find(cell => cell.dir == agent.dir);
+	if (cellInFront && Math.random() < 0.95) {
+		// same direction
+		agent.nextX = cellInFront.x, agent.nextY = cellInFront.y, agent.nextDir = agent.dir;
+	} else {
+		// changing direction
+		let randomDirCell = unmarkedCells[Math.floor(Math.random() * unmarkedCells.length)]; 
+		agent.nextX = randomDirCell.x, agent.nextY = randomDirCell.y, agent.nextDir = randomDirCell.dir;
+	}
+
 	$map.drawRect({
 		fillStyle: agent.lightColor,
 		x: agent.x * boxWidth + 1, y: agent.y * boxHeight + 1,
 		width: boxWidth - 2, height: boxHeight - 2
 	});
-	
-	let neighbours = [
-		{ x: agent.x,     y: agent.y - 1, dir: 0 },
-		{ x: agent.x + 1, y: agent.y - 1, dir: 1 },
-		{ x: agent.x + 1, y: agent.y    , dir: 2 },
-		{ x: agent.x + 1, y: agent.y + 1, dir: 3 },
-		{ x: agent.x,     y: agent.y + 1, dir: 4 },
-		{ x: agent.x - 1, y: agent.y + 1, dir: 5 },
-		{ x: agent.x - 1, y: agent.y    , dir: 6 },
-		{ x: agent.x - 1, y: agent.y - 1, dir: 7 }
-	];
-	neighbours = neighbours.filter(cell => (cell.x >= 0 && cell.x < grid.length) && (cell.y >= 0 && cell.y < grid[0].length)/*  && (cell.x != agent.prevX || cell.y != agent.prevY) */);
-	if (agent.mode == 'search') {
-		// search mode
-		neighbours = neighbours.filter(cell => !grid[cell.x][cell.y].isWall);
-		// poi = point of interest
-		let poi = neighbours.find(cell => grid[cell.x][cell.y].poi);
-		if (!poi) {
-			// no poi found
-			let unmarkedCells = neighbours.filter(cell => grid[cell.x][cell.y].stepMarking < 0);
-			if (unmarkedCells.length > 0) {
-				// found unmarked cells
-				// check if the one in front of the agent is unmarked and free to move into
-				let cellInFront = unmarkedCells.find(cell => cell.dir == agent.dir);
-				if (cellInFront && Math.random() < 0.95) {
-					// facing same direction - direction remains the same after moving
-					// agent.updateLoc(cellInFront.x, cellInFront.y, agent.dir);
-					// CAUTIONCAUTIONCAUTIONCAUTION
-					agent.nextX = cellInFront.x, agent.nextY = cellInFront.y, agent.nextDir = agent.dir;
-				} else {
-					// changing direction - pick randomly between neighbouring unmarked cells
-					let randomDirCell = unmarkedCells[Math.floor(Math.random() * unmarkedCells.length)];
-					// agent.updateLoc(randomDirCell.x, randomDirCell.y, randomDirCell.dir);
-					// CAUTIONCAUTIONCAUTIONCAUTION
-					agent.nextX = randomDirCell.x, agent.nextY = randomDirCell.y, agent.nextDir = randomDirCell.dir;
-				}
-				grid[agent.x][agent.y].stepMarking = ++agent.stepCount;
-				++exploredCells;
-			} else {
-				// no unmarked cells found
-				let highestMarkedCell = findHighestMarkedCell(neighbours.filter(cell => grid[cell.x][cell.y].stepMarking < grid[agent.x][agent.y].stepMarking)/* .filter(cell => cell.dir != agent.dir + 4 % 8) *//* [...neighbours, { x: agent.x, y: agent.y, dir: agent.dir }] */);
-				if (highestMarkedCell && Math.random() < 0.95) {
-					// pick highest marked cell
-					// agent.updateLoc(highestMarkedCell.x, highestMarkedCell.y, highestMarkedCell.dir);
-					// CAUTIONCAUTIONCAUTIONCAUTION
-					agent.nextX = highestMarkedCell.x, agent.nextY = highestMarkedCell.y, agent.nextDir = highestMarkedCell.dir;
-				} else {
-					// pick randomly between neighbouring non-highest marked cells
-					let nonHighestMarkedCells = neighbours.filter(cell => cell != highestMarkedCell);
-					let randomMarkedCell = nonHighestMarkedCells[Math.floor(Math.random() * nonHighestMarkedCells.length)] || neighbours[Math.floor(Math.random() * neighbours.length)];
-					// agent.updateLoc(randomMarkedCell.x, randomMarkedCell.y, randomMarkedCell.dir);
-					// CAUTIONCAUTIONCAUTIONCAUTION
-					agent.nextX = randomMarkedCell.x, agent.nextY = randomMarkedCell.y, agent.nextDir = randomMarkedCell.dir;
-				}
-				/* if (grid[agent.x][agent.y].stepMarking > agent.stepCount) grid[agent.x][agent.y].stepMarking = */ ++agent.stepCount;
-				if (grid[agent.x][agent.y].stepMarking > agent.stepCount || grid[agent.x][agent.y].stepMarking == -1) grid[agent.x][agent.y].stepMarking = agent.stepCount;
-			}
-		} else {
-			console.log("OUTSIDE")
-			// found poi -- change direction and move
-			agent.updateLoc(poi.x, poi.y, agent.dir);	// update dir properly
-			if (grid[poi.x][poi.y].stepMarking == -1) ++exploredCells;
-			agent.mode = 'return';
-		}
-	} else if (agent.mode == 'return') {
-		console.log("OUTSIDE")
-		// return mode
-		if (grid[agent.x][agent.y].stepMarking == 1) {
-			agent.mode = 'search';
-			return;
-		}
-		neighbours = neighbours.filter(cell => grid[cell.x][cell.y].stepMarking > 0);
-		let lowestMarkedCell = findLowestMarkedCell(neighbours);
-		agent.updateLoc(lowestMarkedCell.x, lowestMarkedCell.y, lowestMarkedCell.dir);
+
+	if (grid[agent.x][agent.y].stepMarking <= 0) grid[agent.x][agent.y].stepMarking = agent.stepCount++;
+	++exploredCells;
+}
+
+function moveMarked(agent, neighbours) {
+	console.log("marked")
+	let highestMarkedCell = findHighestMarkedCell(neighbours.filter(cell => /* cell.x != agent.prevX && cell.y != agent.prevY &&*/ grid[cell.x][cell.y].stepMarking < grid[agent.x][agent.y].stepMarking));
+	if (highestMarkedCell && Math.random() < 0.95) {
+		// pick highest marked cell
+		agent.nextX = highestMarkedCell.x, agent.nextY = highestMarkedCell.y, agent.nextDir = highestMarkedCell.dir;
+	} else {
+		// pick randomly between neighbouring non-highest marked cells
+		let nonHighestMarkedCells = neighbours.filter(cell => cell != highestMarkedCell);
+		let randomMarkedCell = nonHighestMarkedCells[Math.floor(Math.random() * nonHighestMarkedCells.length)] || neighbours[Math.floor(Math.random() * neighbours.length)];
+		agent.nextX = randomMarkedCell.x, agent.nextY = randomMarkedCell.y, agent.nextDir = randomMarkedCell.dir;
 	}
-	// console.log(grid[agent.x][agent.y].stepMarking)
-	// console.log(`%cCurrent cell: ${grid[agent.x][agent.y].stepMarking} %c Agent: ${agent.stepCount}`, 'color:red;', 'color:green;')
-	// console.log(agent.stepCount)
+	
+	$map.drawRect({
+		fillStyle: agent.lightColor,
+		x: agent.x * boxWidth + 1, y: agent.y * boxHeight + 1,
+		width: boxWidth - 2, height: boxHeight - 2
+	});
+
+	if (grid[agent.x][agent.y].stepMarking <= 0) {
+		grid[agent.x][agent.y].stepMarking = ++agent.stepCount;
+		++exploredCells;
+	} else if (grid[agent.x][agent.y].stepMarking > agent.stepCount) grid[agent.x][agent.y].stepMarking = agent.stepCount;
 }
 
 function findHighestMarkedCell(cells) {
@@ -1659,147 +890,6 @@ function findLowestMarkedCell(cells) {
 		}
 	}
 	return lowestMarkedCell;
-}
-
-function moveAgent(agent) {
-	agent.drawCells([grid[agent.traversal[agent.stepCount - 1].loc.x][agent.traversal[agent.stepCount - 1].loc.y]]);
-	agent.updateLoc(agent.traversal[agent.stepCount].loc.x, agent.traversal[agent.stepCount++].loc.y);
-	if (grid[agent.x][agent.y].isPositive && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
-		++agent.tempTargetsFound.positive;
-	}
-	if (grid[agent.x][agent.y].isNegative && !grid[agent.x][agent.y].isTempAgentExplored && !grid[agent.x][agent.y].isAgentExplored) {
-		++agent.tempTargetsFound.negative;
-	}
-	agent.tempExplored.add(grid[agent.x][agent.y]);
-	grid[agent.x][agent.y].isTempAgentExplored = true;
-
-	let fov = new Set(agent.traversal[agent.stepCount - 1].explored);
-	let fovToDraw = new Set();
-
-	fov.forEach(cell => {
-		let thisCell = { x: cell[0], y: cell[1] };
-		if (grid[thisCell.x][thisCell.y].isPositive && !grid[thisCell.x][thisCell.y].isTempAgentExplored && !grid[thisCell.x][thisCell.y].isAgentExplored) {
-			++agent.tempTargetsFound.positive;
-		}
-		if (grid[thisCell.x][thisCell.y].isNegative && !grid[thisCell.x][thisCell.y].isTempAgentExplored && !grid[thisCell.x][thisCell.y].isAgentExplored) {
-			++agent.tempTargetsFound.negative;
-		}
-		let neighbours = [
-			{ x: cell[0],     y: cell[1] - 1 },
-			{ x: cell[0] + 1, y: cell[1] - 1 },
-			{ x: cell[0] + 1, y: cell[1]     },
-			{ x: cell[0] + 1, y: cell[1] + 1 },
-			{ x: cell[0],     y: cell[1] + 1 },
-			{ x: cell[0] - 1, y: cell[1] + 1 },
-			{ x: cell[0] - 1, y: cell[1]     },
-			{ x: cell[0] - 1, y: cell[1] - 1 }
-		];
-
-		let currTempExplored = [grid[thisCell.x][thisCell.y]];
-		agent.tempExplored.add(grid[thisCell.x][thisCell.y]);
-		fovToDraw.add(grid[thisCell.x][thisCell.y]);
-		neighbours.forEach((cell, i) => {
-			if (grid[cell.x][cell.y].isWall) {
-				agent.tempExplored.add(grid[cell.x][cell.y]);
-				fovToDraw.add(grid[cell.x][cell.y]);
-				currTempExplored.push(grid[cell.x][cell.y]);
-			}
-		});
-	})
-	agent.drawCells([...fovToDraw]);
-}
-
-function drawMarkers(members) {
-	members.forEach(member => {
-		if (member.id == "victim" && member.isFound) {
-			$map.drawImage({
-				source: 'img/victim-marker-big.png',
-				x: grid[member.loc].x*boxWidth + boxWidth/2 - victimMarker.width/2, y: grid[member.loc].y*boxHeight + boxHeight/2 - victimMarker.height
-			});
-		} else if (member.id == "hazard" && member.isFound) {
-			$map.drawImage({
-				source: 'img/hazard-marker-big.png',
-				x: grid[member.loc].x*boxWidth + boxWidth/2 - victimMarker.width/2, y: grid[member.loc].y*boxHeight + boxHeight/2 - victimMarker.height
-			});
-		}
-	});
-}
-
-function fakeGetSetBoundaries() {
-	botLeft = fakeBotImageScales[intervalCount - 1].left;
-	botRight = fakeBotImageScales[intervalCount - 1].right;
-	botTop = fakeBotImageScales[intervalCount - 1].top;
-	botBottom = fakeBotImageScales[intervalCount - 1].bottom;
-}
-
-// 0 - human, 1 - bot
-function getSetBoundaries(thisSet, who) {
-	if (who == 1) {
-		let setIterator = thisSet.values();
-		let firstElement = setIterator.next().value;
-		botLeft = firstElement.x;
-		botRight = firstElement.x;
-		botTop = firstElement.y;
-		botBottom = firstElement.y;
-
-		for (let i = setIterator.next().value; i != null; i = setIterator.next().value) {
-			if (i.x < botLeft) botLeft = i.x;
-			if (i.x > botRight) botRight = i.x;
-			if (i.y < botTop) botTop = i.y;
-			if (i.y > botBottom) botBottom = i.y;
-		}
-	} else {
-		let setIterator = thisSet.values();
-		let firstElement = setIterator.next().value;
-		humanLeft = firstElement.x;
-		humanRight = firstElement.x;
-		humanTop = firstElement.y;
-		humanBottom = firstElement.y;
-
-		if (humanLeft == null) humanLeft = firstElement.x;
-		if (humanRight == null) humanRight = firstElement.x;
-		if (humanTop == null) humanTop = firstElement.y;
-		if (humanBottom == null) humanBottom = firstElement.y;
-
-		for (let i = setIterator.next().value; i != null; i = setIterator.next().value) {
-			if (i.x < humanLeft) humanLeft = i.x;
-			if (i.x > humanRight) humanRight = i.x;
-			if (i.y < humanTop) humanTop = i.y;
-			if (i.y > humanBottom) humanBottom = i.y;
-		}
-	}
-}
-
-function scaleImages() {
-	let botWidth = columns/(botRight - botLeft + 5) * 100;
-	let botHeight = rows/(botBottom - botTop + 5) * 100;
-	let humanWidth = columns/(humanRight - humanLeft + 5) * 100;
-	let humanHeight = rows/(humanBottom - humanTop + 5) * 100;
-
-	botWidth = (botWidth < 100) ? 100 : botWidth;
-	botHeight = (botHeight < 100) ? 100 : botHeight;
-
-	humanWidth = (humanWidth < 100) ? 100 : humanWidth;
-	humanHeight = (humanHeight < 100) ? 100 : humanHeight;
-
-	if (botWidth > botHeight) {
-		$botImage.attr("width", botHeight + "%");
-		$botImage.attr("height", botHeight + "%");
-	} else {
-		$botImage.attr("width", botWidth + "%");
-		$botImage.attr("height", botWidth + "%");
-	}
-
-	if (humanWidth > humanHeight) {
-		$humanImage.attr("width", humanHeight + "%");
-		$humanImage.attr("height", humanHeight + "%");
-	} else {
-		$humanImage.attr("width", humanWidth + "%");
-		$humanImage.attr("height", humanWidth + "%");
-	}
-	
-	$botImage.parent()[0].scroll((botLeft + (botRight - botLeft + 1)/2)*($botImage.width()/columns) - $('.explored').width()/2, ((botTop + (botBottom - botTop + 1)/2)*($botImage.height()/rows)) - $('.explored').height()/2);
-	$humanImage.parent()[0].scroll((humanLeft + (humanRight - humanLeft + 1)/2)*($humanImage.width()/columns) - $('.explored').width()/2, ((humanTop + (humanBottom - humanTop + 1)/2)*($humanImage.height()/rows)) - $('.explored').height()/2);
 }
 
 function updateScrollingPosition(x, y) {
@@ -1838,97 +928,9 @@ $map.on('click', e => {
 
 	let cellX = Math.floor(x / boxWidth);
 	let cellY = Math.floor(y / boxHeight);
-	console.log(`%cx: ${cellX}, y: ${cellY}, stepMarking: ${grid[cellX][cellY].stepMarking}, poi: ${grid[cellX][cellY].poi}`, 'background-color: #121212; color: white;')
+	console.log(`x: ${cellX}, y: ${cellY}, stepMarking: ${grid[cellX][cellY].stepMarking}`);
 	// console.log(`realX: ${cellX * boxWidth}, realY: ${cellY * boxHeight} - (${cellX}, ${cellY})`)
 })
-
-var watching = false;
-var startLineX = 0, startLineY = 0;
-var lineThickness = 5;
-var lineColor = '#f00'
-
-/* $map.click(e => {
-	if (!watching) {
-		watching = true;
-	
-		let rect = $map[0].getBoundingClientRect();
-		let x = e.clientX - rect.left;
-		let y = e.clientY - rect.top;
-	
-		let cellX = Math.floor(x / boxWidth);
-		let cellY = Math.floor(y / boxHeight);
-
-		console.log(`x: ${x}, y: ${y}, cellX: ${cellX*boxWidth + boxWidth/2 + 1}, cellY: ${cellY*boxHeight + boxWidth/2 + 1}`)
-		let centerX = cellX*boxWidth + boxWidth/2 + 1, centerY = cellY*boxHeight + boxWidth/2 + 1
-	
-		if (x < centerX && y < centerY) {
-			// topleft
-			console.log('topLeft')
-			startLineX = centerX - boxWidth/3
-			startLineY = centerY - boxHeight/3
-		} else if (x > centerX && y < centerY) {
-			// topright
-			console.log('topRight')
-			startLineX = centerX + boxWidth/3
-			startLineY = centerY - boxHeight/3
-		} else if (x > centerX && y > centerY) {
-			// bottomright
-			console.log('bottomRight')
-			startLineX = centerX + boxWidth/3
-			startLineY = centerY + boxHeight/3
-		} else if (x < centerX && y > centerY) {
-			// bottomleft
-			console.log('bottomLeft')
-			startLineX = centerX - boxWidth/3
-			startLineY = centerY + boxHeight/3
-		}
-		console.log(`computedX: ${startLineX}, computedY: ${startLineY}`)
-
-		return;
-	}
-	
-	let rect = $map[0].getBoundingClientRect();
-	let x = e.clientX - rect.left;
-	let y = e.clientY - rect.top;
-
-	let cellX = Math.floor(x / boxWidth);
-	let cellY = Math.floor(y / boxHeight);
-
-	let endLineX, endLineY;
-	let centerX = cellX*boxWidth + boxWidth/2 + 1, centerY = cellY*boxHeight + boxWidth/2 + 1
-	
-	if (x < centerX && y < centerY) {
-		// topleft
-		console.log('topLeft')
-		endLineX = centerX - boxWidth/3
-		endLineY = centerY - boxHeight/3
-	} else if (x > centerX && y < centerY) {
-		// topright
-		console.log('topRight')
-		endLineX = centerX + boxWidth/3
-		endLineY = centerY - boxHeight/3
-	} else if (x > centerX && y > centerY) {
-		// bottomright
-		console.log('bottomRight')
-		endLineX = centerX + boxWidth/3
-		endLineY = centerY + boxHeight/3
-	} else if (x < centerX && y > centerY) {
-		// bottomleft
-		console.log('bottomLeft')
-		endLineX = centerX - boxWidth/3
-		endLineY = centerY + boxHeight/3
-	}
-
-	$map.drawLine({
-		strokeStyle: lineColor,
-		strokeWidth: lineThickness,
-		rounded: true,
-		x1: startLineX, y1: startLineY,
-		x2: endLineX, y2: endLineY
-	})
-
-	watching = false;
-}) */
 
 // SET METHODS
 
@@ -1946,15 +948,4 @@ function difference(setA, setB) {
 		_difference.delete(elem);
 	}
 	return _difference;
-}
-
-function toggleTextInput() {
-	if ($('input[name="optradioQ3"]:checked').val() == 5) {
-		$('.hideTextArea').css('display', 'inline-block');
-		$('.hideTextArea').prop('required', true);
-	} else {
-		$('.hideTextArea').css('display', 'none');
-		$('.hideTextArea').val('');
-		$('.hideTextArea').prop('required', false);
-	}
 }
