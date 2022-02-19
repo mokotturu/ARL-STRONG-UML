@@ -111,6 +111,7 @@ var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
 var intervalCount = 0, half = 0, intervals = 10, duration = 40000, agentNum = 1;
 var log = [[], []];
+var numAgents = 0, curRun = 0;
 
 var victimMarker = new Image();
 var hazardMarker = new Image();
@@ -388,20 +389,40 @@ $(document).ready(async () => {
 	$('.body-container').css('opacity', '0');
 	$('.loader').css('visibility', 'visible');
 	$('.loader').css('opacity', '1');
-	$map.prop('width', $mapContainer.width());
-	$map.prop('height', $mapContainer.height());
+	// $map.prop('width', $mapContainer.width());
+	// $map.prop('height', $mapContainer.height());
 	canvasWidth = $map.width();
 	canvasHeight = $map.height();
 	
-	await initMaps('src/map_50x50.json');
+	await initMaps('src/MAF_500x500_plain_with_obstacles.json');
+	// await initMaps('src/map_50x50.json');
 
 	let tempLoc = getRandomLoc(grid);
-	console.log(`Start location: ${tempLoc}`)
+	console.log(`Start location: ${tempLoc}`);
+
+	let dirs = [0, 2, 4, 6, 1, 3, 5, 7];
+
+	if (localStorage.getItem('numAgents') == null) localStorage.setItem('numAgents', 0);
+	if (localStorage.getItem('curRun') == null) localStorage.setItem('curRun', -1);
+
+	curRun = (Number(localStorage.getItem('curRun')) + 1) % 5;
+	numAgents = Number(localStorage.getItem('numAgents'));
+
+	if (numAgents == 21) {
+		pause = true;
+		alert("All simulations completed.");
+	}
+	// numAgents = (curRun == 0) ? Number(localStorage.getItem('numAgents')) + 1 : numAgents;
+	if (curRun == 0) numAgents = Number(localStorage.getItem('numAgents')) + 1;
+	localStorage.setItem('numAgents', numAgents);
+	localStorage.setItem('curRun', curRun);
+
+	// ------------------------------------------------------------------------
 
 	let generator = genColor();
-	for (let i = 0; i < 1; ++i) {
+	for (let i = 0; i < numAgents; ++i) {
 		let colorObj = generator.next();
-		agents.push(new Agent(i+1, ...tempLoc, 1, 10, 10, false, colorObj.value.primary, colorObj.value.secondary));
+		agents.push(new Agent(i+1, ...tempLoc, dirs[Math.floor(Math.random() * dirs.length)], 0, 1, false, colorObj.value.primary, colorObj.value.secondary));
 	}
 
 	data.forEach(obj => {
@@ -416,7 +437,7 @@ $(document).ready(async () => {
 		x: 0, y: 0,
 		width: canvasWidth, height: canvasHeight
 	});
-	drawMap();
+	// drawMap();
 
 	// mark initial location with its step counter
 	/* for (const agent of agents) {
@@ -645,43 +666,40 @@ function loop() {
 			floodFill(agent);
 		}
 
-		/* for (const agent of agents) {
-			agent.updateLoc(agent.nextX, agent.nextY, agent.nextDir);
-		} */
 		++timeStep;
 
+		$('#numAgents').text(numAgents);
+		$('#curRun').text(curRun);
 		$('#timeSteps').text(timeStep);
 		$('#exploredCells').text(exploredCells);
 		$('#emptyCells').text(emptyCellCount);
 		$('#ninFiveMap').text(0.95 * emptyCellCount);
 		
-		/* if (timeStep >= rows * columns || exploredCells >= 0.95 * emptyCellCount) {
+		if (timeStep >= rows * columns || exploredCells >= 0.95 * emptyCellCount) {
 			pause = true;
 			clearInterval(timeout);
-			console.log('------------------------------------');
-			console.log(`Time steps: ${timeStep}`);
-			console.log(`Explored cells: ${exploredCells}`);
-			console.log(`Empty cells: ${emptyCellCount}`);
-			console.log(`95% of empty cells: ${0.95 * emptyCellCount}`);
-			console.log('------------------------------------');
+			// console.log('------------------------------------');
+			// console.log(`Time steps: ${timeStep}`);
+			// console.log(`Explored cells: ${exploredCells}`);
+			// console.log(`Empty cells: ${emptyCellCount}`);
+			// console.log(`95% of empty cells: ${0.95 * emptyCellCount}`);
+			// console.log('------------------------------------');
+
+			let results = localStorage.getItem('data');
+			if (results == null) results = [];
+			else results = JSON.parse(results);
+			let tempData = { numAgents: numAgents, curRun: curRun, timeSteps: timeStep, exploredCells: exploredCells };
+			results.push(tempData);
+			localStorage.setItem('data', JSON.stringify(results));
 
 			// to automate running and logging multiple runs
-			let runCount = sessionStorage.getItem('runCount');
-			if (!runCount) {
-				runCount = 1;
-				sessionStorage.setItem('runCount', runCount);
-			} else sessionStorage.setItem('runCount', ++runCount);
+			location.reload();
+			// return;
 
-			if (runCount < 31) {
-				location.reload();
-				return;
-			}
-
-			sessionStorage.setItem('runCount', 0);
-			alert(`Finished running ${runCount} simulations.`);
-		} */
+			// localStorage.setItem('curRun', 0);
+			// alert(`Finished running ${curRun} simulations.`);
+		}
 		refreshMap();
-		// updateScrollingPosition(agent0.x, agent0.y);
 		currentFrame = requestAnimationFrame(loop);
 	}
 }
@@ -697,14 +715,12 @@ async function initMaps(path) {
 		columns = data.dimensions[0].columns;
 		boxWidth = Math.floor(canvasWidth/rows);
 		boxHeight = Math.floor(canvasHeight/columns);
-		// boxWidth = canvasWidth/rows;
-		// boxHeight = canvasHeight/columns;
 
 		for (let x = 0; x < columns; ++x) {
 			grid.push([]);
 			for (let y = 0; y < rows; ++y) {
 				if (data.map[x * columns + y].isWall != "true") ++emptyCellCount;
-				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", stepMarking: 0 });
+				grid[x].push({ x: x, y: y, isWall: data.map[x * columns + y].isWall == "true", stepMarking: 0, putBy: 0 });
 			}
 		}
 	}).fail(() => {
@@ -720,7 +736,7 @@ function spawn(members, size) {
 
 function refreshMap() {
 	// spawn players
-	spawn(agents, 1);
+	// spawn(agents, 1);
 }
 
 function terminate() {
@@ -786,18 +802,18 @@ function randomWalk(agent) {
 }
 
 function floodFill(agent) {
-	if (++agent.currentTick < agent.speed) return;
-	agent.currentTick = 0;
+	// if (++agent.currentTick < agent.speed) return;
+	// agent.currentTick = 0;
 	
 	let neighbours = [
 		{ x: agent.x,     y: agent.y - 1, dir: 0 },	// top
-		// { x: agent.x + 1, y: agent.y - 1, dir: 1 },	// top right
+		{ x: agent.x + 1, y: agent.y - 1, dir: 1 },	// top right
 		{ x: agent.x + 1, y: agent.y    , dir: 2 },	// right
-		// { x: agent.x + 1, y: agent.y + 1, dir: 3 },	// bottom right
+		{ x: agent.x + 1, y: agent.y + 1, dir: 3 },	// bottom right
 		{ x: agent.x,     y: agent.y + 1, dir: 4 },	// bottom
-		// { x: agent.x - 1, y: agent.y + 1, dir: 5 },	// bottom left
+		{ x: agent.x - 1, y: agent.y + 1, dir: 5 },	// bottom left
 		{ x: agent.x - 1, y: agent.y    , dir: 6 },	// left
-		// { x: agent.x - 1, y: agent.y - 1, dir: 7 }	// top left
+		{ x: agent.x - 1, y: agent.y - 1, dir: 7 }	// top left
 	];
 	
 	neighbours = neighbours.filter(cell => (cell.x >= 0 && cell.x < grid.length) && (cell.y >= 0 && cell.y < grid[0].length) && (!grid[cell.x][cell.y].isWall));
@@ -810,20 +826,21 @@ function floodFill(agent) {
 		}
 	}
 	
-	$map.drawText({
+	/* $map.drawText({
 		fromCenter: true,
 		fillStyle: 'black',
 		x: agent.x * boxWidth + boxWidth/2, y: agent.y * boxHeight + boxHeight/2,
 		fontSize: boxWidth - 10,
 		fontFamily: 'Montserrat, sans-serif',
 		text: grid[agent.x][agent.y].stepMarking
-	});
+	}); */
 
 	agent.updateLoc(agent.nextX, agent.nextY, agent.nextDir);
 }
 
+// 95% moves in the same direction, 5% changes direction
 function moveUnmarked(agent, unmarkedCells) {
-	console.log("unmarked")
+	// console.log("unmarked")
 	let cellInFront = unmarkedCells.find(cell => cell.dir == agent.dir);
 	if (cellInFront && Math.random() < 0.95) {
 		// same direction
@@ -834,18 +851,23 @@ function moveUnmarked(agent, unmarkedCells) {
 		agent.nextX = randomDirCell.x, agent.nextY = randomDirCell.y, agent.nextDir = randomDirCell.dir;
 	}
 
-	$map.drawRect({
+	/* $map.drawRect({
 		fillStyle: agent.lightColor,
 		x: agent.x * boxWidth + 1, y: agent.y * boxHeight + 1,
 		width: boxWidth - 2, height: boxHeight - 2
-	});
+	}); */
 
-	if (grid[agent.x][agent.y].stepMarking <= 0) grid[agent.x][agent.y].stepMarking = agent.stepCount++;
-	++exploredCells;
+	if (grid[agent.x][agent.y].stepMarking <= 0) {
+		grid[agent.x][agent.y].stepMarking = agent.stepCount++;
+		grid[agent.x][agent.y].putBy = agent.id;
+		++exploredCells;
+	}
 }
 
+// 95% moves to the highest marked cell whose step count is lower than the current cell's step count
+// 5% moves to a random cell
 function moveMarked(agent, neighbours) {
-	console.log("marked")
+	// console.log("marked")
 	let highestMarkedCell = findHighestMarkedCell(neighbours.filter(cell => /* cell.x != agent.prevX && cell.y != agent.prevY &&*/ grid[cell.x][cell.y].stepMarking < grid[agent.x][agent.y].stepMarking));
 	if (highestMarkedCell && Math.random() < 0.95) {
 		// pick highest marked cell
@@ -857,16 +879,20 @@ function moveMarked(agent, neighbours) {
 		agent.nextX = randomMarkedCell.x, agent.nextY = randomMarkedCell.y, agent.nextDir = randomMarkedCell.dir;
 	}
 	
-	$map.drawRect({
+	/* $map.drawRect({
 		fillStyle: agent.lightColor,
 		x: agent.x * boxWidth + 1, y: agent.y * boxHeight + 1,
 		width: boxWidth - 2, height: boxHeight - 2
-	});
+	}); */
 
 	if (grid[agent.x][agent.y].stepMarking <= 0) {
-		grid[agent.x][agent.y].stepMarking = ++agent.stepCount;
+		grid[agent.x][agent.y].stepMarking = agent.stepCount++;
+		grid[agent.x][agent.y].putBy = agent.id;
 		++exploredCells;
-	} else if (grid[agent.x][agent.y].stepMarking > agent.stepCount) grid[agent.x][agent.y].stepMarking = agent.stepCount;
+	} else if (grid[agent.x][agent.y].stepMarking > agent.stepCount) {
+		grid[agent.x][agent.y].stepMarking = agent.stepCount;
+		grid[agent.x][agent.y].putBy = agent.id;
+	}
 }
 
 function findHighestMarkedCell(cells) {
@@ -902,7 +928,7 @@ function getRandomLoc(grid) {
 	do {
 		x = Math.floor(Math.random() * grid.length);
 		y = Math.floor(Math.random() * grid[x].length);
-	} while (grid[x][y].isWall/*  || getNeighbours(x, y).filter(cell => grid[cell.x][cell.y].isWall).length <= 0 */);
+	} while (grid[x][y].isWall || getNeighbours(x, y).filter(cell => grid[cell.x][cell.y].isWall).length <= 0);
 	return [x, y];
 }
 
@@ -928,7 +954,8 @@ $map.on('click', e => {
 
 	let cellX = Math.floor(x / boxWidth);
 	let cellY = Math.floor(y / boxHeight);
-	console.log(`x: ${cellX}, y: ${cellY}, stepMarking: ${grid[cellX][cellY].stepMarking}`);
+	// console.log(`x: ${cellX}, y: ${cellY}, stepMarking: ${grid[cellX][cellY].stepMarking}`);
+	console.log(grid[cellX][cellY]);
 	// console.log(`realX: ${cellX * boxWidth}, realY: ${cellY * boxHeight} - (${cellX}, ${cellY})`)
 })
 

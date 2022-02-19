@@ -701,7 +701,7 @@ nav {
 	width: 97vh;
 	height: 97vh;
 	margin-left: 1em;
-	overflow: hidden;
+	overflow: scroll;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 	border-radius: 7px;
 	/* background-color: white; */
