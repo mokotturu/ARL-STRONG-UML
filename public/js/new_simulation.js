@@ -2,17 +2,8 @@ const $mapContainer = $('#map-container');
 const $map = $('#map');
 var context = $map[0].getContext('2d', { alpha: false });
 const $timer = $('#timer');
-const $detailsModal = $('#exploration-details-modal');
-const $trustConfirmModal = $('#trust-confirm-modal');
-
-const $endRoundModal = $('#endRoundQContainer');
-
-const $trustCueModal = $('#trust-cue-modal');
 
 const $minimapImage = $('#minimap');
-const $humanImage = $('#human-image');
-const $botImage = $('#bot-image');
-const $log = $('.tableItems');
 const $dropdown = $('#maps');
 const $progressbar = $('.background');
 const $agentText = $('.agent-text');
@@ -22,7 +13,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'No TCC Base Game';
+const gameMode = 'Fernando\'s Game';
 
 const colors = {
 	human: '#3333ff',
@@ -44,18 +35,17 @@ const colors = {
 
 var grid;
 var uuid;
-var data = [{ movement: [], human: [], agents: [] }, { movement: [], human: [], agents: [], endGame: [] }];
 var obstacles = { victims: [], hazards: [], targets: [] };
 var mapPaths = [
-	'src/data9.min.json',	//  0
-	'src/data9.min.json',	//  1
-	'src/data9.min.json',	//  2
-	'src/data9.min.json',	//  3
-	'src/data9.min.json',	//  4
-	'src/data9.min.json',	//  5
-	'src/data9.min.json',	//  6
-	'src/data9.min.json',	//  7
-	'src/data9.min.json',	//  8
+	'src/data0.min.json',	//  0
+	'src/data1.min.json',	//  1
+	'src/data2.min.json',	//  2
+	'src/data3.min.json',	//  3
+	'src/data4.min.json',	//  4
+	'src/data5.min.json',	//  5
+	'src/data6.min.json',	//  6
+	'src/data7.min.json',	//  7
+	'src/data8.min.json',	//  8
 	'src/data9.min.json',	//  9
 	'src/data10.min.json',	// 10
 	'src/data11.min.json',	// 11
@@ -63,82 +53,25 @@ var mapPaths = [
 	'src/data13.min.json',	// 13
 	'src/data14.min.json'	// 14
 ];
-var obstacleLocs = [
-	[
-		[222, 348],
-	],
-	[
-		[232, 338],
-	]
-];
 
-var fakeBotImageScales = [
-	{ left:  96, right: 192, top: 158, bottom: 242 },
-	{ left:  96, right: 319, top: 201, bottom: 349 },
-	{ left: 166, right: 369, top: 345, bottom: 414 },
-	{ left: 272, right: 369, top: 207, bottom: 483 },
-	{ left: 281, right: 381, top:  49, bottom: 208 },
-	{ left: 281, right: 431, top:  92, bottom: 330 },
-	{ left: 331, right: 435, top: 264, bottom: 374 },
-	{ left:  96, right: 192, top: 158, bottom: 242 },
-	{ left:  96, right: 319, top: 201, bottom: 349 },
-	{ left: 166, right: 369, top: 345, bottom: 414 }
-];
-
-var fakeAgentScores = [
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -300, positive: 1, negative: 4 },
-	{ score: -100, positive: 1, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -100, positive: 0, negative: 1 },
-	{ score: -200, positive: 0, negative: 2 },
-	{ score: -100, positive: 2, negative: 3 },
-	{ score: -100, positive: 1, negative: 2 }
-];
-
-var fakeAgentNum = 0;
 var pathIndex = 10;
 var currentPath = mapPaths[pathIndex];
 var currentFrame;
 
-var initialTimeStamp = 0, finalTimeStamp = 0;
-
 var human, agent1;
 var agents = [];
-var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, currHumanScore = 0, currAgentScore = 0;
 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
-var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
 var intervalCount = 0, half = 0, intervals = 10, duration = 40, agentNum = 1;
-var log = [[], []];
-
-var victimMarker = new Image();
-var hazardMarker = new Image();
-victimMarker.src = 'img/victim-marker-big.png';
-hazardMarker.src = 'img/hazard-marker-big.png';
-
-/* Trust cue messages to add to the game below.
-   Note: Not all rounds in the game will need a trust cue message.
-   Leave blank strings for rounds which do not need a trust cue. 
-   This behavior of selecting trust cue messages may change in later versions of the game.
-*/
-
-
-const c1_m1 = "I am sorry, I was having difficulty identifying the correct target. I will do better next round.";
-
-const c2_m2 = "I am sorry, I am still having trouble with identification. Let me try something different to see if that will help."
-
-const trustCues = ["X", "X", c1_m1, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, c2_m2, "X"];
-
 
 class Player {
 	constructor (x, y, dir, fovSize) {
 		this.id = 'human';
 		this.x = x;
 		this.y = y;
+		this.lastX = x;
+		this.lastY = y;
 		this.dir = dir;
 		this.darkColor = colors.human;
 		this.lightColor = colors.lightHuman;
@@ -152,12 +85,15 @@ class Player {
 	spawn(size) {
 		$map.drawRect({
 			fillStyle: this.darkColor,
-			x: this.x * boxWidth, y: this.y * boxHeight,
+			x: this.x * boxWidth + 1, y: this.y * boxHeight + 1,
 			width: (boxWidth - 1) * size, height: (boxHeight - 1) * size
 		});
 
-		let tracker = { x: this.x, y: this.y, t: Math.round((performance.now()/1000) * 100)/100 };
-		data[half].human.push(tracker);
+		$map.drawRect({
+			fillStyle: this.lightColor,
+			x: this.lastX * boxWidth + 1, y: this.lastY * boxHeight + 1,
+			width: (boxWidth - 1) * size, height: (boxHeight - 1) * size
+		});
 	}
 
 	drawCells(cells, shouldAdd) {
@@ -262,6 +198,8 @@ class Agent extends Player {
 	}
 
 	updateLoc(x, y) {
+		this.lastX = this.x;
+		this.lastY = this.y;
 		this.x = x;
 		this.y = y;
 	}
@@ -276,9 +214,6 @@ class Agent extends Player {
 			fontFamily: 'Montserrat, sans-serif',
 			text: this.id
 		});
-
-		let tracker = { x: this.x, y: this.y, t: Math.round((performance.now()/1000) * 100)/100 };
-		data[half].agents[this.id - 1].push(tracker);
 	}
 
 	drawCells(cells) {
@@ -375,47 +310,54 @@ class Obstacle {
 $(document).ready(async () => {
 	// if on small screen
 	if (window.location.pathname != '/mobile' && window.innerWidth < 1000) window.location.href = '/mobile';
-	
-	// if not uuid
-	if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
 
 	if (localStorage.getItem('devMode') == 'true') duration = 5;
 
 	startTime = new Date();
-	uuid = sessionStorage.getItem('uuid');
 
 	$('.body-container').css('visibility', 'hidden');
 	$('.body-container').css('opacity', '0');
 	$('.loader').css('visibility', 'visible');
 	$('.loader').css('opacity', '1');
 
-	human = new Player(232, 348, 1, 10);
-	data.forEach(obj => {
-		obj.agents.push([], []);
-	});
-	
+	// human = new Player(232, 348, 1, 10);
+
+
+	/************** initialize agent here ***************/
+	/**
+	 * for example:
+	 * 
+	 * let agent = new Agent(id, x , y, dir, speed, fovSize, shouldCalcFOV, lightColor, darkColor)
+	 * 
+	 * id:	integer > 0
+	 * x:	integer within map bounds (this is a 500x500 map so min is 0 and max is 499)
+	 * y:	integer within map bounds (this is a 500x500 map so min is 0 and max is 499)
+	 * dir: integer between 0 and 7
+	 * 
+	 * 7   0   1
+	 *   \ | /
+	 * 6 - A - 2
+	 *   / | \
+	 * 5   4   3
+	 * 
+	 * speed:			integer (lower = faster; I typically leave it at 0 for fastest and increase it
+	 * 					to monitor agents' behaviour in slow motion
+	 * fovSize:			radius of fov (0 in this case)
+	 * shoudlCalcFov:	boolean (false in this case)
+	 * lightColor:		any hex value as a string - used to highlight the agent's path
+	 * darkColor:		any hex value as a string - used to highlight the agent's current location
+	 */
+
 	await initMaps(currentPath);
+	let agent = new Agent(1, ...getRandomLoc(grid), 1, 10, 0, false, colors.lightAgent, colors.agent);
+	agents.push(agent);	// agents is a global array that holds all the agents in action
+	
 	// initialize the canvas with a plain grey background
 	$map.drawRect({
 		fillStyle: '#252525',
 		x: 0, y: 0,
 		width: canvasWidth, height: canvasHeight
 	});
-
-	for (let i = 0; i < obstacleLocs[0].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goodTarget, 'positive', 100));
-	}
-
-	for (let i = 0; i < obstacleLocs[1].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.badTarget, 'negative', -100));
-	}
-
-	for (let i = 0; i < 20; ++i) {
-		let tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goodTarget, 'positive', 100));
-		tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.badTarget, 'negative', -100));
-	}
 
 	$('.loader').css('visibility', 'hidden');
 	$('.body-container').css('visibility', 'visible');
@@ -432,30 +374,22 @@ $(document).ready(async () => {
 		}
 	});
 
-	updateScrollingPosition(human.x, human.y);
+	drawMap();
+
+	updateScrollingPosition(agents[0].x, agents[0].y);
 	timeout = setInterval(updateTime, 1000);
 
-	currentFrame = requestAnimationFrame(loop);
-	// currentFrame = setInterval(loop, 100);
+	currentFrame = requestAnimationFrame(loop);	// request a new frame and pass loop function
 });
 
 function updateTime() {
-	if (++seconds % duration == 0) {
-		seconds = 0;
-		agentNum = 1;
-		pause = true;
-		clearInterval(timeout);
-		// showExploredInfo();
-		showTrustPrompt();
-	}
 	$timer.text(`Time elapsed: ${seconds}s`);
 }
 
 // game loop
 function loop() {
 	if (!pause) {
-		if (intervalCount >= intervals) preTerminationPrompt();
-		refreshMap();
+		refreshMap();	// takes care of calculating next steps and rendering the new content
 		currentFrame = requestAnimationFrame(loop);
 	}
 }
@@ -480,436 +414,41 @@ async function initMaps(path) {
 	});
 }
 
-function spawn(members, size) {
+function drawMap() {
+	for (const column of grid) {
+		for (const rowCell of column) {
+			if (rowCell.isWall) {
+				$map.drawRect({
+					fillStyle: colors.wall,
+					x: (rowCell.x)*boxWidth + 1, y: (rowCell.y)*boxHeight + 1,
+					width: boxWidth - 1, height: boxHeight - 1
+				});
+			} else {
+				$map.drawRect({
+					fillStyle: 'white',
+					x: (rowCell.x)*boxWidth + 1, y: (rowCell.y)*boxHeight + 1,
+					width: boxWidth - 1, height: boxHeight - 1
+				});
+			}
+		}
+	}
+}
+
+function spawn(members, size = 1) {
 	members.forEach(member => {
 		member.spawn(size);
 	});
 }
 
 function refreshMap() {
-	// compute human FOV
-	let fov = new Set(getFOV(human));
-	human.drawCells(fov);
-
-	// compute agent FOV
-	for (const agent of agents) {
-		if (agent.shouldCalcFOV) {
-			fov = new Set(getFOV(agent));
-			agent.drawCells(fov);
-		}
-	}
-
 	// spawn players
-	spawn([...obstacles.targets, human/* , ...agents */], 1);
-}
-
-function preTerminationPrompt() {
-	// end game
-	pause = true;
-	clearInterval(timeout);
-	$(document).off();
-	cancelAnimationFrame(currentFrame);
-
-	// show survey
-	$('#endGameQContainer').css('display', 'flex');
-	$('#endGameQContainer').css('visibility', 'visible');
-	$('#endGameQContainer').css('opacity', '1');
-}
-
-function terminate() {
-	// data.endGame = $('#endGameSurvey').serializeArray();
-	let endGameData = $('#endGameSurvey').serializeArray();
-	if (endGameData.length != 2) {
-		console.error('All fields are required.')
-		$('#endGameSurveyRQMsg').css('display', 'initial');
-		return;
-	}
-	data.endGame = endGameData;
-	
-	$('.body-container').css('visibility', 'hidden');
-	$('.body-container').css('opacity', '0');
-	$('.loader').css('visibility', 'visible');
-	$('.loader').css('opacity', '1');
-	sessionStorage.setItem('finishedGame', true);
-
-	$.ajax({
-		url: "/simulation/2",
-		type: "POST",
-		data: JSON.stringify({
-			uuid: uuid,
-			movement: data[half].movement,
-			humanTraversal: data[half].human,
-			agent1Traversal: [],
-			agent2Traversal: [],
-			humanExplored: [...human.explored].filter(cell => !cell.isWall),
-			agent1Explored: [],
-			agent2Explored: [],
-			obstacles: obstacles,
-			decisions: { agent1: log[0], agent2: log[1] },
-			endGame: data.endGame
-		}),
-		contentType: "application/json; charset=utf-8",
-		success: (data, status, jqXHR) => {
-			console.log(data, status, jqXHR);
-			window.location.href = "/survey-1";
-		},
-		error: (jqXHR, status, err) => {
-			console.log(jqXHR, status, err);
-			alert(err);
-		}
+	// @params: 
+	// - array of objects to be drawn
+	// - size scale
+	agents.forEach(agent => {
+		randomWalk(agent);
 	});
-}
-
-function showTrustPrompt() {
-	$(document).off();
-	cancelAnimationFrame(currentFrame);
-	// clearInterval(currentFrame);
-
-	if (agentNum == 1) {
-		$map.clearCanvas();
-		human.drawCells(human.tempExplored, false);
-		spawn([...human.tempTargetsFound.positive, ...human.tempTargetsFound.negative, human], 1);
-		$humanImage.attr("src", $map.getCanvasImage());
-		$botImage.attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
-		$minimapImage.attr("src", $map.getCanvasImage());
-		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
-	}
-
-	// updateTrustMessage();
-
-	$trustConfirmModal.css('display', 'flex');
-	$trustConfirmModal.css('visibility', 'visible');
-	$trustConfirmModal.css('opacity', '1');
-
-	initialTimeStamp = performance.now();
-}
-
-function showPostIntegratePrompt(){
-	$('#intervalSurvey')[0].reset();
-	$('#decisionInfluenceText').css('display', 'none');
-	$('#decisionInfluenceText').val('');
-	$endRoundModal.css('display', 'flex');
-	$endRoundModal.css('visibility', 'visible');
-	$endRoundModal.css('opacity', '1');
-	setTimeout(() => { $endRoundModal.scrollTop(-10000) }, 500);
-}
-
-function showExploredInfo() {
-	currHumanScore = human.tempTargetsFound.positive.length * 100 - human.tempTargetsFound.negative.length * 100;
-	// currAgentScore = fakeAgentScores[fakeAgentNum].score;
-	let tempCurrAgentScore = fakeAgentScores[fakeAgentNum].score;
-	totalHumanScore += currHumanScore;
-	totalAgentScore += currAgentScore;
-	teamScore += currHumanScore + currAgentScore;
-	$('#teamScoreMain').text(`Team Score: ${teamScore} points`);
-
-	drawMarkers([...obstacles.victims, ...obstacles.hazards]);
-
-	$detailsModal.css('display', 'flex');
-	$detailsModal.css('visibility', 'visible');
-	$detailsModal.css('opacity', '1');
-
-	$log.empty();
-
-	$agentText.toggleClass(`agent${agentNum - 1}`, false);
-	$agentText.toggleClass(`agent${agentNum + 1}`, false);
-	$agentText.toggleClass(`agent${agentNum}`, true);
-	$('#agentTargetsFound').text(`positive: ${fakeAgentScores[fakeAgentNum].blue}, Yellow:  ${fakeAgentScores[fakeAgentNum++].yellow}`);
-	$('#humanTargetsFound').text(`Blue: ${human.tempTargetsFound.blue}, Yellow:  ${human.tempTargetsFound.yellow}`);
-
-	if (log[agentNum - 1][intervalCount - 1].trusted) {
-		if (currAgentScore > 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-		else if (currAgentScore < 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-		else $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-	} else {
-		if (currAgentScore > 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}>trending_flat</span>`);
-		else if (currAgentScore < 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-		else $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-	}
-
-	
-	if (currHumanScore > 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-	else if (currHumanScore < 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-
-	$('#agentOverall').text(totalAgentScore);
-	$('#humanOverall').text(totalHumanScore);
-	if (teamScore > tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-	else if (teamScore < tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.yellowTarget}">trending_flat</span>`);
-
-	tempTeamScore = teamScore;
-	if (log[agentNum - 1][intervalCount - 1] != null) {
-		log[agentNum - 1].forEach((data, i) => {
-			if (data.trusted) {
-				$log.append(`<p style='background-color: ${colors.lightAgent1};'>Interval ${i + 1}: Integrated</p>`);
-			} else {
-				$log.append(`<p style='background-color: ${colors.lightAgent};'>Interval ${i + 1}: Discarded</p>`);
-			}
-		});
-	}
-
-	getSetBoundaries(human.tempExplored, 0);
-	fakeGetSetBoundaries();
-	scaleImages();
-
-	setTimeout(() => { $detailsModal.scrollTop(-10000) }, 500);
-	setTimeout(() => { $log.scrollLeft(10000) }, 500);
-
-	/*Adding updated star display messages*/
-
-	updateResults();
-}
-
-//Update the display for star count for targets on the results display
-function updateResults(){
-	let tempString = ' ';
-	for (let i = 0; i < human.tempTargetsFound.positive.length; i++){
-		tempString+= `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
-	}
-	$("div.hBlueStar").html(tempString);
-
-	tempString = ' ';
-	for (let j = 0; j < human.tempTargetsFound.negative.length; j++){
-		tempString+= `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
-	}
-	$("div.hYellowStar").html(tempString);
-
-	tempString = ' '; 
-	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].positive; k++){
-		tempString+= `<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>`;
-	}
-	$("div.aBlueStar").html(tempString);
-
-	tempString = ' ';
-	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].negative; l++){
-		tempString+= `<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>`;
-	}
-	$("div.aYellowStar").html(tempString);
-
-	/* tempString = ' ';
-
-	let totBlue = human.tempTargetsFound.blue + fakeAgentScores[fakeAgentNum - 1].blue;
-
-	let totYellow = human.tempTargetsFound.yellow + fakeAgentScores[fakeAgentNum - 1].yellow;
-
-	for (let m = 0; m < totBlue; m++){
-		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
-	}
-
-	$("div.oBlueStar").html(tempString);
-
-	tempString = ' ';
-
-	for (let n = 0; n < totYellow; n++){
-		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
-	}
-
-	$("div.oYellowStar").html(tempString); */
-
-	if (currHumanScore + currAgentScore >= 0) {
-		$('#currTeamPositive').css('width', `${(currHumanScore + currAgentScore)/100 * 8}`);
-		$('#currTeamScorePositive').text(`${currHumanScore + currAgentScore} pts`);
-		$('#currTeamNegative').css('width', `0`);
-		$('#currTeamScoreNegative').text(``);
-	} else {
-		$('#currTeamNegative').css('width', `${Math.abs((currHumanScore + currAgentScore)/100 * 8)}`);
-		$('#currTeamScoreNegative').text(`${currHumanScore + currAgentScore} pts`);
-		$('#currTeamPositive').css('width', `0`);
-		$('#currTeamScorePositive').text(``);
-	}
-
-	if (teamScore >= 0) {
-		$('#overallPositive').css('width', `${teamScore/100 * 8}`);
-		$('#overallScorePositive').text(`${teamScore} pts`);
-		$('#overallNegative').css('width', `0`);
-		$('#overallScoreNegative').text(``);
-	} else {
-		$('#overallNegative').css('width', `${Math.abs(teamScore/100 * 8)}`);
-		$('#overallScoreNegative').text(`${teamScore} pts`);
-		$('#overallPositive').css('width', `0`);
-		$('#overallScorePositive').text(``);
-	}
-
-	if (currHumanScore >= 0) {
-		$('#humanPositive').css('width', `${currHumanScore/100 * 8}`);
-		$('#humanScorePositive').text(`${currHumanScore} pts`);
-		$('#humanNegative').css('width', `0`);
-		$('#humanScoreNegative').text(``);
-	} else {
-		$('#humanNegative').css('width', `${Math.abs(currHumanScore/100 * 8)}`);
-		$('#humanScoreNegative').text(`${currHumanScore} pts`);
-		$('#humanPositive').css('width', `0`);
-		$('#humanScorePositive').text(``);
-	}
-
-	if (fakeAgentScores[fakeAgentNum - 1].score >= 0) {
-		$('#agentPositive').css('width', `${fakeAgentScores[fakeAgentNum - 1].score/100 * 8}`);
-		$('#agentScorePositive').text(`${fakeAgentScores[fakeAgentNum - 1].score} pts`);
-		$('#agentNegative').css('width', `0`);
-		$('#agentScoreNegative').text(``);
-	} else {
-		$('#agentNegative').css('width', `${Math.abs(fakeAgentScores[fakeAgentNum - 1].score/100 * 8)}`);
-		$('#agentScoreNegative').text(`${fakeAgentScores[fakeAgentNum - 1].score} pts`);
-		$('#agentPositive').css('width', `0`);
-		$('#agentScorePositive').text(``);
-	}
-}
-
-function updateTrustMessage(){
-
-	if (trustCues[intervalCount] != "X"){
-
-	let cueMessage = '<h2 id="trustConfirmQuestion" style="color: white;font-size: 20px;">' + trustCues[intervalCount] +'</h2>';
-	
-	$("div.trustCueMessage").html(cueMessage);
-
-	$trustCueModal.css('visibility', 'visible');
-	$trustCueModal.css('display', 'flex');
-	$trustCueModal.css('opacity', '1');
-	$trustCueModal.css('z-index','999');
-
-	}
-
-	else if (trustCues[intervalCount] == "X"){
-		$trustCueModal.css('visibility', 'hidden');
-		$trustCueModal.css('display', 'none');
-		$trustCueModal.css('opacity', '0');
-	}
-
-}
-
-function hideTrustMessage(){
-	$trustCueModal.css('visibility', 'hidden');
-	$trustCueModal.css('display', 'none');
-	$trustCueModal.css('opacity', '0');
-}
-
-function confirmExploration() {
-	finalTimeStamp = performance.now();
-	++intervalCount;
-	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
-	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
-	currAgentScore = fakeAgentScores[fakeAgentNum].score;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: 1, timeTaken: finalTimeStamp - initialTimeStamp, humanPosTargetsCollected: human.tempTargetsFound.positive.length, humanNegTargetsCollected: human.tempTargetsFound.negative.length });
-	initialTimeStamp = 0, finalTimeStamp = 0;
-
-	$trustConfirmModal.css('visibility', 'hidden');
-	$trustConfirmModal.css('display', 'none');
-	$trustConfirmModal.css('opacity', '0');
-
-	showExploredInfo();
-}
-
-function undoExploration() {
-	finalTimeStamp = performance.now();
-	++intervalCount;
-	human.totalTargetsFound.positive.push(...human.tempTargetsFound.positive);
-	human.totalTargetsFound.negative.push(...human.tempTargetsFound.negative);
-	currAgentScore = 0;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: 0, timeTaken: finalTimeStamp - initialTimeStamp, humanPosTargetsCollected: human.tempTargetsFound.positive.length, humanNegTargetsCollected: human.tempTargetsFound.negative.length });
-	initialTimeStamp = 0, finalTimeStamp = 0;
-	for (const agent of agents) {
-		agent.tempExplored.forEach(cell => {
-			grid[cell.x][cell.y].isTempAgentExplored = false;
-		});
-	}
-
-	$trustConfirmModal.css('visibility', 'hidden');
-	$trustConfirmModal.css('display', 'none');
-	$trustConfirmModal.css('opacity', '0');
-
-	showExploredInfo();
-}
-
-// redraw the map and hide pop-up
-function hideExploredInfo() {
-	// log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
-	$('#intervalSurveyRQMsg').css('display', 'none');
-	let rawIntervalSurveyData = $('#intervalSurvey').serializeArray();
-	/* console.log(intervalSurveyData)
-	if (intervalSurveyData[0].name != 'performanceRating' || intervalSurveyData[1].name != 'teammateRating' || intervalSurveyData[2].name != 'decisionInfluence' || (intervalSurveyData[2].value == '5'  && intervalSurveyData[3].value == '')) {
-		console.error('This field is required.')
-		$endRoundModal.scrollTop(-10000);
-		$('#intervalSurveyRQMsg').css('display', 'initial');
-		return;
-	} */
-
-	let updatedIntervalSurveyData = [
-		rawIntervalSurveyData.find(data => data.name == 'performanceRating')     || { name: 'performanceRating',     value: '' },
-		rawIntervalSurveyData.find(data => data.name == 'teammateRating')        || { name: 'teammateRating',        value: '' },
-		rawIntervalSurveyData.find(data => data.name == 'decisionInfluence')     || { name: 'decisionInfluence',     value: '' },
-		rawIntervalSurveyData.find(data => data.name == 'decisionInfluenceText') || { name: 'decisionInfluenceText', value: '' }
-	];
-	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = updatedIntervalSurveyData;
-
-	if (agentNum < agents.length) {
-		// agents[agentNum - 1].tempTargetsFound.positive = 0;
-		// agents[agentNum - 1].tempTargetsFound.negative = 0;
-		++agentNum;
-		showExploredInfo();
-		return;
-	}
-
-	// agents[agentNum - 1].tempTargetsFound.positive = 0;
-	// agents[agentNum - 1].tempTargetsFound.negative = 0;
-	human.tempTargetsFound.positive = [];
-	human.tempTargetsFound.negative = [];
-
-	if (intervalCount == Math.floor(intervals / 2)) {
-		$.ajax({
-			url: "/simulation/1",
-			type: "POST",
-			data: JSON.stringify({
-				uuid: uuid,
-				map: pathIndex,
-				gameMode: gameMode,
-				movement: data[half].movement,
-				humanTraversal: data[half].human,
-				agent1Traversal: [],
-				agent2Traversal: [],
-				failedTutorial: localStorage.getItem('failedTutorial')
-			}),
-			contentType: "application/json; charset=utf-8"
-		});
-		++half;
-	}
-
-	$map.clearCanvas();
-	$map.drawRect({
-		fillStyle: '#252525',
-		x: 0, y: 0,
-		width: canvasWidth, height: canvasHeight
-	});
-
-	human.explored = union(human.explored, human.tempExplored);
-	human.tempExplored.clear();
-	human.drawCells(human.explored, false);
-	for (const agent of agents) {
-		agent.drawCells(agent.explored);
-		agent.tempExplored.clear();
-	}
-	
-	refreshMap();
-
-	$(document).on('keydown', e => {
-		eventKeyHandlers(e);
-	});
-
-	$endRoundModal.css('visibility', 'hidden');
-	$endRoundModal.css('display', 'none');
-	$endRoundModal.css('opacity', '0');
-
-	$detailsModal.css('visibility', 'hidden');
-	$detailsModal.css('display', 'none');
-	$detailsModal.css('opacity', '0');
-	$progressbar.css('width', `${Math.round(intervalCount*100/intervals)}%`);
-	$progressbar.html(`<p>${Math.round(intervalCount*100/intervals)}%</p>`);
-	clearInterval(timeout);
-	timeout = setInterval(updateTime, 1000);
-	pause = false;
-	// currentFrame = setInterval(loop, 100);
-	currentFrame = requestAnimationFrame(loop);
+	spawn(agents, 1);
 }
 
 // divides the square field of view around the human/agent into 4 distinct "quadrants"
@@ -1223,14 +762,10 @@ function eventKeyHandlers(e) {
 				e.preventDefault();
 				human.moveDown();
 				break;
-			case 32:	// space bar
-				e.preventDefault();
-				human.pickTarget();
-				break;
 			case 49:	// 1
 				e.preventDefault();
 				// data[half].movement.push({ key: e.key, t: Math.round((performance.now()/1000) * 100)/100 });
-				updateScrollingPosition(agent1.x, agent1.y);
+				updateScrollingPosition(agents[0].x, agents[0].y);
 				break;
 			case 50:	// 2
 				e.preventDefault();
@@ -1246,6 +781,7 @@ function eventKeyHandlers(e) {
 function randomWalk(agent) {
 	if (++agent.currentTick < agent.speed) return;
 	agent.currentTick = 0;
+
 	let dx, dy;
 	do {
 		switch (Math.floor(Math.random() * 4) + 1) {
@@ -1264,10 +800,15 @@ function randomWalk(agent) {
 		}
 	} while (grid[agent.x + dx][agent.y + dy].isWall);
 
-	agent.x += dx;
-	agent.y += dy;
+	// agent.x += dx;
+	// agent.y += dy;
+
+	// use updateLoc to update the agent's current position and store the previous location in its memory
+	agent.updateLoc(agent.x + dx, agent.y + dy);
 }
 
+// make the agent move given a set path
+// this path is provided in a separate JSON file
 function moveAgent(agent) {
 	agent.drawCells([grid[agent.traversal[agent.stepCount - 1].loc.x][agent.traversal[agent.stepCount - 1].loc.y]]);
 	agent.updateLoc(agent.traversal[agent.stepCount].loc.x, agent.traversal[agent.stepCount++].loc.y);
@@ -1316,99 +857,6 @@ function moveAgent(agent) {
 	agent.drawCells([...fovToDraw]);
 }
 
-function drawMarkers(members) {
-	members.forEach(member => {
-		if (member.id == "victim" && member.isFound) {
-			$map.drawImage({
-				source: 'img/victim-marker-big.png',
-				x: grid[member.loc].x*boxWidth + boxWidth/2 - victimMarker.width/2, y: grid[member.loc].y*boxHeight + boxHeight/2 - victimMarker.height
-			});
-		} else if (member.id == "hazard" && member.isFound) {
-			$map.drawImage({
-				source: 'img/hazard-marker-big.png',
-				x: grid[member.loc].x*boxWidth + boxWidth/2 - victimMarker.width/2, y: grid[member.loc].y*boxHeight + boxHeight/2 - victimMarker.height
-			});
-		}
-	});
-}
-
-function fakeGetSetBoundaries() {
-	botLeft = fakeBotImageScales[intervalCount - 1].left;
-	botRight = fakeBotImageScales[intervalCount - 1].right;
-	botTop = fakeBotImageScales[intervalCount - 1].top;
-	botBottom = fakeBotImageScales[intervalCount - 1].bottom;
-}
-
-// 0 - human, 1 - bot
-function getSetBoundaries(thisSet, who) {
-	if (who == 1) {
-		let setIterator = thisSet.values();
-		let firstElement = setIterator.next().value;
-		botLeft = firstElement.x;
-		botRight = firstElement.x;
-		botTop = firstElement.y;
-		botBottom = firstElement.y;
-
-		for (let i = setIterator.next().value; i != null; i = setIterator.next().value) {
-			if (i.x < botLeft) botLeft = i.x;
-			if (i.x > botRight) botRight = i.x;
-			if (i.y < botTop) botTop = i.y;
-			if (i.y > botBottom) botBottom = i.y;
-		}
-	} else {
-		let setIterator = thisSet.values();
-		let firstElement = setIterator.next().value;
-		humanLeft = firstElement.x;
-		humanRight = firstElement.x;
-		humanTop = firstElement.y;
-		humanBottom = firstElement.y;
-
-		if (humanLeft == null) humanLeft = firstElement.x;
-		if (humanRight == null) humanRight = firstElement.x;
-		if (humanTop == null) humanTop = firstElement.y;
-		if (humanBottom == null) humanBottom = firstElement.y;
-
-		for (let i = setIterator.next().value; i != null; i = setIterator.next().value) {
-			if (i.x < humanLeft) humanLeft = i.x;
-			if (i.x > humanRight) humanRight = i.x;
-			if (i.y < humanTop) humanTop = i.y;
-			if (i.y > humanBottom) humanBottom = i.y;
-		}
-	}
-}
-
-function scaleImages() {
-	let botWidth = columns/(botRight - botLeft + 5) * 100;
-	let botHeight = rows/(botBottom - botTop + 5) * 100;
-	let humanWidth = columns/(humanRight - humanLeft + 5) * 100;
-	let humanHeight = rows/(humanBottom - humanTop + 5) * 100;
-
-	botWidth = (botWidth < 100) ? 100 : botWidth;
-	botHeight = (botHeight < 100) ? 100 : botHeight;
-
-	humanWidth = (humanWidth < 100) ? 100 : humanWidth;
-	humanHeight = (humanHeight < 100) ? 100 : humanHeight;
-
-	if (botWidth > botHeight) {
-		$botImage.attr("width", botHeight + "%");
-		$botImage.attr("height", botHeight + "%");
-	} else {
-		$botImage.attr("width", botWidth + "%");
-		$botImage.attr("height", botWidth + "%");
-	}
-
-	if (humanWidth > humanHeight) {
-		$humanImage.attr("width", humanHeight + "%");
-		$humanImage.attr("height", humanHeight + "%");
-	} else {
-		$humanImage.attr("width", humanWidth + "%");
-		$humanImage.attr("height", humanWidth + "%");
-	}
-	
-	$botImage.parent()[0].scroll((botLeft + (botRight - botLeft + 1)/2)*($botImage.width()/columns) - $('.explored').width()/2, ((botTop + (botBottom - botTop + 1)/2)*($botImage.height()/rows)) - $('.explored').height()/2);
-	$humanImage.parent()[0].scroll((humanLeft + (humanRight - humanLeft + 1)/2)*($humanImage.width()/columns) - $('.explored').width()/2, ((humanTop + (humanBottom - humanTop + 1)/2)*($humanImage.height()/rows)) - $('.explored').height()/2);
-}
-
 function updateScrollingPosition(x, y) {
 	$mapContainer[0].scroll(x * boxWidth - $mapContainer.width()/2, y * boxHeight - $mapContainer.height()/2);
 }
@@ -1422,6 +870,16 @@ function getRandomLoc(grid) {
 	} while (grid[x][y].isWall);
 	return [x, y];
 }
+
+$map.on('click', e => {
+	let rect = $map[0].getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+
+	let cellX = Math.floor(x / boxWidth);
+	let cellY = Math.floor(y / boxHeight);
+	console.log(grid[cellX][cellY]);
+});
 
 // SET METHODS
 
@@ -1439,15 +897,4 @@ function difference(setA, setB) {
 		_difference.delete(elem);
 	}
 	return _difference;
-}
-
-function toggleTextInput() {
-	if ($('input[name="decisionInfluence"]:checked').val() == 5) {
-		$('.hideTextArea').css('display', 'inline-block');
-		$('.hideTextArea').prop('required', true);
-	} else {
-		$('.hideTextArea').css('display', 'none');
-		$('.hideTextArea').val('');
-		$('.hideTextArea').prop('required', false);
-	}
 }
