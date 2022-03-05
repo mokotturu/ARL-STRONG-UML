@@ -111,15 +111,6 @@ var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, bot
 var intervalCount = 0, half = 0, intervals = 10, duration = 40000, agentNum = 1;
 var numAgents = 0, curRun = 0;
 
-var victimMarker = new Image();
-var hazardMarker = new Image();
-victimMarker.src = 'img/victim-marker-big.png';
-hazardMarker.src = 'img/hazard-marker-big.png';
-
-var agent0Path = [606,605,604,603,602,601,600,575,550,525,500,475,450,451,452,453,428,403,378,353,328,303,278,253,228,203,178,153,154,155,156,131,130,129,104,105,106,81,56,31,6,5,4,29,28,3,2,1,26,51,52,77,52,51,26,1,2,3,28,29,30,55,80,81,82,83,84,85,86,87,88,89,90,91,92,93,68,43,18,19,44,69,70,45,20,21,22,23,24,49,74,99,124,149,174,173,148,123,98,73,48,47,46,71,72,73,98,123,148,173,172,171,196,221,246,271,296,321,346,371,396,421,446,471,470,469,468,493,494,495,496,521,546,571,570,545,520,519,544,569,544,544,-1]
-var agent1Path = [606,581,556,531,506,481,456,455,454,479,480,479,478,503,502,501,526,527,526,501,476,477,452,453,428,403,378,353,328,303,278,253,228,203,178,153,152,151,150,125,100,75,50,25,26,51,76,101,126,127,102,77,52,51,26,1,2,3,28,29,30,55,80,81,82,83,84,85,86,87,88,89,90,91,92,93,118,143,168,169,170,145,144,119,94,95,120,121,96,97,122,147,146,171,196,221,246,271,296,321,346,371,396,421,446,471,472,473,474,499,524,549,574,599,624,623,598,573,548,523,498,497,522,547,572,597,622,621,596,595,620,619,594,593,618,593,568,543,518,543,-1]
-var agent2Path = [606,581,580,555,530,505,504,529,554,579,578,577,576,551,552,553,528,527,526,501,476,477,452,453,428,403,378,353,328,303,278,253,228,203,178,153,128,103,78,79,54,53,28,27,2,1,0,1,2,3,28,29,30,55,80,81,82,83,84,85,86,87,112,137,162,187,212,237,238,239,240,265,290,315,340,365,390,389,364,339,314,289,264,263,288,313,338,363,388,387,362,337,312,287,262,261,236,235,234,259,284,309,334,359,384,385,360,335,310,285,260,285,286,311,336,361,386,387,412,437,462,487,512,537,536,535,534,533,532,533,534,535,536,537,538,539,540,541,542,543,544,-1]
-
 class Player {
 	constructor (x, y, dir, fovSize) {
 		this.id = 'human';
@@ -225,28 +216,19 @@ class Player {
 	getNeighbours() {
 		return [
 			{ x: this.x,     y: this.y - 1, dir: 0 },	// top
-			{ x: this.x + 1, y: this.y - 1, dir: 1 },	// top right
+			// { x: this.x + 1, y: this.y - 1, dir: 1 },	// top right
 			{ x: this.x + 1, y: this.y    , dir: 2 },	// right
-			{ x: this.x + 1, y: this.y + 1, dir: 3 },	// bottom right
+			// { x: this.x + 1, y: this.y + 1, dir: 3 },	// bottom right
 			{ x: this.x,     y: this.y + 1, dir: 4 },	// bottom
-			{ x: this.x - 1, y: this.y + 1, dir: 5 },	// bottom left
+			// { x: this.x - 1, y: this.y + 1, dir: 5 },	// bottom left
 			{ x: this.x - 1, y: this.y    , dir: 6 },	// left
-			{ x: this.x - 1, y: this.y - 1, dir: 7 }	// top left
+			// { x: this.x - 1, y: this.y - 1, dir: 7 }	// top left
 		].filter(cell => (cell.x >= 0 && cell.x < grid.length) && (cell.y >= 0 && cell.y < grid[0].length) && (!grid[cell.x][cell.y].isWall));
 	}
 
 	pickTarget() {
 		let pickedObstacle = obstacles.targets.filter(cell => cell.x == this.x && cell.y == this.y);
 		if (pickedObstacle.length == 0) return;
-		/* if (pickedObstacle[0].isPicked) {
-			pickedObstacle[0].isPicked = false;
-			if (pickedObstacle[0].variant == 'positive') --this.tempTargetsFound.positive;
-			else if (pickedObstacle[0].variant == 'negative') --this.tempTargetsFound.negative;
-		} else {
-			pickedObstacle[0].isPicked = true;
-			if (pickedObstacle[0].variant == 'positive') ++this.tempTargetsFound.positive;
-			else if (pickedObstacle[0].variant == 'negative') ++this.tempTargetsFound.negative;
-		} */
 		if (!pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = true;
 			if (pickedObstacle[0].variant == 'positive') this.tempTargetsFound.positive.push(pickedObstacle[0]);
@@ -272,7 +254,7 @@ class Agent extends Player {
 		this.lightColor = lightColor;
 		this.darkColor = darkColor;
 		this.stepCount = 1;
-		this.mode = 'search';
+		this.mode = 'marking';
 	}
 
 	updateLoc(x, y, dir) {
@@ -399,9 +381,8 @@ $(document).ready(async () => {
 	canvasWidth = $map.width();
 	canvasHeight = $map.height();
 	
-	await initMaps('src/new_map.json');
-	grid[23][21].isPoi = true;
-	// await initMaps('src/map_50x50.json');
+	// await initMaps('src/new_map.json');
+	await initMaps('src/map_50x50.json');
 
 	let tempLoc = getRandomLoc(grid);
 	console.log(`Start location: ${tempLoc}`);
@@ -598,73 +579,28 @@ function drawMap() {
 		for (const rowCell of column) {
 			if (rowCell.isWall) {
 				$map.drawRect({
-					// fillStyle: Math.random() > 0.5 ? colors.wall : '#151515',
 					fillStyle: colors.wall,
 					x: (rowCell.x)*boxWidth + 1, y: (rowCell.y)*boxHeight + 1,
 					width: boxWidth - 1, height: boxHeight - 1
 				});
-				/* $map.drawText({
-					fromCenter: true,
-					strokeStyle: '#000',
-					strokeWidth: 1,
-					fillStyle: '#000',
-					x: rowCell.x * boxWidth + boxWidth/2 + 1, y: rowCell.y * boxHeight + boxHeight/2 + 1,
-					fontSize: boxWidth/1.5,
-					fontFamily: 'Arial, sans-serif',
-					text: '×'
-				}) */
 			} else if (rowCell.isPoi) {
 				$map.drawRect({
-					// fillStyle: Math.random() > 0.5 ? 'white' : '#eeeeee',
 					fillStyle: 'red',
 					x: (rowCell.x)*boxWidth + 1, y: (rowCell.y)*boxHeight + 1,
 					width: boxWidth - 1, height: boxHeight - 1
 				});
 			} else {
 				$map.drawRect({
-					// fillStyle: Math.random() > 0.5 ? 'white' : '#eeeeee',
 					fillStyle: 'white',
 					x: (rowCell.x)*boxWidth + 1, y: (rowCell.y)*boxHeight + 1,
 					width: boxWidth - 1, height: boxHeight - 1
 				});
-				/* $map.drawEllipse({
-					fromCenter: true,
-					strokeStyle: '#000',
-					strokeWidth: 1,
-					fillStyle: '#fff',
-					x: rowCell.x * boxWidth + boxWidth/2 + 1, y: rowCell.y * boxHeight + boxHeight/2 + 1,
-					width: boxWidth/3, height: boxHeight/3
-				}) */
-
-				/* if (rowCell.y - 1 > -1 && !grid[rowCell.x][rowCell.y - 1].isWall) {
-					$map.drawLine({
-						strokeStyle: '#000',
-						strokeWidth: 1,
-						x1: rowCell.x * boxWidth + boxWidth/2 + 1, y1: rowCell.y  * boxHeight + boxHeight/2 + 1 - boxWidth/6,
-						x2: rowCell.x * boxWidth + boxWidth/2 + 1, y2: rowCell.y  * boxHeight + boxHeight/2 + 1 - boxWidth + boxWidth/6
-					})
-				}
-				
-				if (rowCell.x - 1 > -1 && !grid[rowCell.x - 1][rowCell.y].isWall) {
-					$map.drawLine({
-						strokeStyle: '#000',
-						strokeWidth: 1,
-						x1: rowCell.x * boxWidth + boxWidth/2 + 1 - boxWidth/6, y1: rowCell.y  * boxHeight + boxHeight/2 + 1,
-						x2: rowCell.x * boxWidth + boxWidth/2 + 1 - boxWidth + boxWidth/6, y2: rowCell.y  * boxHeight + boxHeight/2 + 1
-					})
-				} */
 			}
 		}
 	}
 }
 
 function updateTime() {
-	/* if (++seconds % duration == 0) {
-		seconds = 0;
-		agentNum = 1;
-		pause = true;
-		clearInterval(timeout);
-	} */
 	$timer.text(`${++seconds}s`);
 }
 
@@ -771,6 +707,29 @@ function randomWalk(agent) {
 
 	agent.x += dx;
 	agent.y += dy;
+}
+
+function getNeighbours(x, y) {
+	return [
+		{ x: this.x,     y: this.y - 1, dir: 0 },	// top
+		{ x: this.x + 1, y: this.y - 1, dir: 1 },	// top right
+		{ x: this.x + 1, y: this.y    , dir: 2 },	// right
+		{ x: this.x + 1, y: this.y + 1, dir: 3 },	// bottom right
+		{ x: this.x,     y: this.y + 1, dir: 4 },	// bottom
+		{ x: this.x - 1, y: this.y + 1, dir: 5 },	// bottom left
+		{ x: this.x - 1, y: this.y    , dir: 6 },	// left
+		{ x: this.x - 1, y: this.y - 1, dir: 7 }	// top left
+	].filter(cell => (cell.x >= 0 && cell.x < grid.length) && (cell.y >= 0 && cell.y < grid[0].length) && (!grid[cell.x][cell.y].isWall));
+}
+
+function brickAndMortar(agent) {
+	if (++agent.currentTick < agent.speed) return;
+	agent.currentTick = 0;
+
+	let neighbours = agent.getNeighbours();
+	for (const cell in neighbours) {
+		getNeighbours(cell.x, cell.y);
+	}
 }
 
 function floodFill(agent) {
