@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'Performance Trust and Moral Trust Base Game';
+const gameMode = 'Performance Trust and Moral Trust With Choice Base Game';
 
 const colors = {
 	human: '#3333ff',
@@ -93,19 +93,19 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ gold: 3, red: 0, pink: 2 },
-	{ gold: 1, red: 0, pink: 0 },
-	{ gold: 2, red: 0, pink: 0 },
-	{ gold: 2, red: 0, pink: 1 },
-	{ gold: 1, red: 0, pink: 2 },
-	{ gold: 0, red: 0, pink: 1 },
-	{ gold: 0, red: 0, pink: 1 },
-	{ gold: 0, red: 0, pink: 1 },
-	{ gold: 2, red: 0, pink: 0 },
-	{ gold: 4, red: 0, pink: 2 },
-	{ gold: 3, red: 0, pink: 1 },
-	{ gold: 3, red: 0, pink: 2 },
-	{ gold: 2, red: 0, pink: 1 },
+	{ gold: 3, },
+	{ gold: 1, },
+	{ gold: 2, },
+	{ gold: 2, },
+	{ gold: 1, },
+	{ gold: 0, },
+	{ gold: 0, },
+	{ gold: 0, },
+	{ gold: 2, },
+	{ gold: 4, },
+	{ gold: 3, },
+	{ gold: 3, },
+	{ gold: 2, },
 ];
 
 var fakeAgentNum = 0;
@@ -155,8 +155,8 @@ class Player {
 		this.fovSize = fovSize;
 		this.explored = new Set();
 		this.tempExplored = new Set();
-		this.tempTargetsFound = { gold: [], red: [], pink: [] };
-		this.totalTargetsFound = { gold: [], red: [], pink: [] };
+		this.tempTargetsFound = { gold: [] };
+		this.totalTargetsFound = { teamGold: [], individualGold: [] };
 	}
 
 	spawn(size) {
@@ -243,8 +243,6 @@ class Player {
 		if (!pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = true;
 			if (pickedObstacle[0].variant == 'gold') this.tempTargetsFound.gold.push(pickedObstacle[0]);
-			else if (pickedObstacle[0].variant == 'red') this.tempTargetsFound.red.push(pickedObstacle[0]);
-			else if (pickedObstacle[0].variant == 'pink') this.tempTargetsFound.pink.push(pickedObstacle[0]);
 		}
 	}
 }
@@ -391,7 +389,7 @@ $(document).ready(async () => {
 	// if not uuid
 	if (window.location.pathname != '/' && !sessionStorage.getItem('uuid')) window.location.href = '/';
 
-	if (localStorage.getItem('devMode') == 'true') duration = 5;
+	if (localStorage.getItem('devMode') == 'true') duration = 10;
 
 	startTime = new Date();
 	uuid = sessionStorage.getItem('uuid');
@@ -418,21 +416,9 @@ $(document).ready(async () => {
 		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goodTarget, 'gold'));
 	}
 
-	for (let i = 0; i < obstacleLocs[1].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.badTarget, 'red'));
-	}
-
-	for (let i = 0; i < obstacleLocs[2].length; ++i) {
-		obstacles.targets.push(new Obstacle(obstacleLocs[2][i][0], obstacleLocs[2][i][1], colors.selfishTarget, 'pink'));
-	}
-
 	for (let i = 0; i < 20; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goodTarget, 'gold'));
-		tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.badTarget, 'red'));
-		tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.selfishTarget, 'pink'));
 	}
 
 	$('.loader').css('visibility', 'hidden');
@@ -586,7 +572,7 @@ function showTrustPrompt() {
 	if (agentNum == 1) {
 		$map.clearCanvas();
 		human.drawCells(human.tempExplored, false);
-		spawn([...human.tempTargetsFound.gold, ...human.tempTargetsFound.red, ...human.tempTargetsFound.pink, human], 1);
+		spawn([...human.tempTargetsFound.gold, human], 1);
 		$humanImage.attr("src", $map.getCanvasImage());
 		$botImage.attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 		$minimapImage.attr("src", $map.getCanvasImage());
@@ -615,10 +601,16 @@ function showPostIntegratePrompt(){
 // *** CLEAN UP THIS FUNCTION ***
 function showExploredInfo() {
 	// NEW STUFF
-	pastHumanIndScore = (human.totalTargetsFound.pink.length) * 100;
-	pastHumanTeamScore = (human.totalTargetsFound.gold.length - human.totalTargetsFound.pink.length - human.totalTargetsFound.red.length) * 100;
-	currHumanIndScore = (human.tempTargetsFound.pink.length) * 100;
-	currHumanTeamScore = (human.tempTargetsFound.gold.length - human.tempTargetsFound.pink.length - human.tempTargetsFound.red.length) * 100;
+	pastHumanIndScore = human.totalTargetsFound.individualGold.length * 100;
+	pastHumanTeamScore = human.totalTargetsFound.teamGold.length * 100;
+
+	if (log[agentNum - 1][intervalCount - 1].addedTo == 'Team') {
+		currHumanTeamScore = human.tempTargetsFound.gold.length * 100;
+		currHumanIndScore = 0;
+	} else {
+		currHumanTeamScore = 0;
+		currHumanIndScore = human.tempTargetsFound.gold.length * 100;
+	}
 
 	// CALCULATIONS
 	totalTeamScore += currHumanTeamScore + currAgentTeamScore;
@@ -642,11 +634,7 @@ function showExploredInfo() {
 	// tempTeamScore = teamScore;
 	if (log[agentNum - 1][intervalCount - 1] != null) {
 		log[agentNum - 1].forEach((data, i) => {
-			if (data.trusted) {
-				$log.append(`<p style='background-color: ${colors.lightAgent1};'>Interval ${i + 1}: Integrated</p>`);
-			} else {
-				$log.append(`<p style='background-color: ${colors.lightAgent};'>Interval ${i + 1}: Discarded</p>`);
-			}
+			$log.append(`<p style='background-color: ${colors.lightAgent1};'>Interval ${i + 1}: Added to ${data.addedTo} score</p>`);
 		});
 	}
 
@@ -670,35 +658,11 @@ function updateResults(){
 	}
 	$("div.hYellowStar").html(tempString);
 
-	tempString = human.tempTargetsFound.red.length > 0 ? `` : `No red targets found`;
-	for (let j = 0; j < human.tempTargetsFound.red.length; j++){
-		tempString += `<span class="material-icons" style="color: #ff4848; font-size: 25px;";>circle</span>`;
-	}
-	$("div.hRedCircle").html(tempString);
-
-	tempString = human.tempTargetsFound.pink.length > 0 ? `` : `No pink targets found`;
-	for (let j = 0; j < human.tempTargetsFound.pink.length; j++){
-		tempString += `<svg id="triangle" viewBox="0 0 30 30" style="width: 25px; height: 25px; padding: 0 1px; border-radius: 2px;"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg>`;
-	}
-	$("div.hPinkTriangle").html(tempString);
-
 	tempString = fakeAgentScores[fakeAgentNum - 1].gold > 0 ? `` : `No gold targets found`; 
 	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].gold; k++){
 		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
 	}
 	$("div.aYellowStar").html(tempString);
-
-	tempString = fakeAgentScores[fakeAgentNum - 1].red > 0 ? `` : `No red targets found`;
-	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].red; l++){
-		tempString += `<span class="material-icons" style="color: #ff4848; font-size: 25px;";>circle</span>`;
-	}
-	$("div.aRedCircle").html(tempString);
-
-	tempString = fakeAgentScores[fakeAgentNum - 1].pink > 0 ? `` : `No pink targets found`;
-	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].pink; l++){
-		tempString += `<svg id="triangle" viewBox="0 0 30 30" style="width: 25px; height: 25px; padding: 0 1px; border-radius: 2px;"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg>`;
-	}
-	$("div.aPinkTriangle").html(tempString);
 
 	if (totalTeamScore >= 0) {
 		$('#overallTeamScorePositiveGraph').css('width', `${totalTeamScore/100 * 8}`);
@@ -724,36 +688,35 @@ function updateResults(){
 		$('#currTeamScorePositive').text(``);
 	}
 
-	
-	let tempCurrAgentIndScore = ((fakeAgentScores[fakeAgentNum - 1].pink) * 100);
-	let tempCurrAgentTeamScore = (fakeAgentScores[fakeAgentNum - 1].gold - fakeAgentScores[fakeAgentNum - 1].pink - fakeAgentScores[fakeAgentNum - 1].red) * 100;
+	// let tempCurrAgentIndScore = ((fakeAgentScores[fakeAgentNum - 1].pink) * 100);
+	// let tempCurrAgentTeamScore = (fakeAgentScores[fakeAgentNum - 1].gold - fakeAgentScores[fakeAgentNum - 1].pink - fakeAgentScores[fakeAgentNum - 1].red) * 100;
 
-	if (tempCurrAgentIndScore >= 0) {
-		$('#agentIndScorePositiveGraph').css('width', `${tempCurrAgentIndScore/100 * 8}`);
-		$('#agentIndScorePositive').text(`${tempCurrAgentIndScore} pts`);
+	if (currAgentIndScore >= 0) {
+		$('#agentIndScorePositiveGraph').css('width', `${currAgentIndScore/100 * 8}`);
+		$('#agentIndScorePositive').text(`${currAgentIndScore} pts`);
 		$('#agentIndScoreNegativeGraph').css('width', `0`);
 		$('#agentIndScoreNegative').text(``);
 	} else {
-		$('#agentIndScoreNegativeGraph').css('width', `${Math.abs(tempCurrAgentIndScore/100 * 8)}`);
-		$('#agentIndScoreNegative').text(`${tempCurrAgentIndScore} pts`);
+		$('#agentIndScoreNegativeGraph').css('width', `${Math.abs(currAgentIndScore/100 * 8)}`);
+		$('#agentIndScoreNegative').text(`${currAgentIndScore} pts`);
 		$('#agentIndScorePositiveGraph').css('width', `0`);
 		$('#agentIndScorePositive').text(``);
 	}
 
-	if (tempCurrAgentTeamScore >= 0) {
-		$('#agentTeamScorePositiveGraph').css('width', `${tempCurrAgentTeamScore/100 * 8}`);
-		$('#agentTeamScorePositive').text(`${tempCurrAgentTeamScore} pts`);
+	if (currAgentTeamScore >= 0) {
+		$('#agentTeamScorePositiveGraph').css('width', `${currAgentTeamScore/100 * 8}`);
+		$('#agentTeamScorePositive').text(`${currAgentTeamScore} pts`);
 		$('#agentTeamScoreNegativeGraph').css('width', `0`);
 		$('#agentTeamScoreNegative').text(``);
 	} else {
-		$('#agentTeamScoreNegativeGraph').css('width', `${Math.abs(tempCurrAgentTeamScore/100 * 8)}`);
-		$('#agentTeamScoreNegative').text(`${tempCurrAgentTeamScore} pts`);
+		$('#agentTeamScoreNegativeGraph').css('width', `${Math.abs(currAgentTeamScore/100 * 8)}`);
+		$('#agentTeamScoreNegative').text(`${currAgentTeamScore} pts`);
 		$('#agentTeamScorePositiveGraph').css('width', `0`);
 		$('#agentTeamScorePositive').text(``);
 	}
 
 	if (currHumanIndScore >= 0) {
-		$('#humanIndScorePositiveGraph').css('width', `${currHumanIndScore/100 * 8}`);
+		$('#humanIndScorePositiveGraph').css('width', `${currHumanIndScore/100 * 8}`);8
 		$('#humanIndScorePositive').text(`${currHumanIndScore} pts`);
 		$('#humanIndScoreNegativeGraph').css('width', `0`);
 		$('#humanIndScoreNegative').text(``);
@@ -830,15 +793,16 @@ function hideTrustMessage(){
 	$trustCueModal.css('opacity', '0');
 }
 
-function confirmExploration() {
+function addIndividual() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
-	human.totalTargetsFound.gold.push(...human.tempTargetsFound.gold);
-	human.totalTargetsFound.red.push(...human.tempTargetsFound.red);
-	human.totalTargetsFound.pink.push(...human.tempTargetsFound.pink);
-	currAgentIndScore = (fakeAgentScores[fakeAgentNum].pink) * 100;
-	currAgentTeamScore = (fakeAgentScores[fakeAgentNum].gold - fakeAgentScores[fakeAgentNum].pink - fakeAgentScores[fakeAgentNum].red) * 100;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: 1, timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length, humanRedTargetsCollected: human.tempTargetsFound.red.length, humanPinkTargetsCollected: human.tempTargetsFound.pink.length });
+
+	human.totalTargetsFound.individualGold.push(...human.tempTargetsFound.gold);
+	currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 100;
+	currAgentIndScore = 0;
+
+	log[agentNum - 1].push({ interval: intervalCount, addedTo: 'Individual', timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length });
+	
 	initialTimeStamp = 0, finalTimeStamp = 0;
 
 	$trustConfirmModal.css('visibility', 'hidden');
@@ -848,20 +812,17 @@ function confirmExploration() {
 	showExploredInfo();
 }
 
-function undoExploration() {
+function addTeam() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
-	human.totalTargetsFound.gold.push(...human.tempTargetsFound.gold);
-	human.totalTargetsFound.red.push(...human.tempTargetsFound.red);
-	human.totalTargetsFound.pink.push(...human.tempTargetsFound.pink);
-	currAgentIndScore = 0, currAgentTeamScore = 0;
-	log[agentNum - 1].push({ interval: intervalCount, trusted: 0, timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length, humanRedTargetsCollected: human.tempTargetsFound.red.length, humanPinkTargetsCollected: human.tempTargetsFound.pink.length });
+	
+	human.totalTargetsFound.teamGold.push(...human.tempTargetsFound.gold);
+	currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 100;
+	currAgentIndScore = 0;
+
+	log[agentNum - 1].push({ interval: intervalCount, addedTo: 'Team', timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length });
+
 	initialTimeStamp = 0, finalTimeStamp = 0;
-	for (const agent of agents) {
-		agent.tempExplored.forEach(cell => {
-			grid[cell.x][cell.y].isTempAgentExplored = false;
-		});
-	}
 
 	$trustConfirmModal.css('visibility', 'hidden');
 	$trustConfirmModal.css('display', 'none');
@@ -902,8 +863,6 @@ function hideExploredInfo() {
 	// agents[agentNum - 1].tempTargetsFound.positive = 0;
 	// agents[agentNum - 1].tempTargetsFound.negative = 0;
 	human.tempTargetsFound.gold = [];
-	human.tempTargetsFound.red = [];
-	human.tempTargetsFound.pink = [];
 
 	if (intervalCount == Math.floor(intervals / 2)) {
 		$.ajax({
