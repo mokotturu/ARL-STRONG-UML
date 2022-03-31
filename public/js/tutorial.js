@@ -84,13 +84,16 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ score:  100, gold: 2, red: 1 },
-	{ score: -100, gold: 1, red: 2 },
-	{ score: -100, gold: 1, red: 2 },
-	{ score: -100, gold: 2, red: 3 },
-	{ score:  200, gold: 4, red: 2 },
-	{ score:  300, gold: 3, red: 0 },
-	{ score:  200, gold: 3, red: 1 }
+	{ gold: 3, addedTo: 'team' },
+	{ gold: 1, addedTo: 'individual' },
+	{ gold: 2, addedTo: 'team' },
+	{ gold: 2, addedTo: 'individual' },
+	{ gold: 1, addedTo: 'team' },
+	{ gold: 0, addedTo: 'individual' },
+	{ gold: 0, addedTo: 'team' },
+	{ gold: 0, addedTo: 'individual' },
+	{ gold: 2, addedTo: 'team' },
+	{ gold: 4, addedTo: 'individual' },
 ];
 
 var fakeAgentNum = 0;
@@ -102,7 +105,7 @@ var initialTimeStamp = 0, finalTimeStamp = 0;
 
 var human, agent1;
 var agents = [];
-var teamScore = 0, tempTeamScore = 0, totalHumanScore = 0, totalAgentScore = 0, currHumanScore = 0, currAgentScore = 0;
+var pastHumanIndScore, pastHumanTeamScore, currHumanIndScore, currHumanTeamScore, currAgentIndScore, currAgentTeamScore, totalAgentTeamScore = 0, totalAgentIndScore = 0, totalTeamScore = 0;
 
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
@@ -127,8 +130,8 @@ class Player {
 		this.fovSize = fovSize;
 		this.explored = new Set();
 		this.tempExplored = new Set();
-		this.tempTargetsFound = { gold: 0, red: 0 };
-		this.totalTargetsFound = { gold: 0, red: 0 };
+		this.tempTargetsFound = { gold: [] };
+		this.totalTargetsFound = { teamGold: [], individualGold: [] };
 		this.tutorial = { inTutorial: true, restricted: true, dir: 1, step: 0 };
 	}
 
@@ -212,26 +215,11 @@ class Player {
 	pickTarget() {
 		let pickedObstacle = obstacles.targets.filter(cell => cell.x == this.x && cell.y == this.y);
 		if (pickedObstacle.length == 0) return false;
-		/* if (pickedObstacle[0].isPicked) {
-			pickedObstacle[0].isPicked = false;
-			if (pickedObstacle[0].variant == 'gold') --this.tempTargetsFound.gold;
-			else if (pickedObstacle[0].variant == 'red') --this.tempTargetsFound.red;
-		} else {
-			pickedObstacle[0].isPicked = true;
-			if (pickedObstacle[0].variant == 'gold') ++this.tempTargetsFound.gold;
-			else if (pickedObstacle[0].variant == 'red') ++this.tempTargetsFound.red;
-		} */
 		if (!pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = true;
 			if (pickedObstacle[0].variant == 'gold') {
-				++this.tempTargetsFound.gold;
-				showNotification('<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>', 'You picked up a gold target!', 'This will <u>increase</u> the team score by 100 points and have no effect on your individual score.');
-			} else if (pickedObstacle[0].variant == 'red') {
-				++this.tempTargetsFound.red;
-				showNotification('<span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span>', 'You picked up a red target!', 'This will <u>decrease</u> the team score by 100 points and have no effect on your individual score.');
-			} else if (pickedObstacle[0].variant == 'pink') {
-				++this.tempTargetsFound.pink;
-				showNotification('<svg id="triangle" viewBox="0 0 30 30"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg>', 'You picked up a pink target!', 'This will decrease the team score by 100 points and add it to your individual score.');
+				this.tempTargetsFound.gold.push(pickedObstacle[0]);
+				showNotification('<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>', 'You picked up a gold target!', 'This will award 200 points if added to the team score, or 100 points if added to your individual score.');
 			}
 			++targetCount;
 		}
@@ -611,7 +599,7 @@ function showInstructions11() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Picking up targets:');
-		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of each of the highlighted targets and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
+		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of the highlighted target and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
 		$('#instructions-content').css('display', 'initial');
 		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
@@ -627,14 +615,6 @@ function showInstructions11() {
 
 		for (let i = 0; i < obstacleLocs[0].length; ++i) {
 			obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goldTarget, 'gold'));
-		}
-	
-		for (let i = 0; i < obstacleLocs[1].length; ++i) {
-			obstacles.targets.push(new Obstacle(obstacleLocs[1][i][0], obstacleLocs[1][i][1], colors.redTarget, 'red'));
-		}
-	
-		for (let i = 0; i < obstacleLocs[2].length; ++i) {
-			obstacles.targets.push(new Obstacle(obstacleLocs[2][i][0], obstacleLocs[2][i][1], colors.pinkTarget, 'pink'));
 		}
 	}, 500);
 }
@@ -661,6 +641,22 @@ function showInstructions13() {
 	$instructionsModal.removeClass('animate__fadeInLeft');
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
+		showTrustPrompt();
+
+		$('.notificationsContainer').addClass("animate__animated animate__fadeOutRight");
+		/* $('#legend').css({
+			'z-index': 100000,
+			'position': 'absolute',
+		}); */
+	}, 500);
+}
+
+function showInstructions14() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	setTimeout(() => {
 		$endRoundModal.css('display', 'flex');
 		$endRoundModal.css('visibility', 'visible');
 		$endRoundModal.css('opacity', '1');
@@ -668,32 +664,6 @@ function showInstructions13() {
 		$endRoundModal.addClass('animate__animated animate__zoomIn');
 
 		$('.notificationsContainer').addClass("animate__animated animate__fadeOutRight");
-		$('#legend').css({
-			'z-index': 100000,
-			'position': 'absolute',
-		});
-	}, 500);
-}
-
-function showInstructions14() {
-	$('#instructions-heading').removeClass('animate__zoomIn');
-	$('#instructions-content').removeClass('animate__zoomIn');
-	$endRoundModal.removeClass('animate__zoomIn');
-	$endRoundModal.addClass('animate__zoomOut');
-	$instructionsModal.removeClass('animate__fadeInLeft');
-	$instructionsModal.addClass('animate__fadeOutLeft');
-	setTimeout(() => {
-		$('#endRoundQH4').html('If you find 2 yellow targets and 2 pink targets in one round of the game, what will be your team performance score and individual performance score in this round?<sup style="font-size: 11px;color: red;">*</sup>');
-		$('#oneOneLabel').html('<input id="oneOneInput"   type="radio" name="performanceRating"  value="200_200"  required>Team Performance Score: 200, Individual Performance Score: 200');
-		$('#oneTwoLabel').html('<input id="oneTwoInput"   type="radio" name="performanceRating"  value="0_200"  required>Team Performance Score: 0, Individual Performance Score: 200');
-		$('#oneThreeLabel').html('<input id="oneThreeInput" type="radio" name="performanceRating" value="200_0" required>Team Performance Score: 200, Individual Performance Score: 0');
-		$('#oneFourLabel').html('<input id="oneFourInput"  type="radio" name="performanceRating" value="0_0" required>Team Performance Score: 0, Individual Performance Score: 0');
-		$endRoundModal.css('display', 'flex');
-		$endRoundModal.css('visibility', 'visible');
-		$endRoundModal.css('opacity', '1');
-		$endRoundModal.css('z-index', 1000);
-		$endRoundModal.removeClass('animate__zoomOut');
-		$endRoundModal.addClass('animate__animated animate__zoomIn');
 	}, 500);
 }
 
@@ -776,6 +746,9 @@ function nextInstruction() {
 		case 15:
 			showInstructions15();
 			break;
+		/* case 16:
+			showInstructions16();
+			break; */
 		default:
 			console.error('No instructions found with that ID.');
 			break;
@@ -785,7 +758,7 @@ function nextInstruction() {
 }
 
 function validateUser() {
-	if (($instructionsModal.attr('data-id') == '13' && $('#intervalSurvey').serialize() == 'performanceRating=-100_0') || ($instructionsModal.attr('data-id') == '14' && $('#intervalSurvey').serialize() == 'performanceRating=0_200')) {
+	if ($('#intervalSurvey').serialize() == 'scoresQuiz=800_400') {
 		// proceed to next q or game
 		nextInstruction();
 	} else if ($('#intervalSurvey').serialize() == '') {
@@ -980,75 +953,114 @@ function showTrustPrompt() {
 
 	initialTimeStamp = performance.now();
 
-	if (agentNum == 1) {
+	/* if (agentNum == 1) {
 		$humanImage.attr("src", $map.getCanvasImage());
 		$botImage.attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
-	}
+	} */
+
+	$('#popupRoundDetails').text(`You picked ${human.tempTargetsFound.gold.length} target(s) and gained ${human.tempTargetsFound.gold.length * 100} points.`);
 
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
 	$trustConfirmModal.css('opacity', '1');
 }
 
-function showExploredInfo() {
-	nextInstruction();
-	currHumanScore = human.tempTargetsFound.gold * 100 - human.tempTargetsFound.red * 100;
-	// currAgentScore = fakeAgentScores[fakeAgentNum].score;
-	let tempCurrAgentScore = fakeAgentScores[fakeAgentNum].score;
-	totalHumanScore += currHumanScore;
-	totalAgentScore += currAgentScore;
-	teamScore += currHumanScore + currAgentScore;
-	$('#teamScoreMain').text(`Team Score: ${teamScore} points`);
+function addIndividual() {
+	finalTimeStamp = performance.now();
+	++intervalCount;
 
-	drawMarkers([...obstacles.victims, ...obstacles.hazards]);
+	human.totalTargetsFound.individualGold.push(...human.tempTargetsFound.gold);
+
+	if (fakeAgentScores[fakeAgentNum].addedTo == 'team') {
+		currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 200;
+		currAgentIndScore = 0;
+	} else {
+		currAgentTeamScore = 0;
+		currAgentIndScore = fakeAgentScores[fakeAgentNum].gold * 100;
+	}
+
+	log[agentNum - 1].push({ interval: intervalCount, addedTo: 'Individual', timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length });
+	
+	initialTimeStamp = 0, finalTimeStamp = 0;
+
+	$trustConfirmModal.css('visibility', 'hidden');
+	$trustConfirmModal.css('display', 'none');
+	$trustConfirmModal.css('opacity', '0');
+
+	showExploredInfo();
+}
+
+function addTeam() {
+	finalTimeStamp = performance.now();
+	++intervalCount;
+	
+	human.totalTargetsFound.teamGold.push(...human.tempTargetsFound.gold);
+
+	if (fakeAgentScores[fakeAgentNum].addedTo == 'team') {
+		currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 200;
+		currAgentIndScore = 0;
+	} else {
+		currAgentTeamScore = 0;
+		currAgentIndScore = fakeAgentScores[fakeAgentNum].gold * 100;
+	}
+
+	log[agentNum - 1].push({ interval: intervalCount, addedTo: 'Team', timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length });
+
+	initialTimeStamp = 0, finalTimeStamp = 0;
+
+	$trustConfirmModal.css('visibility', 'hidden');
+	$trustConfirmModal.css('display', 'none');
+	$trustConfirmModal.css('opacity', '0');
+
+	showExploredInfo();
+}
+
+function showExploredInfo() {
+	// NEW STUFF
+	pastHumanIndScore = human.totalTargetsFound.individualGold.length * 100;
+	pastHumanTeamScore = human.totalTargetsFound.teamGold.length * 200;
+
+	if (log[agentNum - 1][intervalCount - 1].addedTo == 'Team') {
+		currHumanTeamScore = human.tempTargetsFound.gold.length * 200;
+		currHumanIndScore = 0;
+	} else {
+		currHumanTeamScore = 0;
+		currHumanIndScore = human.tempTargetsFound.gold.length * 100;
+	}
+
+	// CALCULATIONS
+	totalTeamScore += currHumanTeamScore + currAgentTeamScore;
+	totalAgentIndScore += currAgentIndScore;
+
+	$('#teamScoreMain').text(`${totalTeamScore}`);
+	$('#humanIndMain').text(`${pastHumanIndScore}`);
+	$('#agentIndMain').text(`${totalAgentIndScore}`);
 
 	$detailsModal.css('display', 'flex');
 	$detailsModal.css('visibility', 'visible');
 	$detailsModal.css('opacity', '1');
-	$minimapImage.attr("src", $map.getCanvasImage());
+
+	setTimeout(() => {
+		$('#curAgentScoreDetailsBlock').toggleClass('animate__animated animate__heartBeat');
+	}, 100);
 
 	$log.empty();
 
 	$agentText.toggleClass(`agent${agentNum - 1}`, false);
 	$agentText.toggleClass(`agent${agentNum + 1}`, false);
 	$agentText.toggleClass(`agent${agentNum}`, true);
-	$('#agentTargetsFound').text(`Blue: ${fakeAgentScores[fakeAgentNum].gold}, Yellow:  ${fakeAgentScores[fakeAgentNum++].red}`);
-	$('#humanTargetsFound').text(`Blue: ${human.tempTargetsFound.gold}, Yellow:  ${human.tempTargetsFound.red}`);
+	++fakeAgentNum;
 
-	if (log[agentNum - 1][intervalCount - 1].trusted) {
-		if (currAgentScore > 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-		else if (currAgentScore < 0) $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-		else $('#agentCurInt').html(`${currAgentScore} <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
-	} else {
-		if (currAgentScore > 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.redTarget}>trending_flat</span>`);
-		else if (currAgentScore < 0) $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
-		else $('#agentCurInt').html(`${tempCurrAgentScore} <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
-	}
-
-	
-	if (currHumanScore > 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-	else if (currHumanScore < 0) $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#humanCurInt').html(`${currHumanScore} <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
-
-	$('#agentOverall').text(totalAgentScore);
-	$('#humanOverall').text(totalHumanScore);
-	if (teamScore > tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent1}">trending_up</span>`);
-	else if (teamScore < tempTeamScore) $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.lightAgent}">trending_down</span>`);
-	else $('#teamScore').html(`TEAM SCORE: ${teamScore} points <span class="material-icons" style="color: ${colors.redTarget}">trending_flat</span>`);
-	tempTeamScore = teamScore;
+	// tempTeamScore = teamScore;
 	if (log[agentNum - 1][intervalCount - 1] != null) {
 		log[agentNum - 1].forEach((data, i) => {
-			if (data.trusted) {
-				$log.append(`<p style='background-color: ${colors.lightAgent1};'>Interval ${i + 1}: Integrated</p>`);
-			} else {
-				$log.append(`<p style='background-color: ${colors.lightAgent};'>Interval ${i + 1}: Discarded</p>`);
-			}
+			$log.append(`<p style='background-color: ${colors.lightAgent1};'>Interval ${i + 1}: Added to ${data.addedTo} score</p>`);
 		});
 	}
 
-	getSetBoundaries(human.explored, 0);
-	fakeGetSetBoundaries();
-	scaleImages();
+	// getSetBoundaries(human.tempExplored, 0);
+	// fakeGetSetBoundaries();
+	// scaleImages();
 
 	setTimeout(() => { $detailsModal.scrollTop(-10000) }, 500);
 	setTimeout(() => { $log.scrollLeft(10000) }, 500);
@@ -1060,103 +1072,121 @@ function showExploredInfo() {
 
 //Update the display for star count for targets on the results display
 function updateResults(){
-	let tempString = ' ';
-	for (let i = 0; i < human.tempTargetsFound.gold; i++){
-
-		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
+	/* let tempString = human.tempTargetsFound.gold.length > 0 ? `` : `No gold targets found`;
+	for (let i = 0; i < human.tempTargetsFound.gold.length; i++){
+		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
 	}
-	$("div.hBlueStar").html(tempString);
+	$("div.hYellowStar").html(tempString); */
 
-	tempString = ' ';
-
-	for (let j = 0; j < human.tempTargetsFound.red; j++){
-
-		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
-	}
-	$("div.hYellowStar").html(tempString);
-
-	tempString = ' '; 
-
+	tempString = fakeAgentScores[fakeAgentNum - 1].gold > 0 ? `` : `No gold targets found`; 
 	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].gold; k++){
-		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
+		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
 	}
-
-	$("div.aBlueStar").html(tempString);
-
-	tempString = ' ';
-
-	for (let l = 0; l < fakeAgentScores[fakeAgentNum - 1].red; l++){
-		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
-	}
-
 	$("div.aYellowStar").html(tempString);
 
-	/* tempString = ' ';
-
-	let totBlue = human.tempTargetsFound.blue + fakeAgentScores[fakeAgentNum - 1].blue;
-
-	let totYellow = human.tempTargetsFound.yellow + fakeAgentScores[fakeAgentNum - 1].yellow;
-
-	for (let m = 0; m < totBlue; m++){
-		tempString+= "<img src = 'img/blue_star.png' id = 'star' height=30>";
+	if (fakeAgentScores[fakeAgentNum - 1].addedTo == 'team') {
+		$('#curAgentScoreDetails').text(`Added to team score: ${fakeAgentScores[fakeAgentNum - 1].gold * 200} pts`);
+	} else {
+		$('#curAgentScoreDetails').text(`Added to individual score: ${fakeAgentScores[fakeAgentNum - 1].gold * 100} pts`);
 	}
 
-	$("div.oBlueStar").html(tempString);
-
-	tempString = ' ';
-
-	for (let n = 0; n < totYellow; n++){
-		tempString+= "<img src = 'img/yellow_star.png' id = 'star' height=30>";
+	if (totalTeamScore >= 0) {
+		$('#overallTeamScorePositiveGraph').css('width', `${totalTeamScore/100 * 8}`);
+		$('#overallTeamScorePositive').text(`${totalTeamScore} pts`);
+		$('#overallTeamScoreNegativeGraph').css('width', `0`);
+		$('#overallTeamScoreNegative').text(``);
+	} else {
+		$('#overallTeamScoreNegativeGraph').css('width', `${Math.abs(totalTeamScore/100 * 8)}`);
+		$('#overallTeamScoreNegative').text(`${totalTeamScore} pts`);
+		$('#overallTeamScorePositiveGraph').css('width', `0`);
+		$('#overallTeamScorePositive').text(``);
 	}
 
-	$("div.oYellowStar").html(tempString); */
-
-	if (currHumanScore + currAgentScore >= 0) {
-		$('#currTeamPositive').css('width', `${(currHumanScore + currAgentScore)/100 * 8}`);
-		$('#currTeamScorePositive').text(`${currHumanScore + currAgentScore} pts`);
-		$('#currTeamNegative').css('width', `0`);
+	if ((currHumanTeamScore + currAgentTeamScore) >= 0) {
+		$('#currTeamScorePositiveGraph').css('width', `${(currHumanTeamScore + currAgentTeamScore)/100 * 8}`);
+		$('#currTeamScorePositive').text(`${(currHumanTeamScore + currAgentTeamScore)} pts`);
+		$('#currTeamScoreNegativeGraph').css('width', `0`);
 		$('#currTeamScoreNegative').text(``);
 	} else {
-		$('#currTeamNegative').css('width', `${Math.abs((currHumanScore + currAgentScore)/100 * 8)}`);
-		$('#currTeamScoreNegative').text(`${currHumanScore + currAgentScore} pts`);
-		$('#currTeamPositive').css('width', `0`);
+		$('#currTeamScoreNegativeGraph').css('width', `${Math.abs((currHumanTeamScore + currAgentTeamScore)/100 * 8)}`);
+		$('#currTeamScoreNegative').text(`${(currHumanTeamScore + currAgentTeamScore)} pts`);
+		$('#currTeamScorePositiveGraph').css('width', `0`);
 		$('#currTeamScorePositive').text(``);
 	}
 
-	if (teamScore >= 0) {
-		$('#overallPositive').css('width', `${teamScore/100 * 8}`);
-		$('#overallScorePositive').text(`${teamScore} pts`);
-		$('#overallNegative').css('width', `0`);
-		$('#overallScoreNegative').text(``);
+	// let tempCurrAgentIndScore = ((fakeAgentScores[fakeAgentNum - 1].pink) * 100);
+	// let tempCurrAgentTeamScore = (fakeAgentScores[fakeAgentNum - 1].gold - fakeAgentScores[fakeAgentNum - 1].pink - fakeAgentScores[fakeAgentNum - 1].red) * 100;
+
+	if (currAgentIndScore >= 0) {
+		$('#agentIndScorePositiveGraph').css('width', `${currAgentIndScore/100 * 8}`);
+		$('#agentIndScorePositive').text(`${currAgentIndScore} pts`);
+		$('#agentIndScoreNegativeGraph').css('width', `0`);
+		$('#agentIndScoreNegative').text(``);
 	} else {
-		$('#overallNegative').css('width', `${Math.abs(teamScore/100 * 8)}`);
-		$('#overallScoreNegative').text(`${teamScore} pts`);
-		$('#overallPositive').css('width', `0`);
-		$('#overallScorePositive').text(``);
+		$('#agentIndScoreNegativeGraph').css('width', `${Math.abs(currAgentIndScore/100 * 8)}`);
+		$('#agentIndScoreNegative').text(`${currAgentIndScore} pts`);
+		$('#agentIndScorePositiveGraph').css('width', `0`);
+		$('#agentIndScorePositive').text(``);
 	}
 
-	if (currHumanScore >= 0) {
-		$('#humanPositive').css('width', `${currHumanScore/100 * 8}`);
-		$('#humanScorePositive').text(`${currHumanScore} pts`);
-		$('#humanNegative').css('width', `0`);
-		$('#humanScoreNegative').text(``);
+	if (currAgentTeamScore >= 0) {
+		$('#agentTeamScorePositiveGraph').css('width', `${currAgentTeamScore/100 * 8}`);
+		$('#agentTeamScorePositive').text(`${currAgentTeamScore} pts`);
+		$('#agentTeamScoreNegativeGraph').css('width', `0`);
+		$('#agentTeamScoreNegative').text(``);
 	} else {
-		$('#humanNegative').css('width', `${Math.abs(currHumanScore/100 * 8)}`);
-		$('#humanScoreNegative').text(`${currHumanScore} pts`);
-		$('#humanPositive').css('width', `0`);
-		$('#humanScorePositive').text(``);
+		$('#agentTeamScoreNegativeGraph').css('width', `${Math.abs(currAgentTeamScore/100 * 8)}`);
+		$('#agentTeamScoreNegative').text(`${currAgentTeamScore} pts`);
+		$('#agentTeamScorePositiveGraph').css('width', `0`);
+		$('#agentTeamScorePositive').text(``);
 	}
 
-	if (currAgentScore >= 0) {
-		$('#agentPositive').css('width', `${currAgentScore/100 * 8}`);
-		$('#agentScorePositive').text(`${currAgentScore} pts`);
-		$('#agentNegative').css('width', `0`);
-		$('#agentScoreNegative').text(``);
+	if (currHumanIndScore >= 0) {
+		$('#humanIndScorePositiveGraph').css('width', `${currHumanIndScore/100 * 8}`);8
+		$('#humanIndScorePositive').text(`${currHumanIndScore} pts`);
+		$('#humanIndScoreNegativeGraph').css('width', `0`);
+		$('#humanIndScoreNegative').text(``);
 	} else {
-		$('#agentNegative').css('width', `${Math.abs(currAgentScore/100 * 8)}`);
-		$('#agentScoreNegative').text(`${currAgentScore} pts`);
-		$('#agentPositive').css('width', `0`);
-		$('#agentScorePositive').text(``);
+		$('#humanIndScoreNegativeGraph').css('width', `${Math.abs(currHumanIndScore/100 * 8)}`);
+		$('#humanIndScoreNegative').text(`${currHumanIndScore} pts`);
+		$('#humanIndScorePositiveGraph').css('width', `0`);
+		$('#humanIndScorePositive').text(``);
+	}
+
+	if (currHumanTeamScore >= 0) {
+		$('#humanTeamScorePositiveGraph').css('width', `${currHumanTeamScore/100 * 8}`);
+		$('#humanTeamScorePositive').text(`${currHumanTeamScore} pts`);
+		$('#humanTeamScoreNegativeGraph').css('width', `0`);
+		$('#humanTeamScoreNegative').text(``);
+	} else {
+		$('#humanTeamScoreNegativeGraph').css('width', `${Math.abs(currHumanTeamScore/100 * 8)}`);
+		$('#humanTeamScoreNegative').text(`${currHumanTeamScore} pts`);
+		$('#humanTeamScorePositiveGraph').css('width', `0`);
+		$('#humanTeamScorePositive').text(``);
+	}
+
+	if (pastHumanIndScore >= 0) {
+		$('#overallHumanIndScorePositiveGraph').css('width', `${pastHumanIndScore/100 * 8}`);
+		$('#overallHumanIndScorePositive').text(`${pastHumanIndScore} pts`);
+		$('#overallHumanIndScoreNegativeGraph').css('width', `0`);
+		$('#overallHumanIndScoreNegative').text(``);
+	} else {
+		$('#overallHumanIndScoreNegativeGraph').css('width', `${Math.abs(pastHumanIndScore/100 * 8)}`);
+		$('#overallHumanIndScoreNegative').text(`${pastHumanIndScore} pts`);
+		$('#overallHumanIndScorePositiveGraph').css('width', `0`);
+		$('#overallHumanIndScorePositive').text(``);
+	}
+
+	if (totalAgentIndScore >= 0) {
+		$('#overallAgentIndScorePositiveGraph').css('width', `${totalAgentIndScore/100 * 8}`);
+		$('#overallAgentIndScorePositive').text(`${totalAgentIndScore} pts`);
+		$('#overallAgentIndScoreNegativeGraph').css('width', `0`);
+		$('#overallAgentIndScoreNegative').text(``);
+	} else {
+		$('#overallAgentIndScoreNegativeGraph').css('width', `${Math.abs(totalAgentIndScore/100 * 8)}`);
+		$('#overallAgentIndScoreNegative').text(`${totalAgentIndScore} pts`);
+		$('#overallAgentIndScorePositiveGraph').css('width', `0`);
+		$('#overallAgentIndScorePositive').text(``);
 	}
 }
 
@@ -1164,7 +1194,6 @@ function confirmExploration() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
 	human.totalTargetsFound.gold += human.tempTargetsFound.gold;
-	human.totalTargetsFound.red += human.tempTargetsFound.red;
 	currAgentScore = fakeAgentScores[fakeAgentNum].score;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: true, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -1180,7 +1209,6 @@ function undoExploration() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
 	human.totalTargetsFound.gold += human.tempTargetsFound.gold;
-	human.totalTargetsFound.red += human.tempTargetsFound.red;
 	currAgentScore = 0;
 	log[agentNum - 1].push({ interval: intervalCount, trusted: false, timeTaken: finalTimeStamp - initialTimeStamp });
 	initialTimeStamp = 0, finalTimeStamp = 0;
@@ -1210,24 +1238,6 @@ function hideExploredInfo() {
 	// agents[agentNum - 1].tempTargetsFound.gold = 0;
 	// agents[agentNum - 1].tempTargetsFound.red = 0;
 	human.tempTargetsFound.gold = 0;
-	human.tempTargetsFound.red = 0;
-
-	if (intervalCount == Math.floor(intervals / 2)) {
-		$.ajax({
-			url: "/simulation/1",
-			type: "POST",
-			data: JSON.stringify({
-				uuid: uuid,
-				map: pathIndex,
-				movement: data[half].movement,
-				humanTraversal: data[half].human,
-				agent1Traversal: [],
-				agent2Traversal: []
-			}),
-			contentType: "application/json; charset=utf-8"
-		});
-		++half;
-	}
 
 	$map.clearCanvas();
 	$map.drawRect({
@@ -1256,6 +1266,8 @@ function hideExploredInfo() {
 	clearInterval(timeout);
 	timeout = setInterval(updateTime, 1000);
 	pause = false;
+
+	nextInstruction();
 	// currentFrame = setInterval(loop, 100);
 	currentFrame = requestAnimationFrame(loop);
 }
@@ -1597,7 +1609,7 @@ function eventKeyHandlers(e) {
 				break;
 			case 32:	// space bar
 				e.preventDefault();
-				if (human.tutorial.inTutorial && human.pickTarget() && targetCount >= 3) {
+				if (human.tutorial.inTutorial && human.pickTarget() && targetCount >= 1) {
 					human.tutorial.inTutorial = false;
 					nextInstruction();
 				}

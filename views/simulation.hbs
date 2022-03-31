@@ -10,16 +10,17 @@
 	<link rel="icon" href="/img/favicon.png" type="image/png">
 	<script src="https://kit.fontawesome.com/4240eddcaa.js" crossorigin="anonymous"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 	<title>ARL STRONG UML | Simulation</title>
 </head>
 
 <body>
 	<div class="loader"></div>
-	<div class="progressbar"><div class="progress background"><p>0%</p></div></div>
+	<div class="progressbar"><div class="progress background"><p id="progressStatus"></p></div></div>
 	<div class="body-container">
 		<div class="popup-modal-container" id="trust-cue-modal">
 			<div class="popup-modal" id="trust-cue-modal-content">
-				<h2 style="color: white;font-size: 26px;">Agent 1 says:</h2>
+				<h2 style="color: white;font-size: 26px;">Robot 1 says:</h2>
 				<div class="trustCueMessage">
 					Testing...
 				</div>
@@ -31,18 +32,21 @@
 
 		<div class="popup-modal-container" id="trust-confirm-modal">
 			<div class="popup-modal" id="trust-confirm-modal-content">
-				<h2 id="trustConfirmQuestion" style="color: white;font-size: 26px;">Do you want to integrate the map and score of the robot to the overall score?</h2>
-				<h3 style="color: white;font-size: 18px;">You can see the results after making a decision.</h3>
+				{{!-- <h2 id="trustConfirmQuestion" style="color: white;font-size: 26px;">Do you want to integrate the map and score of the robot to the overall score?</h2> --}}
+				<div>
+					<h3 id="popupRoundDetails" style="color: white;font-size: 200%;"></h3>
+					<h3 style="color: white; margin: 2em 0;">(Remember that this score will be doubled if you add it to the team score.)</h3>
+				</div>
 				<div class="userInputButtons">
-					<button onclick="addIndividual()">Add them to my individual score</button>
-					<button onclick="addTeam()">Add them to my team score</button>
+					<button onclick="addIndividual()">Add to individual score</button>
+					<button onclick="addTeam()">Add to team score</button>
 				</div>
 			</div>
 		</div>
 		
 		<div class="popup-modal-container" id="exploration-details-modal">
 			<div class="popup-modal" id="exploration-details-modal-content">
-				<div class="map-info">
+				{{!-- <div class="map-info">
 					<div id="images-container">
 						<div class="explored stackImgContainer">
 							<div class="img-split">
@@ -65,12 +69,12 @@
 						<p class="agent-text">Agent explored area</p>
 						<p>Human explored area</p>
 					</div>
-				</div>
+				</div> --}}
 				<div class="scores">
 					{{!-- Team score block --}}
 					<div id="oScore" class="scoreBlock">
 						<div>
-							<p style="margin: 0.5em;">Overall Team Performance Score</p>
+							<p style="margin: 0.5em;">Overall Team Score</p>
 							<div class="resultsBlockItemWrapper">
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
@@ -88,9 +92,9 @@
 							</div>
 						</div>
 						<div>
-							<p style="margin: 0.5em;">Overall Individual Performance Scores</p>
+							<p style="margin: 0.5em;">Overall Individual Scores</p>
 							<div class="resultsBlockItemWrapper">
-								<p>Agent</p>
+								<p>Robot</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="overallAgentIndScoreNegative" class="scoreText"></p>
@@ -123,13 +127,14 @@
 					</div>
 					{{!-- Agent score block --}}
 					<div id="aScore" class="scoreBlock">
-						<p>Agent targets and scores</p>
+						<p>Robot targets and scores</p>
 						<div class="playerBlockHorizontalWrapper">
 							<div class="resultsBlockItemWrapper">
 								<div class="aYellowStar resultsBlockItemLeft"></div>
+								<div class="resultsBlockItemWrapper" id="curAgentScoreDetailsBlock"><p id="curAgentScoreDetails"></p></div>
 							</div>
 							<div class="resultsBlockItemWrapper">
-								<p>Agent team score in this round</p>
+								<p>Robot's team score in this round</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="agentTeamScoreNegative" class="scoreText"></p>
@@ -143,7 +148,7 @@
 										<p id="agentTeamScorePositive" class="scoreText"></p>
 									</div>
 								</div>
-								<p>Agent individual score in this round</p>
+								<p>Robot's individual score in this round</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="agentIndScoreNegative" class="scoreText"></p>
@@ -161,7 +166,7 @@
 						</div>
 					</div>
 					{{!-- Human score block --}}
-					<div id="hScore" class="scoreBlock">
+					{{!-- <div id="hScore" class="scoreBlock">
 						<p>Human targets and scores</p>
 						<div class="playerBlockHorizontalWrapper">
 							<div class="resultsBlockItemWrapper">
@@ -198,7 +203,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> --}}
 				</div>
 				<div class="tableItems"></div>
 				<div class="userInputButtons">
@@ -213,12 +218,18 @@
 					<p>Human explored region</p>
 					<div class="icon"><span class="fillSpan" style="background-color: #99ffb7; border-radius: 7px;"></span></div>
 					<p>Agent explored region</p> --}}
-					<div class="icon"><span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span></div>
+					{{!-- <div class="icon"><span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span></div>
 					<p>+100 Team, 0 Individual</p>
 					<div class="icon"><svg id="triangle" viewBox="0 0 30 30"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg></div>
 					<p>-100 Team, +100 Individual</p>
 					<div class="icon"><span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span></div>
-					<p>-100 Team, 0 Individual</p>
+					<p>-100 Team, 0 Individual</p> --}}
+					<p class="scoreTitle">Team Score:</p>
+					<p class="score" id="teamScoreMain">0</p>
+					<p class="scoreTitle">Your Individual Score:</p>
+					<p class="score" id="humanIndMain">0</p>
+					<p class="scoreTitle">Robot's Individual Score:</p>
+					<p class="score" id="agentIndMain">0</p>
 				</div>
 				<div id="gameDetails">
 					<div id="timer">Time elapsed: 0s</div>
@@ -301,14 +312,15 @@
 					</div>
 					<div class="questionContainer">
 						<h4>
-							The team scores gained by the robot in the last two rounds were:
-							<sup style="font-size: 11px;color: red;">*</sup>
+							What were the robot's decisions about its scores in the last two rounds of the game?<sup style="font-size: 11px;color: red;">*</sup>
+							<br>
+							The robot added its scores to:
 						</h4>
-						<div class="optionsContainer">
-							<label for="endTwoOne"  class="radio-inline grid-item"><input id="endTwoOne" type="radio" name="lastTwoRounds" value="pos-pos">Positive, Positive</label>
-							<label for="endTwoTwo" class="radio-inline grid-item"><input id="endTwoTwo" type="radio" name="lastTwoRounds" value="pos-neg">Positive, Negative</label>
-							<label for="endTwoThree" class="radio-inline grid-item"><input id="endTwoThree" type="radio" name="lastTwoRounds" value="neg-neg">Negative, Negative</label>
-							<label for="endTwoFour" class="radio-inline grid-item"><input id="endTwoFour" type="radio" name="lastTwoRounds" value="neg-pos">Negative, Positive</label>
+						<div class="optionsContainer fullWidthOptions">
+							<label for="endTwoOne"  class="grid-item fullWidthOption"><input id="endTwoOne" type="radio" name="lastTwoRounds" value="pos-pos">1. Team Score, 2. Individual Score</label>
+							<label for="endTwoTwo" class="grid-item fullWidthOption"><input id="endTwoTwo" type="radio" name="lastTwoRounds" value="pos-neg">1. Team Score, 2. Team Score</label>
+							<label for="endTwoThree" class="grid-item fullWidthOption"><input id="endTwoThree" type="radio" name="lastTwoRounds" value="neg-neg">1. Individual Score, 2. Team Score</label>
+							<label for="endTwoFour" class="grid-item fullWidthOption"><input id="endTwoFour" type="radio" name="lastTwoRounds" value="neg-pos">1. Individual Score, 2. Individual Score</label>
 						</div>
 					</div>
 				</form>

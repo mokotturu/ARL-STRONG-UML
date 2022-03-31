@@ -16,7 +16,7 @@
 
 <body>
 	<div class="loader"></div>
-	<div class="progressbar"><div class="progress background"><p>0%</p></div></div>
+	<div class="progressbar"><div class="progress background"><p id="progressStatus"></p></div></div>
 	<div class="body-container">
 		<div data-id="1" class="popup-modal-container" id="instructions-modal">
 			<div class="popup-modal" id="instructions-modal-content">
@@ -29,114 +29,109 @@
 		</div>
 		<div class="popup-modal-container" id="trust-confirm-modal">
 			<div class="popup-modal" id="trust-confirm-modal-content">
-				<h2 id="trustConfirmQuestion" style="color: white;font-size: 26px;">Do you want to integrate the score of the robot to the overall score?</h2>
-				<h3 style="color: white;font-size: 18px;">You can see the results after making a decision.</h3>
+				<div>
+					<h3 id="popupRoundDetails" style="color: white;font-size: 200%;"></h3>
+					<h3 style="color: white; margin: 2em 0;">(Remember that this score will be doubled if you add it to the team score.)</h3>
+				</div>
 				<div class="userInputButtons">
-					<button onclick="confirmExploration()">Integrate</button>
-					<button onclick="undoExploration()">Discard</button>
+					<button onclick="addIndividual()">Add to individual score</button>
+					<button onclick="addTeam()">Add to team score</button>
 				</div>
 			</div>
 		</div>
 		<div class="popup-modal-container" id="exploration-details-modal">
 			<div class="popup-modal" id="exploration-details-modal-content">
-				<div class="map-info">
-					<div id="images-container">
-						<div class="explored">
-							<img src="#" id="minimap" alt="Entire Map">
-						</div>
-						<div class="explored">
-							<img src="#" id="bot-image" alt="Agent explored area">
-						</div>
-						<div class="explored">
-							<img src="#" id="human-image" alt="Human explored area">
-						</div>
-					</div>
-					<div class="headings-container">
-						<p>Entire map</p>
-						<p class="agent-text">
-							Agent explored area
-							{{!-- <i class="fas fa-info-circle tooltip">
-								<span class="tooltiptext">If there is no area highlighted in green/orange, then the agent did not explore any new area.</span>
-							</i> --}}
-						</p>
-						<p>Human explored area</p>
-					</div>
-				</div>
-				<div class = "scores">
-					<div id = "oScore" class="scoreBlock">
-						<p>Overall score of current round</p>
-						<div class="resultsBlockItemWrapper">
-							<div class="negativeScoreGraph resultsBlockItemLeft">
-								<p id="currTeamScoreNegative"></p>
-								<div id="currTeamNegative" class="negativeScore graph"></div>
-							</div>
-							<img src = "img/bar.png" id = "star" height = 30>
-							<div class="positiveScoreGraph resultsBlockItemRight">
-								<div id="currTeamPositive" class="positiveScore graph"></div>
-								<p id="currTeamScorePositive"></p>
+				<div class="scores">
+					<div id="oScore" class="scoreBlock">
+						<div>
+							<p style="margin: 0.5em;">Overall Team Score</p>
+							<div class="resultsBlockItemWrapper">
+								<div class="graphResultsBlockItemWrapper">
+									<div class="negativeScoreGraph resultsBlockItemLeft">
+										<p id="overallTeamScoreNegative" class="scoreText"></p>
+										<div id="overallTeamScoreNegativeGraph" class="negativeScore graph"></div>
+									</div>
+									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+									</svg>
+									<div class="positiveScoreGraph resultsBlockItemRight">
+										<div id="overallTeamScorePositiveGraph" class="positiveScore graph"></div>
+										<p id="overallTeamScorePositive" class="scoreText"></p>
+									</div>
+								</div>
 							</div>
 						</div>
-						<p>Overall team score</p>
-						{{!-- <p><b>INSERT GRAPH HERE</b></p> --}}
-						<div class="resultsBlockItemWrapper">
-							<div class="negativeScoreGraph resultsBlockItemLeft">
-								<p id="overallScoreNegative"></p>
-								<div id="overallNegative" class="negativeScore graph"></div>
-							</div>
-							<img src = "img/bar.png" id = "star" height = 30>
-							<div class="positiveScoreGraph resultsBlockItemRight">
-								<div id="overallPositive" class="positiveScore graph"></div>
-								<p id="overallScorePositive"></p>
-							</div>
-						</div>
-					</div>
-					<div id = "aScore" class="scoreBlock">
-						<p>Targets collected by agent in this round</p>
-						<div class="resultsBlockItemWrapper">
-							<div class = "aYellowStar resultsBlockItemLeft">
-								<img src = "img/yellow_star.png" id = "star" height = 30>
-							</div>
-							<img src = "img/bar.png" id = "star" height = 30 style="padding: 0 5px;">
-							<div class = "aBlueStar resultsBlockItemRight">
-								<img src = "img/blue_star.png" id = "star" height = 30>
-							</div>
-						</div>
-						<p>Agent score in this round</p>
-						{{!-- <p><b>INSERT GRAPH HERE</b></p> --}}
-						<div class="resultsBlockItemWrapper">
-							<div class="negativeScoreGraph resultsBlockItemLeft">
-								<p id="agentScoreNegative"></p>
-								<div id="agentNegative" class="negativeScore graph"></div>
-							</div>
-							<img src = "img/bar.png" id = "star" height = 30>
-							<div class="positiveScoreGraph resultsBlockItemRight">
-								<div id="agentPositive" class="positiveScore graph"></div>
-								<p id="agentScorePositive"></p>
+						<div>
+							<p style="margin: 0.5em;">Overall Individual Scores</p>
+							<div class="resultsBlockItemWrapper">
+								<p>Robot</p>
+								<div class="graphResultsBlockItemWrapper">
+									<div class="negativeScoreGraph resultsBlockItemLeft">
+										<p id="overallAgentIndScoreNegative" class="scoreText"></p>
+										<div id="overallAgentIndScoreNegativeGraph" class="negativeScore graph"></div>
+									</div>
+									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+									</svg>
+									<div class="positiveScoreGraph resultsBlockItemRight">
+										<div id="overallAgentIndScorePositiveGraph" class="positiveScore graph"></div>
+										<p id="overallAgentIndScorePositive" class="scoreText"></p>
+									</div>
+								</div>
+								<p>Human</p>
+								<div class="graphResultsBlockItemWrapper">
+									<div class="negativeScoreGraph resultsBlockItemLeft">
+										<p id="overallHumanIndScoreNegative" class="scoreText"></p>
+										<div id="overallHumanIndScoreNegativeGraph" class="negativeScore graph"></div>
+									</div>
+									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+									</svg>
+									<div class="positiveScoreGraph resultsBlockItemRight">
+										<div id="overallHumanIndScorePositiveGraph" class="positiveScore graph"></div>
+										<p id="overallHumanIndScorePositive" class="scoreText"></p>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div id = "hScore" class="scoreBlock">
-						<p>Targets collected by human in this round</p>
-						<div class="resultsBlockItemWrapper">
-							<div class = "hYellowStar resultsBlockItemLeft">
-								<img src = "img/yellow_star.png" id = "star" height = 30>
+					{{!-- Agent score block --}}
+					<div id="aScore" class="scoreBlock">
+						<p>Robot targets and scores</p>
+						<div class="playerBlockHorizontalWrapper">
+							<div class="resultsBlockItemWrapper">
+								<div class="aYellowStar resultsBlockItemLeft"></div>
+								<div class="resultsBlockItemWrapper" id="curAgentScoreDetailsBlock"><p id="curAgentScoreDetails"></p></div>
 							</div>
-							<img src = "img/bar.png" id = "star" height = 30 style="padding: 0 5px;">
-							<div class = "hBlueStar resultsBlockItemRight">
-								<img src = "img/blue_star.png" id = "star" height = 30>
-							</div>
-						</div>
-						<p>Human score in this round</p>
-						{{!-- <p><b>INSERT GRAPH HERE</b></p> --}}
-						<div class="resultsBlockItemWrapper">
-							<div class="negativeScoreGraph resultsBlockItemLeft">
-								<p id="humanScoreNegative"></p>
-								<div id="humanNegative" class="negativeScore graph"></div>
-							</div>
-							<img src = "img/bar.png" id = "star" height = 30>
-							<div class="positiveScoreGraph resultsBlockItemRight">
-								<div id="humanPositive" class="positiveScore graph"></div>
-								<p id="humanScorePositive"></p>
+							<div class="resultsBlockItemWrapper">
+								<p>Robot's team score in this round</p>
+								<div class="graphResultsBlockItemWrapper">
+									<div class="negativeScoreGraph resultsBlockItemLeft">
+										<p id="agentTeamScoreNegative" class="scoreText"></p>
+										<div id="agentTeamScoreNegativeGraph" class="negativeScore graph"></div>
+									</div>
+									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+									</svg>
+									<div class="positiveScoreGraph resultsBlockItemRight">
+										<div id="agentTeamScorePositiveGraph" class="positiveScore graph"></div>
+										<p id="agentTeamScorePositive" class="scoreText"></p>
+									</div>
+								</div>
+								<p>Robot's individual score in this round</p>
+								<div class="graphResultsBlockItemWrapper">
+									<div class="negativeScoreGraph resultsBlockItemLeft">
+										<p id="agentIndScoreNegative" class="scoreText"></p>
+										<div id="agentIndScoreNegativeGraph" class="negativeScore graph"></div>
+									</div>
+									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+									</svg>
+									<div class="positiveScoreGraph resultsBlockItemRight">
+										<div id="agentIndScorePositiveGraph" class="positiveScore graph"></div>
+										<p id="agentIndScorePositive" class="scoreText"></p>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -150,23 +145,15 @@
 		<div id="simulation">
 			<div id="info">
 				<div id="legend">
-					{{!-- <div class="icon"><span class="fillSpan" style="background-color: #9999ff; border-radius: 7px;"></span></div>
-					<p>Human explored region</p>
-					<div class="icon"><span class="fillSpan" style="background-color: #99ffb7; border-radius: 7px;"></span></div>
-					<p>Agent explored region</p> --}}
-					<div class="icon"><span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span></div>
-					<p>+100 Team, 0 Individual</p>
-					<div class="icon"><svg id="triangle" viewBox="0 0 30 30"><polygon points="15 2, 30 26, 0 26" fill="#ff48ff"/></svg></div>
-					<p>-100 Team, +100 Individual</p>
-					<div class="icon"><span class="material-icons" style="color: #ff4848; font-size: 30px;";>circle</span></div>
-					<p>-100 Team, 0 Individual</p>
+					<p class="scoreTitle">Team Score:</p>
+					<p class="score" id="teamScoreMain">0</p>
+					<p class="scoreTitle">Human Individual Score:</p>
+					<p class="score" id="humanIndMain">0</p>
+					<p class="scoreTitle">Agent Individual Score:</p>
+					<p class="score" id="agentIndMain">0</p>
 				</div>
 				<div id="gameDetails">
 					<div id="timer">Time elapsed: 0s</div>
-					{{!-- <hr style="width: 90%;">
-					<div id="teamScoreMain" style="font-size: 18px;">Team Score: 0</div>
-					<div id="humanIndMain" style="font-size: 18px;">Human Individual Score: 0</div>
-					<div id="agentIndMain" style="font-size: 18px;">Agent Individual Score: 0</div> --}}
 				</div>
 			</div>
 			<div id="map-container">
@@ -180,14 +167,42 @@
 				<form name="intervalSurvey" id="intervalSurvey" onsubmit="return false;">
 					<div class="questionContainer">
 						<h4 id="endRoundQH4">
-							If you find 2 red targets and 1 yellow target in one round of the game, what will be your team performance score and individual performance score in this round?
+							If you pick 4 targets in one round of the game, how many points would you gain if you add them to the team score? How many points would you gain if you add them to your individual score?
 							<sup style="font-size: 11px;color: red;">*</sup>
 						</h4>
 						<div class="optionsContainer">
-							<label for="oneOneInput"   class="radio-inline grid-item" id="oneOneLabel"><input id="oneOneInput"   type="radio" name="performanceRating"  value="200_-100"  required>Team Performance Score: 200, Individual Performance Score: -100</label>
-							<label for="oneTwoInput"   class="radio-inline grid-item" id="oneTwoLabel"><input id="oneTwoInput"   type="radio" name="performanceRating"  value="-200_100"  required>Team Performance Score: -200, Individual Performance Score: 100</label>
-							<label for="oneThreeInput" class="radio-inline grid-item" id="oneThreeLabel"><input id="oneThreeInput" type="radio" name="performanceRating" value="-100_0" required>Team Performance Score: -100, Individual Performance Score: 0</label>
-							<label for="oneFourInput"  class="radio-inline grid-item" id="oneFourLabel"><input id="oneFourInput"  type="radio" name="performanceRating" value="100_0" required>Team Performance Score: 100, Individual Performance Score: 0</label>
+							<label for="oneOneInput"   class="radio-inline grid-item" id="oneOneLabel">
+								<input id="oneOneInput"   type="radio" name="scoresQuiz"  value="400_400"  required>
+								Team: 400, Individual: 400
+							</label>
+							<label for="oneTwoInput"   class="radio-inline grid-item" id="oneTwoLabel">
+								<input id="oneTwoInput"   type="radio" name="scoresQuiz"  value="800_400"  required>
+								Team: 800, Individual: 400
+							</label>
+							<label for="oneThreeInput"   class="radio-inline grid-item" id="oneThreeLabel">
+								<input id="oneThreeInput"   type="radio" name="scoresQuiz"  value="400_200"  required>
+								Team: 400, Individual: 200
+							</label>
+							<label for="oneFourInput"   class="radio-inline grid-item" id="oneFourLabel">
+								<input id="oneFourInput"   type="radio" name="scoresQuiz"  value="200_200"  required>
+								Team: 200, Individual: 200
+							</label>
+							<label for="oneFiveInput"   class="radio-inline grid-item" id="oneFiveLabel">
+								<input id="oneFiveInput"   type="radio" name="scoresQuiz"  value="400_800"  required>
+								Team: 400, Individual: 800
+							</label>
+							<label for="oneSixInput"   class="radio-inline grid-item" id="oneSixLabel">
+								<input id="oneSixInput"   type="radio" name="scoresQuiz"  value="200_400"  required>
+								Team: 200, Individual: 400
+							</label>
+							<label for="oneSevenInput"   class="radio-inline grid-item" id="oneSevenLabel">
+								<input id="oneSevenInput"   type="radio" name="scoresQuiz"  value="800_800"  required>
+								Team: 800, Individual: 800
+							</label>
+							<label for="oneEightInput"   class="radio-inline grid-item" id="oneEightLabel">
+								<input id="oneEightInput"   type="radio" name="scoresQuiz"  value="800_200"  required>
+								Team: 800, Individual: 200
+							</label>
 						</div>
 					</div>
 				</form>

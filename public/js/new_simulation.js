@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'Performance Trust and Moral Trust With Choice Base Game';
+const gameMode = 'Retaliation Game';
 
 const colors = {
 	human: '#3333ff',
@@ -87,25 +87,19 @@ var fakeBotImageScales = [
 	{ left:  96, right: 192, top: 158, bottom: 242 },
 	{ left:  96, right: 319, top: 201, bottom: 349 },
 	{ left: 166, right: 369, top: 345, bottom: 414 },
-	{ left: 272, right: 369, top: 207, bottom: 483 },
-	{ left: 281, right: 381, top:  49, bottom: 208 },
-	{ left: 281, right: 431, top:  92, bottom: 330 },
 ];
 
 var fakeAgentScores = [
-	{ gold: 3, },
-	{ gold: 1, },
-	{ gold: 2, },
-	{ gold: 2, },
-	{ gold: 1, },
-	{ gold: 0, },
-	{ gold: 0, },
-	{ gold: 0, },
-	{ gold: 2, },
-	{ gold: 4, },
-	{ gold: 3, },
-	{ gold: 3, },
-	{ gold: 2, },
+	{ gold: 3, addedTo: 'team' },
+	{ gold: 1, addedTo: 'individual' },
+	{ gold: 2, addedTo: 'team' },
+	{ gold: 2, addedTo: 'individual' },
+	{ gold: 1, addedTo: 'team' },
+	{ gold: 0, addedTo: 'individual' },
+	{ gold: 0, addedTo: 'team' },
+	{ gold: 0, addedTo: 'individual' },
+	{ gold: 2, addedTo: 'team' },
+	{ gold: 4, addedTo: 'individual' },
 ];
 
 var fakeAgentNum = 0;
@@ -122,7 +116,7 @@ var pastHumanIndScore, pastHumanTeamScore, currHumanIndScore, currHumanTeamScore
 var seconds = 0, timeout, startTime, throttle;
 var eventListenersAdded = false, fullMapDrawn = false, pause = false;
 var humanLeft, humanRight, humanTop, humanBottom, botLeft, botRight, botTop, botBottom;
-var intervalCount = 0, half = 0, intervals = 13, duration = 40, agentNum = 1;
+var intervalCount = 0, half = 0, intervals = 10, duration = 25, agentNum = 1;
 var log = [[], []];
 
 var victimMarker = new Image();
@@ -416,7 +410,7 @@ $(document).ready(async () => {
 		obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goodTarget, 'gold'));
 	}
 
-	for (let i = 0; i < 20; ++i) {
+	for (let i = 0; i < 40; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goodTarget, 'gold'));
 	}
@@ -424,6 +418,9 @@ $(document).ready(async () => {
 	$('.loader').css('visibility', 'hidden');
 	$('.body-container').css('visibility', 'visible');
 	$('.body-container').css('opacity', '1');
+	
+	$progressbar.css('width', `${Math.round((intervalCount + 1)*100/intervals)}%`);
+	$progressbar.html(`<p>Round ${intervalCount + 1}/${intervals}</p>`);
 	
 	$(document).on('keydown', e => {
 		eventKeyHandlers(e);
@@ -573,10 +570,10 @@ function showTrustPrompt() {
 		$map.clearCanvas();
 		human.drawCells(human.tempExplored, false);
 		spawn([...human.tempTargetsFound.gold, human], 1);
-		$humanImage.attr("src", $map.getCanvasImage());
-		$botImage.attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
-		$minimapImage.attr("src", $map.getCanvasImage());
-		$('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
+		// $humanImage.attr("src", $map.getCanvasImage());
+		// $botImage.attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
+		// $minimapImage.attr("src", $map.getCanvasImage());
+		// $('#minimapAgentOverlay').attr("src", `img/fakeAgentImages/agentExploration${intervalCount + 1}.png`);
 	}
 
 	// updateTrustMessage();
@@ -584,6 +581,7 @@ function showTrustPrompt() {
 	$trustConfirmModal.css('display', 'flex');
 	$trustConfirmModal.css('visibility', 'visible');
 	$trustConfirmModal.css('opacity', '1');
+	$('#popupRoundDetails').text(`You picked ${human.tempTargetsFound.gold.length} target(s) and gained ${human.tempTargetsFound.gold.length * 100} points.`);
 
 	initialTimeStamp = performance.now();
 }
@@ -602,10 +600,10 @@ function showPostIntegratePrompt(){
 function showExploredInfo() {
 	// NEW STUFF
 	pastHumanIndScore = human.totalTargetsFound.individualGold.length * 100;
-	pastHumanTeamScore = human.totalTargetsFound.teamGold.length * 100;
+	pastHumanTeamScore = human.totalTargetsFound.teamGold.length * 200;
 
 	if (log[agentNum - 1][intervalCount - 1].addedTo == 'Team') {
-		currHumanTeamScore = human.tempTargetsFound.gold.length * 100;
+		currHumanTeamScore = human.tempTargetsFound.gold.length * 200;
 		currHumanIndScore = 0;
 	} else {
 		currHumanTeamScore = 0;
@@ -616,13 +614,17 @@ function showExploredInfo() {
 	totalTeamScore += currHumanTeamScore + currAgentTeamScore;
 	totalAgentIndScore += currAgentIndScore;
 
-	$('#teamScoreMain').text(`Team Score: ${totalTeamScore}`);
-	$('#humanIndMain').text(`Human Individual Score: ${pastHumanIndScore}`);
-	$('#agentIndMain').text(`Agent Individual Score: ${totalAgentIndScore}`);
+	$('#teamScoreMain').text(`${totalTeamScore}`);
+	$('#humanIndMain').text(`${pastHumanIndScore}`);
+	$('#agentIndMain').text(`${totalAgentIndScore}`);
 
 	$detailsModal.css('display', 'flex');
 	$detailsModal.css('visibility', 'visible');
 	$detailsModal.css('opacity', '1');
+
+	setTimeout(() => {
+		$('#curAgentScoreDetailsBlock').toggleClass('animate__animated animate__heartBeat');
+	}, 100);
 
 	$log.empty();
 
@@ -638,9 +640,9 @@ function showExploredInfo() {
 		});
 	}
 
-	getSetBoundaries(human.tempExplored, 0);
-	fakeGetSetBoundaries();
-	scaleImages();
+	// getSetBoundaries(human.tempExplored, 0);
+	// fakeGetSetBoundaries();
+	// scaleImages();
 
 	setTimeout(() => { $detailsModal.scrollTop(-10000) }, 500);
 	setTimeout(() => { $log.scrollLeft(10000) }, 500);
@@ -652,17 +654,23 @@ function showExploredInfo() {
 
 //Update the display for star count for targets on the results display
 function updateResults(){
-	let tempString = human.tempTargetsFound.gold.length > 0 ? `` : `No gold targets found`;
+	/* let tempString = human.tempTargetsFound.gold.length > 0 ? `` : `No gold targets found`;
 	for (let i = 0; i < human.tempTargetsFound.gold.length; i++){
 		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
 	}
-	$("div.hYellowStar").html(tempString);
+	$("div.hYellowStar").html(tempString); */
 
 	tempString = fakeAgentScores[fakeAgentNum - 1].gold > 0 ? `` : `No gold targets found`; 
 	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].gold; k++){
 		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
 	}
 	$("div.aYellowStar").html(tempString);
+
+	if (fakeAgentScores[fakeAgentNum - 1].addedTo == 'team') {
+		$('#curAgentScoreDetails').text(`Added to team score: ${fakeAgentScores[fakeAgentNum - 1].gold * 200} pts`);
+	} else {
+		$('#curAgentScoreDetails').text(`Added to individual score: ${fakeAgentScores[fakeAgentNum - 1].gold * 100} pts`);
+	}
 
 	if (totalTeamScore >= 0) {
 		$('#overallTeamScorePositiveGraph').css('width', `${totalTeamScore/100 * 8}`);
@@ -798,8 +806,14 @@ function addIndividual() {
 	++intervalCount;
 
 	human.totalTargetsFound.individualGold.push(...human.tempTargetsFound.gold);
-	currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 100;
-	currAgentIndScore = 0;
+
+	if (fakeAgentScores[fakeAgentNum].addedTo == 'team') {
+		currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 200;
+		currAgentIndScore = 0;
+	} else {
+		currAgentTeamScore = 0;
+		currAgentIndScore = fakeAgentScores[fakeAgentNum].gold * 100;
+	}
 
 	log[agentNum - 1].push({ interval: intervalCount, addedTo: 'Individual', timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length });
 	
@@ -817,8 +831,14 @@ function addTeam() {
 	++intervalCount;
 	
 	human.totalTargetsFound.teamGold.push(...human.tempTargetsFound.gold);
-	currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 100;
-	currAgentIndScore = 0;
+
+	if (fakeAgentScores[fakeAgentNum].addedTo == 'team') {
+		currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 200;
+		currAgentIndScore = 0;
+	} else {
+		currAgentTeamScore = 0;
+		currAgentIndScore = fakeAgentScores[fakeAgentNum].gold * 100;
+	}
 
 	log[agentNum - 1].push({ interval: intervalCount, addedTo: 'Team', timeTaken: finalTimeStamp - initialTimeStamp, humanGoldTargetsCollected: human.tempTargetsFound.gold.length });
 
@@ -835,6 +855,7 @@ function addTeam() {
 function hideExploredInfo() {
 	// log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
 	$('#intervalSurveyRQMsg').css('display', 'none');
+	$('#curAgentScoreDetailsBlock').toggleClass('animate__animated animate__heartBeat');
 	let rawIntervalSurveyData = $('#intervalSurvey').serializeArray();
 	/* console.log(intervalSurveyData)
 	if (intervalSurveyData[0].name != 'performanceRating' || intervalSurveyData[1].name != 'teammateRating' || intervalSurveyData[2].name != 'decisionInfluence' || (intervalSurveyData[2].value == '5'  && intervalSurveyData[3].value == '')) {
@@ -911,8 +932,10 @@ function hideExploredInfo() {
 	$detailsModal.css('visibility', 'hidden');
 	$detailsModal.css('display', 'none');
 	$detailsModal.css('opacity', '0');
-	$progressbar.css('width', `${Math.round(intervalCount*100/intervals)}%`);
-	$progressbar.html(`<p>${Math.round(intervalCount*100/intervals)}%</p>`);
+	if (intervalCount < intervals) {
+		$progressbar.css('width', `${Math.round((intervalCount + 1)*100/intervals)}%`);
+		$progressbar.html(`<p>Round ${intervalCount + 1}/${intervals}</p>`);
+	}
 	clearInterval(timeout);
 	timeout = setInterval(updateTime, 1000);
 	pause = false;
@@ -1388,33 +1411,33 @@ function getSetBoundaries(thisSet, who) {
 function scaleImages() {
 	let botWidth = columns/(botRight - botLeft + 5) * 100;
 	let botHeight = rows/(botBottom - botTop + 5) * 100;
-	let humanWidth = columns/(humanRight - humanLeft + 5) * 100;
-	let humanHeight = rows/(humanBottom - humanTop + 5) * 100;
+	// let humanWidth = columns/(humanRight - humanLeft + 5) * 100;
+	// let humanHeight = rows/(humanBottom - humanTop + 5) * 100;
 
 	botWidth = (botWidth < 100) ? 100 : botWidth;
 	botHeight = (botHeight < 100) ? 100 : botHeight;
 
-	humanWidth = (humanWidth < 100) ? 100 : humanWidth;
-	humanHeight = (humanHeight < 100) ? 100 : humanHeight;
+	// humanWidth = (humanWidth < 100) ? 100 : humanWidth;
+	// humanHeight = (humanHeight < 100) ? 100 : humanHeight;
 
-	if (botWidth > botHeight) {
+	/* if (botWidth > botHeight) {
 		$botImage.attr("width", botHeight + "%");
 		$botImage.attr("height", botHeight + "%");
 	} else {
 		$botImage.attr("width", botWidth + "%");
 		$botImage.attr("height", botWidth + "%");
-	}
+	} */
 
-	if (humanWidth > humanHeight) {
+	/* if (humanWidth > humanHeight) {
 		$humanImage.attr("width", humanHeight + "%");
 		$humanImage.attr("height", humanHeight + "%");
 	} else {
 		$humanImage.attr("width", humanWidth + "%");
 		$humanImage.attr("height", humanWidth + "%");
-	}
+	} */
 	
-	$botImage.parent()[0].scroll((botLeft + (botRight - botLeft + 1)/2)*($botImage.width()/columns) - $('.explored').width()/2, ((botTop + (botBottom - botTop + 1)/2)*($botImage.height()/rows)) - $('.explored').height()/2);
-	$humanImage.parent()[0].scroll((humanLeft + (humanRight - humanLeft + 1)/2)*($humanImage.width()/columns) - $('.explored').width()/2, ((humanTop + (humanBottom - humanTop + 1)/2)*($humanImage.height()/rows)) - $('.explored').height()/2);
+	// $botImage.parent()[0].scroll((botLeft + (botRight - botLeft + 1)/2)*($botImage.width()/columns) - $('.explored').width()/2, ((botTop + (botBottom - botTop + 1)/2)*($botImage.height()/rows)) - $('.explored').height()/2);
+	// $humanImage.parent()[0].scroll((humanLeft + (humanRight - humanLeft + 1)/2)*($humanImage.width()/columns) - $('.explored').width()/2, ((humanTop + (humanBottom - humanTop + 1)/2)*($humanImage.height()/rows)) - $('.explored').height()/2);
 }
 
 function updateScrollingPosition(x, y) {
