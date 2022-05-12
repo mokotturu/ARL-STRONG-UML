@@ -34,8 +34,8 @@
 					<h3 style="color: white; margin: 2em 0;">(Remember that this score will be doubled if you add it to the team score.)</h3>
 				</div>
 				<div class="userInputButtons">
-					<button onclick="addIndividual()">Add to individual score</button>
-					<button onclick="addTeam()">Add to team score</button>
+					<button id="addIndividualBtn" onclick="addIndividual()">Add to individual score</button>
+					<button id="addTeamBtn" onclick="addTeam()">Add to team score</button>
 				</div>
 			</div>
 		</div>
@@ -64,7 +64,7 @@
 						<div>
 							<p style="margin: 0.5em;">Overall Individual Scores</p>
 							<div class="resultsBlockItemWrapper">
-								<p>Robot</p>
+								<p>Teammate</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="overallAgentIndScoreNegative" class="scoreText"></p>
@@ -78,18 +78,20 @@
 										<p id="overallAgentIndScorePositive" class="scoreText"></p>
 									</div>
 								</div>
-								<p>Human</p>
-								<div class="graphResultsBlockItemWrapper">
-									<div class="negativeScoreGraph resultsBlockItemLeft">
-										<p id="overallHumanIndScoreNegative" class="scoreText"></p>
-										<div id="overallHumanIndScoreNegativeGraph" class="negativeScore graph"></div>
-									</div>
-									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
-										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
-									</svg>
-									<div class="positiveScoreGraph resultsBlockItemRight">
-										<div id="overallHumanIndScorePositiveGraph" class="positiveScore graph"></div>
-										<p id="overallHumanIndScorePositive" class="scoreText"></p>
+								<div id="humanIndScoreTemp">
+									<p>You</p>
+									<div class="graphResultsBlockItemWrapper">
+										<div class="negativeScoreGraph resultsBlockItemLeft">
+											<p id="overallHumanIndScoreNegative" class="scoreText"></p>
+											<div id="overallHumanIndScoreNegativeGraph" class="negativeScore graph"></div>
+										</div>
+										<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
+											<polygon points="0 0, 3 0, 3 30, 0 30" fill="black" style="stroke-linejoin: round;"></polygon>
+										</svg>
+										<div class="positiveScoreGraph resultsBlockItemRight">
+											<div id="overallHumanIndScorePositiveGraph" class="positiveScore graph"></div>
+											<p id="overallHumanIndScorePositive" class="scoreText"></p>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -97,14 +99,14 @@
 					</div>
 					{{!-- Agent score block --}}
 					<div id="aScore" class="scoreBlock">
-						<p>Robot targets and scores</p>
+						<p>Teammate targets and scores</p>
 						<div class="playerBlockHorizontalWrapper">
 							<div class="resultsBlockItemWrapper">
 								<div class="aYellowStar resultsBlockItemLeft"></div>
 								<div class="resultsBlockItemWrapper" id="curAgentScoreDetailsBlock"><p id="curAgentScoreDetails"></p></div>
 							</div>
 							<div class="resultsBlockItemWrapper">
-								<p>Robot's team score in this round</p>
+								<p>Teammate's team score in this round</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="agentTeamScoreNegative" class="scoreText"></p>
@@ -118,7 +120,7 @@
 										<p id="agentTeamScorePositive" class="scoreText"></p>
 									</div>
 								</div>
-								<p>Robot's individual score in this round</p>
+								<p>Teammate's individual score in this round</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="agentIndScoreNegative" class="scoreText"></p>
@@ -147,9 +149,9 @@
 				<div id="legend">
 					<p class="scoreTitle">Team Score:</p>
 					<p class="score" id="teamScoreMain">0</p>
-					<p class="scoreTitle">Human Individual Score:</p>
+					<p class="scoreTitle">Your Individual Score:</p>
 					<p class="score" id="humanIndMain">0</p>
-					<p class="scoreTitle">Agent Individual Score:</p>
+					<p class="scoreTitle">Teammate's Individual Score:</p>
 					<p class="score" id="agentIndMain">0</p>
 				</div>
 				<div id="gameDetails">

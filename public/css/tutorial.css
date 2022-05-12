@@ -362,6 +362,12 @@ nav {
 	border: 2px dashed #ffc72c;
 }
 
+#humanIndScoreTemp {
+	border: 2px dashed #ffc72c;
+	border-radius: 7px;
+	width: 100%;
+}
+
 .scoreBlock p {
 	padding: 0.5em 0 !important;
 	font-size: 150%;

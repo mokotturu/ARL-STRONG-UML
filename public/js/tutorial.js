@@ -64,6 +64,7 @@ var mapPaths = [
 var obstacleLocs = [
 	[
 		[222, 348],
+		[232, 338],
 	],
 	[
 		[232, 338],
@@ -219,7 +220,7 @@ class Player {
 			pickedObstacle[0].isPicked = true;
 			if (pickedObstacle[0].variant == 'gold') {
 				this.tempTargetsFound.gold.push(pickedObstacle[0]);
-				showNotification('<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>', 'You picked up a gold target!', 'This will award 200 points if added to the team score, or 100 points if added to your individual score.');
+				showNotification('<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>', 'You picked up a gold target!', 'This will award 100 points if added to your individual score, or 200 points if added to the team score.');
 			}
 			++targetCount;
 		}
@@ -433,7 +434,7 @@ function showInstructions2() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('How to play:');
-		$('#instructions-content').text('This is the playground. The blue character in the center is the human. The light blue area around the human is the area in the field of view of the human. To move around the map, you can use your arrow keys, or AWSD, or HJKL. Let\'s practice!');
+		$('#instructions-content').text('This is the playground. The blue character in the center is the human, and it represents your current location on the map. The light blue area around the human is the area in the field of view of the human. To move around the map, you can use your arrow keys, or AWSD, or HJKL. Let\'s practice!');
 		$instructionsModal.css('box-shadow', '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)');
 		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
@@ -599,7 +600,7 @@ function showInstructions11() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Picking up targets:');
-		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of the highlighted target and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
+		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of a highlighted target and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
 		$('#instructions-content').css('display', 'initial');
 		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
@@ -642,16 +643,66 @@ function showInstructions13() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		showTrustPrompt();
+		$('#addTeamBtn').prop('disabled', true);
+
+		$('#instructions-heading').text('Adding to individual score:');
+		$('#instructions-content').html('First let\'s add it to your individual score.');
+		$('#instructions-content').css('display', 'initial');
+		$instructionsModal[0].style.setProperty('height', '10em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#instructions-button').css('display', 'none');
 
 		$('.notificationsContainer').addClass("animate__animated animate__fadeOutRight");
-		/* $('#legend').css({
-			'z-index': 100000,
-			'position': 'absolute',
-		}); */
 	}, 500);
 }
 
 function showInstructions14() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	setTimeout(() => {
+		$('#instructions-heading').text('Picking up targets:');
+		$('#instructions-content').html('Now let\'s pick up the other target. Move to the center of the other highlighted target and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
+		$('#instructions-content').css('display', 'initial');
+		$instructionsModal[0].style.setProperty('height', '25em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#instructions-button').prop('disabled', true);
+		$(document).on('keydown', e => {
+			eventKeyHandlers(e);
+		});
+		human.tutorial.inTutorial = true;
+		human.tutorial.restricted = false;
+		human.tutorial.step = 0;
+		highlightTargets = true;
+	}, 500);
+}
+
+function showInstructions15() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	setTimeout(() => {
+		showTrustPrompt();
+		$('#addTeamBtn').prop('disabled', false);
+		$('#addIndividualBtn').prop('disabled', true);
+
+		$('#instructions-heading').text('Adding to team score:');
+		$('#instructions-content').html('Now let\'s add it to the team score.');
+		$('#instructions-content').css('display', 'initial');
+		$instructionsModal[0].style.setProperty('height', '10em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#instructions-button').css('display', 'none');
+
+		$('.notificationsContainer').addClass("animate__animated animate__fadeOutRight");
+	}, 500);
+}
+
+function showInstructions16() {
 	$('#instructions-heading').removeClass('animate__zoomIn');
 	$('#instructions-content').removeClass('animate__zoomIn');
 	$instructionsModal.removeClass('animate__fadeInLeft');
@@ -667,7 +718,7 @@ function showInstructions14() {
 	}, 500);
 }
 
-function showInstructions15() {
+function showInstructions17() {
 	$('#instructions-heading').removeClass('animate__zoomIn');
 	$('#instructions-content').removeClass('animate__zoomIn');
 	$endRoundModal.removeClass('animate__zoomIn');
@@ -679,6 +730,7 @@ function showInstructions15() {
 		$endRoundModal.css('visibility', 'hidden');
 		$endRoundModal.css('opacity', '0');
 		$endRoundModal.css('z-index', 0);
+		$instructionsModal[0].style.setProperty('height', '20em', 'important');
 		$('#instructions-heading').text('End of Tutorial');
 		$('#instructions-content').text('Congratulations! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
 		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
@@ -703,56 +755,7 @@ function showInstructions15() {
 
 function nextInstruction() {
 	let currInstructionID = $instructionsModal.attr('data-id');
-	switch (++currInstructionID) {
-		case 2:
-			showInstructions2();
-			break;
-		case 3:
-			showInstructions3();
-			break;
-		case 4:
-			showInstructions4();
-			break;
-		case 5:
-			showInstructions5();
-			break;
-		case 6:
-			showInstructions6();
-			break;
-		case 7:
-			showInstructions7();
-			break;
-		case 8:
-			showInstructions8();
-			break;
-		case 9:
-			showInstructions9();
-			break;
-		case 10:
-			showInstructions10();
-			break;
-		case 11:
-			showInstructions11();
-			break;
-		case 12:
-			showInstructions12();
-			break;
-		case 13:
-			showInstructions13();
-			break;
-		case 14:
-			showInstructions14();
-			break;
-		case 15:
-			showInstructions15();
-			break;
-		/* case 16:
-			showInstructions16();
-			break; */
-		default:
-			console.error('No instructions found with that ID.');
-			break;
-	}
+	window[`showInstructions${++currInstructionID}`]();
 
 	$instructionsModal.attr('data-id', `${currInstructionID}`);
 }
@@ -966,6 +969,9 @@ function showTrustPrompt() {
 }
 
 function addIndividual() {
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+
 	finalTimeStamp = performance.now();
 	++intervalCount;
 
@@ -987,10 +993,13 @@ function addIndividual() {
 	$trustConfirmModal.css('display', 'none');
 	$trustConfirmModal.css('opacity', '0');
 
-	showExploredInfo();
+	showExploredInfo('individual');
 }
 
 function addTeam() {
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+
 	finalTimeStamp = performance.now();
 	++intervalCount;
 	
@@ -1012,11 +1021,27 @@ function addTeam() {
 	$trustConfirmModal.css('display', 'none');
 	$trustConfirmModal.css('opacity', '0');
 
-	showExploredInfo();
+	showExploredInfo('team');
 }
 
-function showExploredInfo() {
+function showExploredInfo(selection) {
 	// NEW STUFF
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	setTimeout(() => {
+		$('#instructions-heading').text('Scoring:');
+		$('#instructions-content').html(
+			`You found ${human.tempTargetsFound.gold.length} gold target (${human.tempTargetsFound.gold.length * 100} points) and added the score to your ${selection} score (${selection == 'individual' ? human.tempTargetsFound.gold.length * 100 : human.tempTargetsFound.gold.length * 200} points).`
+		);
+		$('#instructions-content').css('display', 'initial');
+		$instructionsModal[0].style.setProperty('height', '10em', 'important');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#humanIndScoreTemp').css('border', 'none');
+	}, 500);
+
 	pastHumanIndScore = human.totalTargetsFound.individualGold.length * 100;
 	pastHumanTeamScore = human.totalTargetsFound.teamGold.length * 200;
 
@@ -1042,6 +1067,7 @@ function showExploredInfo() {
 
 	setTimeout(() => {
 		$('#curAgentScoreDetailsBlock').toggleClass('animate__animated animate__heartBeat');
+		$('#humanIndScoreTemp').toggleClass('animate__animated animate__heartBeat');
 	}, 100);
 
 	$log.empty();
@@ -1227,6 +1253,13 @@ function undoExploration() {
 
 // redraw the map and hide pop-up
 function hideExploredInfo() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	$('#curAgentScoreDetailsBlock').toggleClass('animate__animated animate__heartBeat');
+	$('#humanIndScoreTemp').toggleClass('animate__animated animate__heartBeat');
+
 	if (agentNum < agents.length) {
 		// agents[agentNum - 1].tempTargetsFound.gold = 0;
 		// agents[agentNum - 1].tempTargetsFound.red = 0;
@@ -1237,7 +1270,7 @@ function hideExploredInfo() {
 
 	// agents[agentNum - 1].tempTargetsFound.gold = 0;
 	// agents[agentNum - 1].tempTargetsFound.red = 0;
-	human.tempTargetsFound.gold = 0;
+	human.tempTargetsFound.gold = [];
 
 	$map.clearCanvas();
 	$map.drawRect({

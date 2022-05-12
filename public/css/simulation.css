@@ -187,6 +187,20 @@ nav {
 	justify-content: space-evenly;
 }
 
+#matching-modal {
+	width: 50em !important;
+	height: 35em !important;
+	padding: 0 50px;
+	overflow: hidden;
+}
+
+#matching-modal-content {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	text-align: center;
+}
+
 #trust-confirm-modal {
 	width: 50em !important;
 	height: 25em !important;

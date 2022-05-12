@@ -15,17 +15,27 @@
 </head>
 
 <body>
-	<div class="loader"></div>
+	<div class="loader" id="main-loader"></div>
 	<div class="progressbar"><div class="progress background"><p id="progressStatus"></p></div></div>
 	<div class="body-container">
 		<div class="popup-modal-container" id="trust-cue-modal">
 			<div class="popup-modal" id="trust-cue-modal-content">
-				<h2 style="color: white;font-size: 26px;">Robot 1 says:</h2>
+				<h2 style="color: white;font-size: 26px;">Teammate 1 says:</h2>
 				<div class="trustCueMessage">
 					Testing...
 				</div>
 				<div class="userInputButtons">
 					<button onclick = "hideTrustMessage()">OK</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="popup-modal-container" id="matching-modal">
+			<div class="popup-modal" id="matching-modal-content">
+				<h3 style="color: white; font-size: 22px;" id="matching-heading">Please wait while we match you with a teammate...</h3>
+				<div class="loader" id="matching-loader"></div>
+				<div class="userInputButtons">
+					<button disabled onclick="endMatching()" style="margin: 0px;" id="endMatchingBtn">Continue</button>
 				</div>
 			</div>
 		</div>
@@ -94,7 +104,7 @@
 						<div>
 							<p style="margin: 0.5em;">Overall Individual Scores</p>
 							<div class="resultsBlockItemWrapper">
-								<p>Robot</p>
+								<p>Teammate</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="overallAgentIndScoreNegative" class="scoreText"></p>
@@ -108,7 +118,7 @@
 										<p id="overallAgentIndScorePositive" class="scoreText"></p>
 									</div>
 								</div>
-								<p>Human</p>
+								<p>You</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="overallHumanIndScoreNegative" class="scoreText"></p>
@@ -127,14 +137,14 @@
 					</div>
 					{{!-- Agent score block --}}
 					<div id="aScore" class="scoreBlock">
-						<p>Robot targets and scores</p>
+						<p>Teammate targets and scores</p>
 						<div class="playerBlockHorizontalWrapper">
 							<div class="resultsBlockItemWrapper">
 								<div class="aYellowStar resultsBlockItemLeft"></div>
 								<div class="resultsBlockItemWrapper" id="curAgentScoreDetailsBlock"><p id="curAgentScoreDetails"></p></div>
 							</div>
 							<div class="resultsBlockItemWrapper">
-								<p>Robot's team score in this round</p>
+								<p>Teammate's team score in this round</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="agentTeamScoreNegative" class="scoreText"></p>
@@ -148,7 +158,7 @@
 										<p id="agentTeamScorePositive" class="scoreText"></p>
 									</div>
 								</div>
-								<p>Robot's individual score in this round</p>
+								<p>Teammate's individual score in this round</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
 										<p id="agentIndScoreNegative" class="scoreText"></p>
@@ -228,7 +238,7 @@
 					<p class="score" id="teamScoreMain">0</p>
 					<p class="scoreTitle">Your Individual Score:</p>
 					<p class="score" id="humanIndMain">0</p>
-					<p class="scoreTitle">Robot's Individual Score:</p>
+					<p class="scoreTitle">Teammate's Individual Score:</p>
 					<p class="score" id="agentIndMain">0</p>
 				</div>
 				<div id="gameDetails">
@@ -250,7 +260,7 @@
 				<p id="intervalSurveyRQMsg" class="requiredMessage">Please fill out all the fields.</p>
 				<form name="intervalSurvey" id="intervalSurvey" onsubmit="return false;">
 					<div class="questionContainer">
-						<h4>Please rate the performance of the robot in this search and rescue task so far<br>(1 = poor performance, 7 = excellent performance).</h4>
+						<h4>Please rate the performance of your teammate in this search and rescue task so far.<br>(1 = poor performance, 7 = excellent performance)</h4>
 						<div class="optionsContainer">
 							<label for="oneOne" class="radio-inline grid-item"><input id="oneOne" type="radio" name="performanceRating" value="1">1</label>
 							<label for="oneTwo" class="radio-inline grid-item"><input id="oneTwo" type="radio" name="performanceRating" value="2">2</label>
@@ -262,7 +272,7 @@
 						</div>
 					</div>
 					<div class="questionContainer">
-						<h4>Please rate the robot as a teammate<br>(1 = poor teammate, 7 = excellent teammate).</h4>
+						<h4>Please rate your teammate.<br>(1 = poor teammate, 7 = excellent teammate)</h4>
 						<div class="optionsContainer">
 							<label for="twoOne"  class="radio-inline grid-item"><input id="twoOne" type="radio" name="teammateRating" value="1">1</label>
 							<label for="twoTwo" class="radio-inline grid-item"><input id="twoTwo" type="radio" name="teammateRating" value="2">2</label>
@@ -274,12 +284,24 @@
 						</div>
 					</div>
 					<div class="questionContainer">
+						<h4>Please rate your teammate's benevolence.<br>(1 = not benevolent, 7 = very benevolent)</h4>
+						<div class="optionsContainer">
+							<label for="threeOne"  class="radio-inline grid-item"><input id="threeOne" type="radio" name="benevolenceRating" value="1">1</label>
+							<label for="threeTwo" class="radio-inline grid-item"><input id="threeTwo" type="radio" name="benevolenceRating" value="2">2</label>
+							<label for="threeThree" class="radio-inline grid-item"><input id="threeThree" type="radio" name="benevolenceRating" value="3">3</label>
+							<label for="threeFour" class="radio-inline grid-item"><input id="threeFour" type="radio" name="benevolenceRating" value="4">4</label>
+							<label for="threeFive" class="radio-inline grid-item"><input id="threeFive" type="radio" name="benevolenceRating" value="5">5</label>
+							<label for="threeSix" class="radio-inline grid-item"><input id="threeSix" type="radio" name="benevolenceRating" value="6">6</label>
+							<label for="threeSeven" class="radio-inline grid-item"><input id="threeSeven" type="radio" name="benevolenceRating" value="7">7</label>
+						</div>
+					</div>
+					<div class="questionContainer">
 						<h4>What influenced your decision to integrate/discard the map the most?</h4>
 						<div class="fullWidthOptions">
-							<label for="longOne" class="fullWidthOption grid-item"><input id="longOne" type="radio" name="decisionInfluence" value="1" onclick="toggleTextInput()">Good performance of the robot in last round</label>
-							<label for="longTwo" class="fullWidthOption grid-item"><input id="longTwo" type="radio" name="decisionInfluence" value="2" onclick="toggleTextInput()">Bad performance of the robot in last round</label>
-							<label for="longThree" class="fullWidthOption grid-item"><input id="longThree" type="radio" name="decisionInfluence" value="3" onclick="toggleTextInput()">Overall good performance of the robot up to this point</label>
-							<label for="longFour" class="fullWidthOption grid-item"><input id="longFour" type="radio" name="decisionInfluence" value="4" onclick="toggleTextInput()">Overall bad performance of the robot up to this point</label>
+							<label for="longOne" class="fullWidthOption grid-item"><input id="longOne" type="radio" name="decisionInfluence" value="1" onclick="toggleTextInput()">Good performance of my teammate in the current and previous rounds</label>
+							<label for="longTwo" class="fullWidthOption grid-item"><input id="longTwo" type="radio" name="decisionInfluence" value="2" onclick="toggleTextInput()">Bad performance of my teammate in the current and previous rounds</label>
+							<label for="longThree" class="fullWidthOption grid-item"><input id="longThree" type="radio" name="decisionInfluence" value="3" onclick="toggleTextInput()">I was sure my team would add their score to the team score</label>
+							<label for="longFour" class="fullWidthOption grid-item"><input id="longFour" type="radio" name="decisionInfluence" value="4" onclick="toggleTextInput()">I was not sure if my team would add their score to the team score</label>
 							<label for="longFive" class="fullWidthOption grid-item" id="otherRadioButton"><input id="longFive" type="radio" name="decisionInfluence" value="5" onclick="toggleTextInput()">
 								Other
 								<input type="text" name="decisionInfluenceText" id="decisionInfluenceText" class="hideTextArea" placeholder="Please mention why"><sup class="hideTextArea" style="font-size: 11px;color: red; display: none; align-self: flex-start;">*</sup>
@@ -312,9 +334,9 @@
 					</div>
 					<div class="questionContainer">
 						<h4>
-							What were the robot's decisions about its scores in the last two rounds of the game?<sup style="font-size: 11px;color: red;">*</sup>
+							What were the teammate's decisions about their scores in the last two rounds of the game?<sup style="font-size: 11px;color: red;">*</sup>
 							<br>
-							The robot added its scores to:
+							The teammate added their scores to:
 						</h4>
 						<div class="optionsContainer fullWidthOptions">
 							<label for="endTwoOne"  class="grid-item fullWidthOption"><input id="endTwoOne" type="radio" name="lastTwoRounds" value="pos-pos">1. Team Score, 2. Individual Score</label>

@@ -390,8 +390,8 @@ $(document).ready(async () => {
 
 	$('.body-container').css('visibility', 'hidden');
 	$('.body-container').css('opacity', '0');
-	$('.loader').css('visibility', 'visible');
-	$('.loader').css('opacity', '1');
+	$('#main-loader').css('visibility', 'visible');
+	$('#main-loader').css('opacity', '1');
 
 	human = new Player(232, 348, 1, 10);
 	data.forEach(obj => {
@@ -415,30 +415,16 @@ $(document).ready(async () => {
 		obstacles.targets.push(new Obstacle(...tempObstLoc, colors.goodTarget, 'gold'));
 	}
 
-	$('.loader').css('visibility', 'hidden');
+	$('#main-loader').css('visibility', 'hidden');
 	$('.body-container').css('visibility', 'visible');
 	$('.body-container').css('opacity', '1');
-	
-	$progressbar.css('width', `${Math.round((intervalCount + 1)*100/intervals)}%`);
-	$progressbar.html(`<p>Round ${intervalCount + 1}/${intervals}</p>`);
-	
-	$(document).on('keydown', e => {
-		eventKeyHandlers(e);
-	});
-	
-	$(document).on('keyup', () => {
-		if (throttle) {
-			clearTimeout(throttle);
-			throttle = null;
-		}
-	});
 
-	updateScrollingPosition(human.x, human.y);
-	timeout = setInterval(updateTime, 1000);
-
-	currentFrame = requestAnimationFrame(loop);
-	// currentFrame = setInterval(loop, 100);
+	await startMatching();
 });
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function updateTime() {
 	if (++seconds % duration == 0) {
@@ -504,6 +490,46 @@ function refreshMap() {
 	spawn([...obstacles.targets, human/* , ...agents */], 1);
 }
 
+async function startMatching() {
+	$('#matching-modal').css('display', 'flex');
+	$('#matching-modal').css('visibility', 'visible');
+	$('#matching-modal').css('opacity', '1');
+
+	await sleep(4258);
+
+	$('#matching-heading').text(`You are matched with a ${Math.random() > 0.5 ? 'human' : 'robot'}.`);
+	$('#matching-loader').css('display', 'none');
+	$('#matching-modal')[0].style.setProperty('width', '30em', 'important');
+	$('#matching-modal')[0].style.setProperty('height', '20em', 'important');
+	$('#endMatchingBtn').prop('disabled', false);
+}
+
+function endMatching() {
+	$('#matching-modal').css('display', 'none');
+	$('#matching-modal').css('visibility', 'hidden');
+	$('#matching-modal').css('opacity', '0');
+	
+	$progressbar.css('width', `${Math.round((intervalCount + 1)*100/intervals)}%`);
+	$progressbar.html(`<p>Round ${intervalCount + 1}/${intervals}</p>`);
+	
+	$(document).on('keydown', e => {
+		eventKeyHandlers(e);
+	});
+	
+	$(document).on('keyup', () => {
+		if (throttle) {
+			clearTimeout(throttle);
+			throttle = null;
+		}
+	});
+
+	updateScrollingPosition(human.x, human.y);
+	timeout = setInterval(updateTime, 1000);
+
+	currentFrame = requestAnimationFrame(loop);
+	// currentFrame = setInterval(loop, 100);
+}
+
 function preTerminationPrompt() {
 	// end game
 	pause = true;
@@ -529,8 +555,8 @@ function terminate() {
 	
 	$('.body-container').css('visibility', 'hidden');
 	$('.body-container').css('opacity', '0');
-	$('.loader').css('visibility', 'visible');
-	$('.loader').css('opacity', '1');
+	$('#main-loader').css('visibility', 'visible');
+	$('#main-loader').css('opacity', '1');
 	sessionStorage.setItem('finishedGame', true);
 
 	$.ajax({
@@ -868,6 +894,7 @@ function hideExploredInfo() {
 	let updatedIntervalSurveyData = [
 		rawIntervalSurveyData.find(data => data.name == 'performanceRating')     || { name: 'performanceRating',     value: '' },
 		rawIntervalSurveyData.find(data => data.name == 'teammateRating')        || { name: 'teammateRating',        value: '' },
+		rawIntervalSurveyData.find(data => data.name == 'benevolenceRating')     || { name: 'benevolenceRating',        value: '' },
 		rawIntervalSurveyData.find(data => data.name == 'decisionInfluence')     || { name: 'decisionInfluence',     value: '' },
 		rawIntervalSurveyData.find(data => data.name == 'decisionInfluenceText') || { name: 'decisionInfluenceText', value: '' }
 	];
