@@ -495,7 +495,7 @@ async function startMatching() {
 	$('#matching-modal').css('visibility', 'visible');
 	$('#matching-modal').css('opacity', '1');
 
-	await sleep(4258);
+	await sleep(6258);
 
 	$('#matching-heading').text(`You are matched with a ${Math.random() > 0.5 ? 'human' : 'robot'}.`);
 	$('#matching-loader').css('display', 'none');

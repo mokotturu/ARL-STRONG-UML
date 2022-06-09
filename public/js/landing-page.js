@@ -1,6 +1,10 @@
 var timer = null, timeWatched = 0, totalTime = 111;
-$('#instructionsContent > video').on('play', () => startPlaying());
-$('#instructionsContent > video').on('pause', () => pausePlaying());
+// $('#instructionsContent > video').on('play', () => startPlaying());
+// $('#instructionsContent > video').on('pause', () => pausePlaying());
+
+$('#instructionsContent > video').on('ended', () => {
+	$('#startTut').prop('disabled', false);
+});
 
 $(document).ready(() => {
 	if (localStorage.getItem('failedTutorial') != "true" || sessionStorage.getItem('uuid') === null) {
@@ -17,6 +21,8 @@ $(document).ready(() => {
 		$('#begin').css('display', 'initial');
 		$('#skip').css('display', 'none');
 	}
+
+	$('#startTut').prop('disabled', true);
 });
 
 /* $(window).scroll(() => {
@@ -26,14 +32,14 @@ $(document).ready(() => {
 	}
 }); */
 
-function startPlaying() {
+/* function startPlaying() {
 	timer = window.setInterval(() => ++timeWatched, 1000);
 }
 
 function pausePlaying() {
 	if (timeWatched >= totalTime) $('#startTut').prop('disabled', false);
 	if (timer) clearInterval(timer);
-}
+} */
 
 $(window).on('click', e => {
 	if ($(".popup-modal-container").is(e.target)) {

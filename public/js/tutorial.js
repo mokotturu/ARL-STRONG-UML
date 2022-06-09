@@ -65,6 +65,8 @@ var obstacleLocs = [
 	[
 		[222, 348],
 		[232, 338],
+		[242, 348],
+		[232, 358],
 	],
 	[
 		[232, 338],
@@ -220,7 +222,7 @@ class Player {
 			pickedObstacle[0].isPicked = true;
 			if (pickedObstacle[0].variant == 'gold') {
 				this.tempTargetsFound.gold.push(pickedObstacle[0]);
-				showNotification('<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>', 'You picked up a gold target!', 'This will award 100 points if added to your individual score, or 200 points if added to the team score.');
+				if (this.tempTargetsFound.gold.length == 1) showNotification('<span class="material-icons" style="color: #ffc72c; font-size: 35px;";>star_rate</span>', 'You picked up a gold target!', 'This will award 100 points if added to your individual score, or 200 points if added to the team score.');
 			}
 			++targetCount;
 		}
@@ -414,15 +416,21 @@ $(document).ready(async () => {
 			throttle = null;
 		}
 	});
-	
-	showInstructions1();
 
+	resizeInstructionsModal();
+	showInstructions1();
 	updateScrollingPosition(human.x, human.y);
 	// timeout = setInterval(updateTime, 1000);
-
 	currentFrame = requestAnimationFrame(loop);
 	// currentFrame = setInterval(loop, 100);
 });
+
+window.onresize = resizeInstructionsModal;
+
+function resizeInstructionsModal() {
+	$instructionsModal[0].style.setProperty('width', `${(document.querySelector('#map-container').offsetLeft / parseFloat(getComputedStyle(document.documentElement).fontSize)) - 8}rem`, 'important');
+	updateScrollingPosition(human.x, human.y);
+}
 
 function showInstructions1() {
 	$instructionsModal.css('display', 'flex');
@@ -434,9 +442,8 @@ function showInstructions2() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('How to play:');
-		$('#instructions-content').text('This is the playground. The blue character in the center is the human, and it represents your current location on the map. The light blue area around the human is the area in the field of view of the human. To move around the map, you can use your arrow keys, or AWSD, or HJKL. Let\'s practice!');
+		$('#instructions-content').text('This is the playground. The dark blue dot in the center represents your current location on the map. The light blue area around the dot is the area in your field of view. To move around the map, you can use your arrow keys, or AWSD, or HJKL. Let\'s practice!');
 		$instructionsModal.css('box-shadow', '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)');
-		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$mapContainer.addClass('animate__animated animate__shakeX');
@@ -453,7 +460,7 @@ function showInstructions3() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Move up:');
-		$('#instructions-content').html('Press and hold the up arrow (or W or K) to move up.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_up</span><div class="key">W</div><div class="key">K</div></div>');
+		$('#instructions-content').html('Press and hold the up arrow (or W or K) to move up.<div class="btn btn-primary tooltip"><span class="material-icons-outlined">help</span><div class="right"><p>If you\'re unable to move, try clicking on the game window and pressing the keys.</p><i></i></div></div><br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_up</span><div class="key">W</div><div class="key">K</div></div>');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').prop('disabled', true);
@@ -470,7 +477,6 @@ function showInstructions4() {
 		$('#instructions-heading').html(`Well done! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
 		$('#instructions-button').prop('disabled', false);
 		$('#instructions-content').css('display', 'none');
-		$instructionsModal[0].style.setProperty('height', '20em', 'important');
 		$('#instructions-heading').removeClass('animate__zoomOut');
 		$('#instructions-content').removeClass('animate__zoomOut');
 		$('#instructions-heading').addClass('animate__zoomIn');
@@ -488,7 +494,6 @@ function showInstructions5() {
 		$('#instructions-heading').text('Move right:');
 		$('#instructions-content').html('Press and hold the right arrow (or D or L) to move right.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_right</span><div class="key">D</div><div class="key">L</div></div>');
 		$('#instructions-content').css('display', 'initial');
-		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').prop('disabled', true);
@@ -508,7 +513,6 @@ function showInstructions6() {
 		$('#instructions-heading').html(`Great! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
 		$('#instructions-button').prop('disabled', false);
 		$('#instructions-content').css('display', 'none');
-		$instructionsModal[0].style.setProperty('height', '20em', 'important');
 		$('#instructions-heading').removeClass('animate__zoomOut');
 		$('#instructions-content').removeClass('animate__zoomOut');
 		$('#instructions-heading').addClass('animate__zoomIn');
@@ -526,7 +530,6 @@ function showInstructions7() {
 		$('#instructions-heading').text('Move down:');
 		$('#instructions-content').html('Press and hold the down arrow (or S or J) to move down.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_down</span><div class="key">S</div><div class="key">J</div></div>');
 		$('#instructions-content').css('display', 'initial');
-		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').prop('disabled', true);
@@ -546,7 +549,6 @@ function showInstructions8() {
 		$('#instructions-heading').html(`Perfect! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
 		$('#instructions-button').prop('disabled', false);
 		$('#instructions-content').css('display', 'none');
-		$instructionsModal[0].style.setProperty('height', '20em', 'important');
 		$('#instructions-heading').removeClass('animate__zoomOut');
 		$('#instructions-content').removeClass('animate__zoomOut');
 		$('#instructions-heading').addClass('animate__zoomIn');
@@ -564,7 +566,6 @@ function showInstructions9() {
 		$('#instructions-heading').text('Move left:');
 		$('#instructions-content').html('Press and hold the left arrow (or A or H) to move left.<br><br><div class="keysContainer"><span class="material-icons-outlined key">keyboard_arrow_left</span><div class="key">A</div><div class="key">H</div></div>');
 		$('#instructions-content').css('display', 'initial');
-		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').prop('disabled', true);
@@ -584,7 +585,6 @@ function showInstructions10() {
 		$('#instructions-heading').html(`Right on! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
 		$('#instructions-button').prop('disabled', false);
 		$('#instructions-content').css('display', 'none');
-		$instructionsModal[0].style.setProperty('height', '20em', 'important');
 		$('#instructions-heading').removeClass('animate__zoomOut');
 		$('#instructions-content').removeClass('animate__zoomOut');
 		$('#instructions-heading').addClass('animate__zoomIn');
@@ -600,9 +600,8 @@ function showInstructions11() {
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#instructions-heading').text('Picking up targets:');
-		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of a highlighted target and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
+		$('#instructions-content').html('Now let\'s practice picking up targets. Move to the center of all highlighted targets and press the spacebar to pick them up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
 		$('#instructions-content').css('display', 'initial');
-		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').prop('disabled', true);
@@ -627,7 +626,6 @@ function showInstructions12() {
 		$('#instructions-heading').html(`Way to go! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`);
 		$('#instructions-button').prop('disabled', false);
 		$('#instructions-content').css('display', 'none');
-		$instructionsModal[0].style.setProperty('height', '20em', 'important');
 		$('#instructions-heading').removeClass('animate__zoomOut');
 		$('#instructions-content').removeClass('animate__zoomOut');
 		$('#instructions-heading').addClass('animate__zoomIn');
@@ -646,9 +644,9 @@ function showInstructions13() {
 		$('#addTeamBtn').prop('disabled', true);
 
 		$('#instructions-heading').text('Adding to individual score:');
-		$('#instructions-content').html('First let\'s add it to your individual score.');
+		$('#instructions-content').html('Let\'s practice adding it to your individual score. Click on \'Add to individual score\'.');
 		$('#instructions-content').css('display', 'initial');
-		$instructionsModal[0].style.setProperty('height', '10em', 'important');
+		$('#instructions-content').css('margin-bottom', 'initial');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').css('display', 'none');
@@ -658,31 +656,19 @@ function showInstructions13() {
 }
 
 function showInstructions14() {
-	$('#instructions-heading').removeClass('animate__zoomIn');
-	$('#instructions-content').removeClass('animate__zoomIn');
 	$instructionsModal.removeClass('animate__fadeInLeft');
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
-		$('#instructions-heading').text('Picking up targets:');
-		$('#instructions-content').html('Now let\'s pick up the other target. Move to the center of the other highlighted target and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>');
+		$('#instructions-heading').text('Added 400 points to individual score!');
+		$('#instructions-content').html('');
 		$('#instructions-content').css('display', 'initial');
-		$instructionsModal[0].style.setProperty('height', '25em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
-		$('#instructions-button').prop('disabled', true);
-		$(document).on('keydown', e => {
-			eventKeyHandlers(e);
-		});
-		human.tutorial.inTutorial = true;
-		human.tutorial.restricted = false;
-		human.tutorial.step = 0;
-		highlightTargets = true;
+		$('#instructions-button').css('display', 'inline-block');
 	}, 500);
 }
 
 function showInstructions15() {
-	$('#instructions-heading').removeClass('animate__zoomIn');
-	$('#instructions-content').removeClass('animate__zoomIn');
 	$instructionsModal.removeClass('animate__fadeInLeft');
 	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
@@ -691,46 +677,147 @@ function showInstructions15() {
 		$('#addIndividualBtn').prop('disabled', true);
 
 		$('#instructions-heading').text('Adding to team score:');
-		$('#instructions-content').html('Now let\'s add it to the team score.');
+		$('#instructions-content').html('Now let\'s practice adding it to the team score. Click on \'Add to Team score\'.');
 		$('#instructions-content').css('display', 'initial');
-		$instructionsModal[0].style.setProperty('height', '10em', 'important');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').css('display', 'none');
-
-		$('.notificationsContainer').addClass("animate__animated animate__fadeOutRight");
 	}, 500);
 }
 
 function showInstructions16() {
-	$('#instructions-heading').removeClass('animate__zoomIn');
-	$('#instructions-content').removeClass('animate__zoomIn');
 	$instructionsModal.removeClass('animate__fadeInLeft');
 	$instructionsModal.addClass('animate__fadeOutLeft');
+	$('#exploration-results-btn').prop('disabled', true);
+	setTimeout(() => {
+		$('#instructions-heading').text('Scoring:');
+		$('#instructions-content').html(
+			`You found ${human.tempTargetsFound.gold.length} gold targets (${human.tempTargetsFound.gold.length * 100} points) and added the score to the team score (${human.tempTargetsFound.gold.length * 200} points).`
+		);
+		$('#instructions-content').css('display', 'initial');
+		$('#instructions-content').css('margin-bottom', '2rem');
+		$('#instructions-button').css('display', 'inline-block');
+		$instructionsModal.css({
+			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
+		});
+		$('#instructions-button').text('OK');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+		$('#humanIndScoreTemp').css('border', 'none');
+	}, 500);
+}
+
+function showInstructions17() {
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	setTimeout(() => {
+		$('#instructions-heading').text('Teammate targets:');
+		$('#instructions-content').text('This is the number of targets your teammate found in this round. It also shows whether they added the score to their individual score or the team score.');
+		$('#instructions-button').text('Continue');
+		$('#teammateTargetsWrapper').css({
+			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 99
+		});
+		$('#teammateTargetsWrapper').addClass('animate__animated animate__heartBeat');
+		$instructionsModal.css({
+			'box-shadow': 'rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px'
+		});
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+	}, 500);
+}
+
+function showInstructions18() {
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	$('#teammateTargetsWrapper').css({
+		'box-shadow': 'initial',
+		'z-index': 'initial'
+	});
+	setTimeout(() => {
+		$('#instructions-heading').text('Teammate scores:');
+		$('#instructions-content').text('This is the score your teammate gained in this round. It shows whether they added the score to their individual score or the team score.');
+		$('#instructions-button').text('Continue');
+		$('#teammateScoresWrapper').css({
+			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 99
+		});
+		$('#teammateScoresWrapper').addClass('animate__animated animate__heartBeat');
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInLeft');
+	}, 500);
+}
+
+function showInstructions19() {
+	$instructionsModal.removeClass('animate__fadeInLeft');
+	$instructionsModal.addClass('animate__fadeOutLeft');
+	$('#teammateScoresWrapper').css({
+		'box-shadow': 'initial',
+		'z-index': 'initial'
+	});
+	setTimeout(() => {
+		$('#instructions-heading').text('Overall Individual scores:');
+		$('#instructions-content').text(`These are the cumulative individual scores gained by you and your teammate throughout the game. Since you first added your score to individual score during this tutorial, you gained ${pastHumanIndScore} points.`);
+		$('#instructions-button').text('Continue');
+		$('#overallIndividualScoresWrapper').css({
+			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 99
+		});
+		$('#overallIndividualScoresWrapper').addClass('animate__animated animate__heartBeat');
+		$instructionsModal.css({
+			'right': 0,
+			'left': 'auto'
+		});
+		$instructionsModal.removeClass('animate__fadeOutLeft');
+		$instructionsModal.addClass('animate__fadeInRight');
+	}, 500);
+}
+
+function showInstructions20() {
+	$instructionsModal.removeClass('animate__fadeInRight');
+	$instructionsModal.addClass('animate__fadeOutRight');
+	$('#overallIndividualScoresWrapper').css({
+		'box-shadow': 'initial',
+		'z-index': 'initial'
+	});
+	setTimeout(() => {
+		$('#instructions-heading').text('Overall Team score:');
+		$('#instructions-content').text(`This is the number of points you and your teammate added to the team score. Since you found ${human.totalTargetsFound.teamGold.length} targets and added ${pastHumanTeamScore} points to the team the second time during this tutorial, and your teammate added ${currAgentTeamScore} points to the team, the overall team score up to this point is ${pastHumanTeamScore + currAgentTeamScore} points.`);
+		$('#instructions-button').text('Continue');
+		$('#overallTeamScoreWrapper').css({
+			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 99
+		});
+		$('#overallTeamScoreWrapper').addClass('animate__animated animate__heartBeat');
+		$instructionsModal.removeClass('animate__fadeOutRight');
+		$instructionsModal.addClass('animate__fadeInRight');
+	}, 500);
+}
+
+function showInstructions21() {
+	$instructionsModal.removeClass('animate__fadeInRight');
+	$instructionsModal.addClass('animate__fadeOutRight');
+	$('#overallTeamScoreWrapper').css({
+		'box-shadow': 'initial',
+		'z-index': 'initial'
+	});
 	setTimeout(() => {
 		$endRoundModal.css('display', 'flex');
 		$endRoundModal.css('visibility', 'visible');
 		$endRoundModal.css('opacity', '1');
 		$endRoundModal.css('z-index', 1000);
 		$endRoundModal.addClass('animate__animated animate__zoomIn');
-
-		$('.notificationsContainer').addClass("animate__animated animate__fadeOutRight");
 	}, 500);
 }
 
-function showInstructions17() {
-	$('#instructions-heading').removeClass('animate__zoomIn');
-	$('#instructions-content').removeClass('animate__zoomIn');
+function showInstructions22() {
 	$endRoundModal.removeClass('animate__zoomIn');
 	$endRoundModal.addClass('animate__zoomOut');
-	$instructionsModal.removeClass('animate__fadeInLeft');
-	$instructionsModal.addClass('animate__fadeOutLeft');
 	setTimeout(() => {
 		$endRoundModal.css('display', 'none');
 		$endRoundModal.css('visibility', 'hidden');
 		$endRoundModal.css('opacity', '0');
 		$endRoundModal.css('z-index', 0);
-		$instructionsModal[0].style.setProperty('height', '20em', 'important');
 		$('#instructions-heading').text('End of Tutorial');
 		$('#instructions-content').text('Congratulations! You finished the tutorial. Do you wish to play the main game or replay the tutorial?');
 		$('#instructions-modal-content > .userInputButtons').html(`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`);
@@ -738,18 +825,13 @@ function showInstructions17() {
 			'z-index': 0,
 			'position': 'initial',
 		});
-		$('#instructions-content').css({
-			'display': 'initial',
-			'text-align': 'center'
-		});
 		$('#instructions-modal-content > .userInputButtons button').css('margin', '10px');
 		$instructionsModal.css({
-			'margin': 'auto',
 			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
 		});
 		$('#instructions-modal-content').css('align-items', 'center');
-		$instructionsModal.removeClass('animate__fadeOutLeft');
-		$instructionsModal.addClass('animate__zoomIn');
+		$instructionsModal.removeClass('animate__fadeOutRight');
+		$instructionsModal.addClass('animate__fadeInRight');
 	}, 500);
 }
 
@@ -993,7 +1075,8 @@ function addIndividual() {
 	$trustConfirmModal.css('display', 'none');
 	$trustConfirmModal.css('opacity', '0');
 
-	showExploredInfo('individual');
+	nextInstruction();
+	// showExploredInfo('individual');
 }
 
 function addTeam() {
@@ -1021,27 +1104,11 @@ function addTeam() {
 	$trustConfirmModal.css('display', 'none');
 	$trustConfirmModal.css('opacity', '0');
 
+	nextInstruction();
 	showExploredInfo('team');
 }
 
 function showExploredInfo(selection) {
-	// NEW STUFF
-	$('#instructions-heading').removeClass('animate__zoomIn');
-	$('#instructions-content').removeClass('animate__zoomIn');
-	$instructionsModal.removeClass('animate__fadeInLeft');
-	$instructionsModal.addClass('animate__fadeOutLeft');
-	setTimeout(() => {
-		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(
-			`You found ${human.tempTargetsFound.gold.length} gold target (${human.tempTargetsFound.gold.length * 100} points) and added the score to your ${selection} score (${selection == 'individual' ? human.tempTargetsFound.gold.length * 100 : human.tempTargetsFound.gold.length * 200} points).`
-		);
-		$('#instructions-content').css('display', 'initial');
-		$instructionsModal[0].style.setProperty('height', '10em', 'important');
-		$instructionsModal.removeClass('animate__fadeOutLeft');
-		$instructionsModal.addClass('animate__fadeInLeft');
-		$('#humanIndScoreTemp').css('border', 'none');
-	}, 500);
-
 	pastHumanIndScore = human.totalTargetsFound.individualGold.length * 100;
 	pastHumanTeamScore = human.totalTargetsFound.teamGold.length * 200;
 
@@ -1253,10 +1320,6 @@ function undoExploration() {
 
 // redraw the map and hide pop-up
 function hideExploredInfo() {
-	$('#instructions-heading').removeClass('animate__zoomIn');
-	$('#instructions-content').removeClass('animate__zoomIn');
-	$instructionsModal.removeClass('animate__fadeInLeft');
-	$instructionsModal.addClass('animate__fadeOutLeft');
 	$('#curAgentScoreDetailsBlock').toggleClass('animate__animated animate__heartBeat');
 	$('#humanIndScoreTemp').toggleClass('animate__animated animate__heartBeat');
 
@@ -1642,7 +1705,7 @@ function eventKeyHandlers(e) {
 				break;
 			case 32:	// space bar
 				e.preventDefault();
-				if (human.tutorial.inTutorial && human.pickTarget() && targetCount >= 1) {
+				if (human.tutorial.inTutorial && human.pickTarget() && targetCount >= 4) {
 					human.tutorial.inTutorial = false;
 					nextInstruction();
 				}

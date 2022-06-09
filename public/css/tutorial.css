@@ -187,7 +187,7 @@ nav {
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	justify-content: space-evenly;
 	overflow: visible;
 }
 
@@ -196,28 +196,39 @@ nav {
 }
 
 #instructions-modal {
-	width: 40em !important;
-	height: 20em !important;
-	padding: 10px 50px;
-	margin: auto auto 2em 2em;
+	width: 28em !important;
+	height: auto;
+	top: initial;
+	right: auto;
+	max-width: 40rem;
+	padding: 2rem;
+	margin: auto 2em 2em 2em;
 	visibility: visible;
 	opacity: 1;
 	width: 0;
 	box-shadow: 0 0 0 9999px #000000EA;
-	overflow: visible;
+	overflow: auto;
 	z-index: 999;
 }
 
 #instructions-modal-content {
-	display: flex;
-	justify-content: space-evenly;
 	align-items: flex-start;
 	text-align: left;
-	overflow: visible;
 }
 
 #instructions-heading {
 	display: flex;
+	margin-bottom: 2rem;
+	color: white;
+	font-size: 1.5rem;
+}
+
+#instructions-content {
+	margin-bottom: 2rem;
+	color: white;
+	font-size: 1rem;
+	line-height: 160%;
+	width: 100%;
 }
 
 .keysContainer {
@@ -241,9 +252,9 @@ nav {
 
 #trust-confirm-modal {
 	width: 50em !important;
-	height: 25em !important;
+	height: 22em !important;
 	padding: 0 50px;
-	overflow: hidden;
+	overflow: auto;
 }
 
 #trust-confirm-modal-content {
@@ -615,41 +626,55 @@ nav {
 }
 
 .tooltip {
-	position: relative;
 	display: inline-block;
+	position: relative;
+	border-bottom: 1px dotted #666;
+	text-align: left;
 }
 
-.tooltip .tooltiptext {
-	visibility: hidden;
-	width: 200px;
-	background-color: rgba(255, 255, 255, 0.8);
-	backdrop-filter: blur(5px);
-	color: black;
-	text-align: center;
-	border-radius: 7px;
-	padding: 10px 5px;
+.tooltip .right {
+	min-width: 200px;
+	top: 50%;
+	left: 100%;
+	margin-left: 1rem;
+	transform: translate(0, -50%);
+	padding: 1rem;
+	color: #000000;
+	background-color: #ffffff;
+	font-weight: normal;
+	font-size: 13px;
+	border-radius: 8px;
 	position: absolute;
-	z-index: 1;
-	bottom: 150%;
-	left: 50%;
-	margin-left: -100px;
-	font-family: 'Montserrat', 'sans-serif';
-	font-size: 14px;
+	z-index: 99999999;
+	box-sizing: border-box;
+	box-shadow: 0 1px 8px transparent;
+	display: none;
 }
 
-.tooltip .tooltiptext::after {
-	content: "";
+.tooltip:hover .right {
+	display: block;
+}
+
+.tooltip .right i {
 	position: absolute;
-	top: 100%;
-	left: 50%;
-	margin-left: -10px;
-	border: 5px;
-	border-style: solid;
-	border-color: rgba(255, 255, 255, 0.8) transparent transparent transparent;
+	top: 50%;
+	right: 100%;
+	margin-top: -12px;
+	width: 12px;
+	height: 24px;
+	overflow: hidden;
 }
 
-.tooltip:hover .tooltiptext {
-	visibility: visible;
+.tooltip .right i::after {
+	content: '';
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	left: 0;
+	top: 50%;
+	transform: translate(50%, -50%) rotate(-45deg);
+	background-color: #ffffff;
+	box-shadow: 0 1px 8px transparent;
 }
 
 .userInputButtons {

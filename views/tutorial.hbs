@@ -20,8 +20,8 @@
 	<div class="body-container">
 		<div data-id="1" class="popup-modal-container" id="instructions-modal">
 			<div class="popup-modal" id="instructions-modal-content">
-				<h2 id="instructions-heading" style="color: white;font-size: 26px;">Welcome to the tutorial!</h2>
-				<h3 id="instructions-content" style="color: white;font-size: 18px;line-height: 160%;width: 100%;">This brief interactive tutorial will help you understand how to play the game.</h3>
+				<h2 id="instructions-heading">Welcome to the tutorial!</h2>
+				<h3 id="instructions-content">This brief interactive tutorial will help you understand how to play the game.</h3>
 				<div class="userInputButtons">
 					<button id="instructions-button" onclick="nextInstruction()">Continue</button>
 				</div>
@@ -43,7 +43,7 @@
 			<div class="popup-modal" id="exploration-details-modal-content">
 				<div class="scores">
 					<div id="oScore" class="scoreBlock">
-						<div>
+						<div id="overallTeamScoreWrapper" style="border-radius: 7px;">
 							<p style="margin: 0.5em;">Overall Team Score</p>
 							<div class="resultsBlockItemWrapper">
 								<div class="graphResultsBlockItemWrapper">
@@ -61,7 +61,7 @@
 								</div>
 							</div>
 						</div>
-						<div>
+						<div id="overallIndividualScoresWrapper" style="border-radius: 7px;">
 							<p style="margin: 0.5em;">Overall Individual Scores</p>
 							<div class="resultsBlockItemWrapper">
 								<p>Teammate</p>
@@ -101,11 +101,11 @@
 					<div id="aScore" class="scoreBlock">
 						<p>Teammate targets and scores</p>
 						<div class="playerBlockHorizontalWrapper">
-							<div class="resultsBlockItemWrapper">
+							<div id="teammateTargetsWrapper" class="resultsBlockItemWrapper">
 								<div class="aYellowStar resultsBlockItemLeft"></div>
 								<div class="resultsBlockItemWrapper" id="curAgentScoreDetailsBlock"><p id="curAgentScoreDetails"></p></div>
 							</div>
-							<div class="resultsBlockItemWrapper">
+							<div id="teammateScoresWrapper" class="resultsBlockItemWrapper">
 								<p>Teammate's team score in this round</p>
 								<div class="graphResultsBlockItemWrapper">
 									<div class="negativeScoreGraph resultsBlockItemLeft">
@@ -140,7 +140,7 @@
 				</div>
 				<div class="tableItems"></div>
 				<div class="userInputButtons">
-					<button onclick="hideExploredInfo()">Continue</button>
+					<button id="exploration-results-btn" onclick="hideExploredInfo()">Continue</button>
 				</div>
 			</div>
 		</div>
@@ -165,11 +165,11 @@
 		</div>
 		<div class="popup-modal-container" id="endRoundQContainer">
 			<div class="popup-modal" id="endRoundQContent">
-				<h1 id="q3PromptTitle">Please respond to the following question below:</h1>
+				<h1 id="q3PromptTitle">Please respond to the following question:</h1>
 				<form name="intervalSurvey" id="intervalSurvey" onsubmit="return false;">
 					<div class="questionContainer">
 						<h4 id="endRoundQH4">
-							If you pick 4 targets in one round of the game, how many points would you gain if you add them to the team score? How many points would you gain if you add them to your individual score?
+							What will your score be if you pick 4 targets in one round of the game and 1) add it to the team score or 2) add it to the individual score?
 							<sup style="font-size: 11px;color: red;">*</sup>
 						</h4>
 						<div class="optionsContainer">
