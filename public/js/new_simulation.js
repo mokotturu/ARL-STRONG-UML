@@ -442,7 +442,6 @@ function updateTime() {
 function loop() {
 	if (!pause) {
 		if (intervalCount >= intervals) preTerminationPrompt();
-		refreshMap();
 		currentFrame = requestAnimationFrame(loop);
 	}
 }
@@ -525,6 +524,8 @@ function endMatching() {
 
 	updateScrollingPosition(human.x, human.y);
 	timeout = setInterval(updateTime, 1000);
+
+	refreshMap();
 
 	currentFrame = requestAnimationFrame(loop);
 	// currentFrame = setInterval(loop, 100);
