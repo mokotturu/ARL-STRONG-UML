@@ -238,6 +238,7 @@ class Player {
 			pickedObstacle[0].isPicked = true;
 			if (pickedObstacle[0].variant == 'gold') this.tempTargetsFound.gold.push(pickedObstacle[0]);
 		}
+		refreshMap();
 	}
 }
 

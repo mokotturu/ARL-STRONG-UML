@@ -226,6 +226,7 @@ class Player {
 			}
 			++targetCount;
 		}
+		refreshMap();
 		return true;
 	}
 }
@@ -421,6 +422,7 @@ $(document).ready(async () => {
 	showInstructions1();
 	updateScrollingPosition(human.x, human.y);
 	// timeout = setInterval(updateTime, 1000);
+	refreshMap();
 	currentFrame = requestAnimationFrame(loop);
 	// currentFrame = setInterval(loop, 100);
 });
@@ -616,6 +618,8 @@ function showInstructions11() {
 		for (let i = 0; i < obstacleLocs[0].length; ++i) {
 			obstacles.targets.push(new Obstacle(obstacleLocs[0][i][0], obstacleLocs[0][i][1], colors.goldTarget, 'gold'));
 		}
+
+		refreshMap();
 	}, 500);
 }
 
@@ -901,7 +905,7 @@ function updateTime() {
 function loop() {
 	if (!pause) {
 		if (intervalCount >= intervals) terminate();
-		refreshMap();
+		if (highlightTargets) refreshTargets();
 		currentFrame = requestAnimationFrame(loop);
 	}
 }
@@ -959,27 +963,26 @@ function refreshMap() {
 	// spawn players
 	// if (highlightTargets) spawn(obstacles.targets, 1);
 	spawn([...obstacles.targets, human/* , ...agents */], 1);
+}
 
-	if (highlightTargets && ++delayCounter > 7) {
-		// draw attention to targets
+function refreshTargets() {
+	// draw attention to targets
+	$map2.clearCanvas();
+	delayCounter = 0;
+	for (let i = 0; i < obstacles.targets.length; ++i) {
+		$map2.drawArc({
+			fromCenter: true,
+			strokeStyle: String('#ff0') + Math.round(9 - ringCounter/2),
+			strokeWidth: 3,
+			x: obstacles.targets[i].x * boxWidth + boxWidth/2, y: obstacles.targets[i].y * boxHeight + boxHeight/2,
+			radius: 10 + boxWidth + ringCounter,
+			start: 0, end: 360
+		});
+	}
+	if (++ringCounter == 21) {
+		ringCounter = 0;
+		delayCounter = -50;
 		$map2.clearCanvas();
-		delayCounter = 0;
-		for (let i = 0; i < obstacles.targets.length; ++i) {
-			$map2.drawArc({
-				fromCenter: true,
-				strokeStyle: String('#ff0') + Math.round(9 - ringCounter/2),
-				strokeWidth: 3,
-				x: obstacles.targets[i].x * boxWidth + boxWidth/2, y: obstacles.targets[i].y * boxHeight + boxHeight/2,
-				radius: 10 + boxWidth+(++ringCounter),
-				start: 0, end: 360
-			});
-			// ringCounter %= 20;
-			if (ringCounter == 21) {
-				ringCounter = 0;
-				delayCounter = -50;
-				$map2.clearCanvas();
-			}
-		}
 	}
 }
 
