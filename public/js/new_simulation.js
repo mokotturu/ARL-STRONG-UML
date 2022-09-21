@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'Retaliation Game - Moral Trust Violation';
+const gameMode = 'Retaliation Game (Human Teammate - Moral Trust Violation)';
 
 const colors = {
 	human: '#3333ff',
