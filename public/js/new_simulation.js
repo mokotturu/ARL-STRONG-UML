@@ -22,7 +22,7 @@ var rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'Retaliation Game (random condition)';
+const gameMode = 'Retaliation Game - Moral Trust Violation';
 
 const colors = {
 	human: '#3333ff',
@@ -83,16 +83,16 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ gold: 3, addedTo: 'team' },
-	{ gold: 1, addedTo: 'individual' },
+	{ gold: 2, addedTo: 'team' },
+	{ gold: 1, addedTo: 'team' },
 	{ gold: 2, addedTo: 'team' },
 	{ gold: 2, addedTo: 'individual' },
+	{ gold: 2, addedTo: 'individual' },
+	{ gold: 1, addedTo: 'individual' },
+	{ gold: 3, addedTo: 'individual' },
 	{ gold: 1, addedTo: 'team' },
-	{ gold: 0, addedTo: 'individual' },
-	{ gold: 0, addedTo: 'team' },
-	{ gold: 0, addedTo: 'individual' },
 	{ gold: 2, addedTo: 'team' },
-	{ gold: 4, addedTo: 'individual' },
+	{ gold: 2, addedTo: 'team' },
 ];
 
 var fakeAgentNum = 0;
