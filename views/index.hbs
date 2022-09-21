@@ -1,42 +1,58 @@
-<div id="background-video">
+<div id='background-video'>
 	<video autoplay muted loop>
-		<source src="img/ARL_STRONG_hero_2.mp4" type="video/mp4">
+		<source src='img/ARL_STRONG_hero_2.mp4' type='video/mp4' />
 	</video>
-	<div id="shadow"></div>
+	<div id='shadow'></div>
 </div>
-<div class="main-content">
+<div class='main-content'>
 	<h1>ARL STRONG - UMass Lowell</h1>
-	{{!-- <button id="watch" onclick="displayVideo()">Watch Instructions Video</button> --}}
-	<button id="begin" onclick="showConsentForm()">Begin Tutorial</button>
-	<button id="skip" onclick="window.location.href='/simulation'" style="display: none;">Skip to Game</button>
+	{{! <button id="watch" onclick="displayVideo()">Watch Instructions Video</button> }}
+	<button id='begin' onclick='showConsentForm()'>Begin Tutorial</button>
+	<button
+		id='skip'
+		onclick="window.location.href='/simulation'"
+		style='display: none;'
+	>Skip to Game</button>
 </div>
 
-<div class="popup-modal-container" id="instructionsContainer">
-	<div class="popup-modal" id="instructionsContent">
-		<h4 class="modal-heading">Video Instructions</h4>
-		<p style="margin-bottom: 2em;">Please watch the video completely to continue.</p>
+<div class='popup-modal-container' id='instructionsContainer'>
+	<div class='popup-modal' id='instructionsContent'>
+		<h4 class='modal-heading'>Video Instructions</h4>
+		<p style='margin-bottom: 2em;'>Please watch the video completely to
+			continue.</p>
 		<video controls>
-			<source src="img/retaliation_game_instructions.webm" type="video/webm">
+			<source
+				src='img/retaliation_game_instructions.webm'
+				type='video/webm'
+			/>
 		</video>
-		<div id="userInputButtons">
-		<button id="startTut" onclick="window.location.href = '/tutorial'" disabled>Continue</button>
+		<div id='userInputButtons'>
+			<button
+				id='startTut'
+				onclick="window.location.href = '/tutorial'"
+				disabled
+			>Continue</button>
 		</div>
 	</div>
 </div>
 
-<div class="popup-modal-container" id="consentFormContainer">
-	<div class="popup-modal" id="consentFormContent">
-		<h4 class="modal-heading">Consent Form</h4>
-		<div id="consent-form">
-			<object data="src\Consent form.pdf" type="application/pdf" id="pdf"></object>
+<div class='popup-modal-container' id='consentFormContainer'>
+	<div class='popup-modal' id='consentFormContent'>
+		<h4 class='modal-heading'>Consent Form</h4>
+		<div id='consent-form'>
+			<object
+				data='src\Consent form.pdf'
+				type='application/pdf'
+				id='pdf'
+			></object>
 		</div>
-		<div id="userInputButtons">
-			<button onclick="agree()">Agree</button>
-			<button onclick="decline()">Decline</button>
+		<div id='userInputButtons'>
+			<button onclick='agree()'>Agree</button>
+			<button onclick='decline()'>Decline</button>
 		</div>
 	</div>
 </div>
-{{!-- <div id="instructions">
+{{! <div id="instructions">
 	<h2>Instructions</h2>
 	<p>[instructions.mp4]</p>
 	<div class="content-block fadeIn">
@@ -115,6 +131,6 @@
 	</div>
 	
 	<button id="begin" class="fadeIn" onclick="showConsentForm()">Begin Tutorial</button>
-</div> --}}
+</div> }}
 
-<script type="text/javascript" src="js/landing-page.js"></script>
+<script type='text/javascript' src='js/landing-page.js'></script>

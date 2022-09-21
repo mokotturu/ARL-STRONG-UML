@@ -8,22 +8,16 @@ router.get('/user/:uuid', (req, res) => {
 });
 
 router.get('/mobile', (req, res) => {
-	res.render(
-		'mobile',
-		{
-			title: 'ARL STRONG UML | Home',
-		}
-	);
+	res.render('mobile', {
+		title: 'ARL STRONG UML | Home',
+	});
 });
 
 router.get('/', (req, res) => {
-	res.render(
-		'index',
-		{
-			title: 'ARL STRONG UML | Home',
-			// navRight: `<span class="material-icons">warning</span><p>This is a testing site.</p>`
-		}
-	);
+	res.render('index', {
+		title: 'ARL STRONG UML | Home',
+		// navRight: `<span class="material-icons">warning</span><p>This is a testing site.</p>`
+	});
 });
 
 router.get('/tutorial', (req, res) => {
@@ -35,7 +29,7 @@ router.post('/tutorial/failed', async (req, res) => {
 	try {
 		const result = new SimulationResult({
 			uuid: req.body.uuid,
-			failedTutorial: true
+			failedTutorial: true,
 		});
 		await result.save();
 		res.sendStatus(200);
@@ -43,6 +37,10 @@ router.post('/tutorial/failed', async (req, res) => {
 		console.log(err);
 		res.redirect(500, 'error/500');
 	}
+});
+
+router.get('/matching', (req, res) => {
+	res.render('matching', { layout: false });
 });
 
 router.get('/simulation', (req, res) => {
@@ -62,8 +60,8 @@ router.post('/simulation/1', async (req, res) => {
 						movement: req.body.movement,
 						humanTraversal: req.body.humanTraversal,
 						agent1Traversal: req.body.agent1Traversal,
-						agent2Traversal: req.body.agent2Traversal
-					}
+						agent2Traversal: req.body.agent2Traversal,
+					},
 				}
 			);
 		} else {
@@ -75,8 +73,8 @@ router.post('/simulation/1', async (req, res) => {
 					movement: req.body.movement,
 					humanTraversal: req.body.humanTraversal,
 					agent1Traversal: req.body.agent1Traversal,
-					agent2Traversal: req.body.agent2Traversal
-				}
+					agent2Traversal: req.body.agent2Traversal,
+				},
 			});
 			await result.save();
 		}
@@ -100,14 +98,14 @@ router.post('/simulation/2', async (req, res) => {
 					agent2Traversal: req.body.agent2Traversal,
 					humanExplored: req.body.humanExplored,
 					agent1Explored: req.body.agent1Explored,
-					agent2Explored: req.body.agent2Explored
+					agent2Explored: req.body.agent2Explored,
 				},
 				decisions: {
 					agent1: req.body.decisions.agent1,
-					agent2: req.body.decisions.agent2
+					agent2: req.body.decisions.agent2,
 				},
 				obstacles: req.body.obstacles,
-				endGame: req.body.endGame
+				endGame: req.body.endGame,
 			}
 		);
 		res.sendStatus(200);
@@ -132,7 +130,7 @@ router.get('/exit-tutorial', (req, res) => {
 router.get('/survey-1', (req, res) => {
 	res.render('survey-1', {
 		title: 'ARL STRONG UML | Survey 1',
-		layout: 'survey.hbs'
+		layout: 'survey.hbs',
 	});
 });
 
@@ -163,9 +161,9 @@ router.post('/survey-1-submit', async (req, res) => {
 					meticulous: req.body.meticulous ?? 'NaN',
 					hasintegrity: req.body.hasintegrity ?? 'NaN',
 					candid: req.body.candid ?? 'NaN',
-					goodwill: req.body.goodwill ?? 'NaN'
+					goodwill: req.body.goodwill ?? 'NaN',
 				},
-				survey1Modified: new Date()
+				survey1Modified: new Date(),
 			}
 		);
 		res.redirect('/survey-2');
@@ -207,7 +205,7 @@ router.post('/survey-2-submit', async (req, res) => {
 router.get('/survey-2', (req, res) => {
 	res.render('survey-3', {
 		title: 'ARL STRONG UML | Survey 2',
-		layout: 'survey.hbs'
+		layout: 'survey.hbs',
 	});
 });
 
@@ -225,7 +223,7 @@ router.post('/survey-2-submit', async (req, res) => {
 					techEd: req.body.techEd ?? 'NaN',
 					roboticsExp: req.body.roboticsExp ?? 'NaN',
 				},
-				survey2Modified: new Date()
+				survey2Modified: new Date(),
 			}
 		);
 		res.redirect('/thank-you');
@@ -238,7 +236,7 @@ router.post('/survey-2-submit', async (req, res) => {
 router.get('/dev', (req, res) => {
 	res.render('dev', {
 		title: 'ARL STRONG UML | Developer Mode',
-		layout: 'main.hbs'
+		layout: 'main.hbs',
 	});
 });
 
@@ -290,7 +288,7 @@ router.use((req, res, next) => {
 	// res.redirect('error/404');
 	res.render('error/400', {
 		url: req.url,
-		title: 'ARL STRONG UML | Error 404'
+		title: 'ARL STRONG UML | Error 404',
 	});
 	return;
 });

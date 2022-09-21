@@ -1,19 +1,24 @@
-var timer = null, timeWatched = 0, totalTime = 111;
-// $('#instructionsContent > video').on('play', () => startPlaying());
-// $('#instructionsContent > video').on('pause', () => pausePlaying());
+var timer = null,
+	timeWatched = 0,
+	totalTime = 111;
+$('#instructionsContent > video').on('play', () => startPlaying());
+$('#instructionsContent > video').on('pause', () => pausePlaying());
 
-$('#instructionsContent > video').on('ended', () => {
+/* $('#instructionsContent > video').on('ended', () => {
 	$('#startTut').prop('disabled', false);
-});
+}); */
 
 $(document).ready(() => {
-	if (localStorage.getItem('failedTutorial') != "true" || sessionStorage.getItem('uuid') === null) {
+	if (
+		localStorage.getItem('failedTutorial') != 'true' ||
+		sessionStorage.getItem('uuid') === null
+	) {
 		localStorage.setItem('failedTutorial', false);
-		$.get("/user/:uuid", data => {
+		$.get('/user/:uuid', data => {
 			sessionStorage.setItem('uuid', data);
 		});
 	}
-	
+
 	if (localStorage.getItem('devMode') == 'true') {
 		$('#begin').css('display', 'none');
 		$('#skip').css('display', 'initial');
@@ -32,20 +37,20 @@ $(document).ready(() => {
 	}
 }); */
 
-/* function startPlaying() {
+function startPlaying() {
 	timer = window.setInterval(() => ++timeWatched, 1000);
 }
 
 function pausePlaying() {
 	if (timeWatched >= totalTime) $('#startTut').prop('disabled', false);
 	if (timer) clearInterval(timer);
-} */
+}
 
 $(window).on('click', e => {
-	if ($(".popup-modal-container").is(e.target)) {
+	if ($('.popup-modal-container').is(e.target)) {
 		$(`#${e.target.id}`).css({
-			'opacity': '0',
-			'visibility': 'hidden'
+			opacity: '0',
+			visibility: 'hidden',
 		});
 		$('nav').removeClass('disabled');
 		$('.main-content').removeClass('disabled');
@@ -56,8 +61,8 @@ $(window).on('click', e => {
 function showConsentForm() {
 	if (!sessionStorage.getItem('consent')) {
 		$('#consentFormContainer').css({
-			'visibility': 'visible',
-			'opacity': '1'
+			visibility: 'visible',
+			opacity: '1',
 		});
 		$('nav').addClass('disabled');
 		$('.main-content').addClass('disabled');
@@ -67,17 +72,17 @@ function showConsentForm() {
 	}
 }
 
-function displayVideo(){
+function displayVideo() {
 	$('#instructionsContainer').css({
-		'visibility': 'visible',
-		'opacity': '1'
+		visibility: 'visible',
+		opacity: '1',
 	});
 }
 
-function beginTutorial(){
+function beginTutorial() {
 	$('#instructionsContainer').css({
-		'visibility': 'hidden',
-		'opacity': '0'
+		visibility: 'hidden',
+		opacity: '0',
 	});
 	showConsentForm();
 }
@@ -85,8 +90,8 @@ function beginTutorial(){
 function agree() {
 	sessionStorage.setItem('consent', true);
 	$('#consentFormContainer').css({
-		'visibility': 'hidden',
-		'opacity': '0'
+		visibility: 'hidden',
+		opacity: '0',
 	});
 	$('nav').addClass('disabled');
 	$('.main-content').addClass('disabled');
@@ -95,7 +100,7 @@ function agree() {
 }
 
 function decline() {
-	window.location.href = "/declined";
+	window.location.href = '/declined';
 }
 
 function scrollDown() {

@@ -2,7 +2,8 @@
 	--animate-duration: 0.5s !important;
 }
 
-html, body {
+html,
+body {
 	margin: 0;
 	padding: 0;
 	width: 100%;
@@ -35,7 +36,7 @@ html, body {
 	text-align: right;
 	font-size: 10px;
 	border-radius: 0 50px 50px 0;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 .background {
@@ -48,7 +49,10 @@ html, body {
 	margin: 0;
 }
 
-div, input, button, select {
+div,
+input,
+button,
+select {
 	font-family: 'Montserrat', 'sans-serif';
 	font-size: 13px;
 	font-weight: bold;
@@ -85,15 +89,15 @@ html {
 }
 
 ::placeholder {
-	color: #BBBBBB;
+	color: #bbbbbb;
 }
 
 :-ms-input-placeholder {
-	color: #BBBBBB;
+	color: #bbbbbb;
 }
 
 ::-ms-input-placeholder {
-	color: #BBBBBB;
+	color: #bbbbbb;
 }
 
 .loader {
@@ -116,7 +120,7 @@ html {
 
 .loader::before,
 .loader::after {
-	content: "";
+	content: '';
 	position: absolute;
 	border-radius: 50%;
 }
@@ -142,13 +146,21 @@ html {
 }
 
 @-webkit-keyframes spin {
-	0% { -webkit-transform: rotate(0deg); }
-	100% { -webkit-transform: rotate(360deg); }
+	0% {
+		-webkit-transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
 }
 
 @keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
 nav {
@@ -180,7 +192,6 @@ nav {
 	border-radius: 7px;
 	transition: visibility 0.2s linear, opacity 0.2s linear;
 	scroll-behavior: smooth;
-	box-shadow: 0 0 0 9999px #000000EA;
 }
 
 .popup-modal {
@@ -195,18 +206,28 @@ nav {
 	justify-content: space-evenly;
 }
 
+#instructions-modal-fp-container {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-end;
+}
+
 #instructions-modal {
 	width: 28em !important;
 	height: auto;
 	top: initial;
-	right: auto;
+	bottom: initial;
+	left: initial;
+	right: initial;
 	max-width: 40rem;
 	padding: 2rem;
-	margin: auto 2em 2em 2em;
+	margin: 2em 2em 2em 2em;
 	visibility: visible;
 	opacity: 1;
 	width: 0;
-	box-shadow: 0 0 0 9999px #000000EA;
 	overflow: auto;
 	z-index: 999;
 }
@@ -264,7 +285,7 @@ nav {
 	text-align: center;
 }
 
-#redirectTutorialContainer{
+#redirectTutorialContainer {
 	width: 45em !important;
 	height: 20em !important;
 	padding: 35px 50px;
@@ -273,17 +294,15 @@ nav {
 	opacity: 1;
 }
 
-
 #redirectTutorialContent {
 	color: white;
 	justify-content: space-evenly;
 }
 
-#tutRedTitle{
+#tutRedTitle {
 	text-align: center;
-	font-size:24px;
+	font-size: 24px;
 }
-
 
 #endRoundQContainer {
 	width: 45em !important;
@@ -300,7 +319,7 @@ nav {
 
 .optionsContainer {
 	width: 100%;
-	font-size: 16px; 
+	font-size: 16px;
 }
 
 .optionsContainer input {
@@ -319,11 +338,10 @@ nav {
 	width: 100%;
 }
 
-#q3PromptTitle{
+#q3PromptTitle {
 	text-align: center;
-	font-size:30px;
+	font-size: 30px;
 }
-
 
 .questionContainer h4 {
 	margin: 0.5em 0 1em 0;
@@ -340,7 +358,6 @@ nav {
 	margin: 5px;
 }
 
-
 .hCenter {
 	width: 100%;
 	display: flex;
@@ -348,20 +365,20 @@ nav {
 	align-items: center;
 }
 
-.scores{
-    padding: 10px 0;
+.scores {
+	padding: 10px 0;
 	border-radius: 7px;
 	display: inline-flex;
-    flex-wrap: wrap;
+	flex-wrap: wrap;
 	justify-content: space-around;
 	text-align: center;
 }
 
 .scoreBlock {
 	align-content: center;
-	border-radius:7px;
+	border-radius: 7px;
 	width: 28vw;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	display: flex;
 	flex-direction: column;
 	justify-content: space-evenly;
@@ -384,19 +401,24 @@ nav {
 	font-size: 150%;
 }
 
-#hScore{
+#hScore {
 	background-color: #9999ff;
 }
 
-#aScore{
+#aScore {
 	background-color: #99ffb7;
 }
 
-#oScore{
+#oScore {
 	background-color: #cac9ca;
 }
 
-.oYellowStar, .oBlueStar, .aYellowStar, .aBlueStar, .hYellowStar, .hBlueStar {
+.oYellowStar,
+.oBlueStar,
+.aYellowStar,
+.aBlueStar,
+.hYellowStar,
+.hBlueStar {
 	display: inline;
 }
 
@@ -469,7 +491,7 @@ nav {
 	color: black;
 	text-align: right;
 	font-size: 10px;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 .graph {
@@ -480,29 +502,29 @@ nav {
 }
 
 .negativeScore {
-	background-color: #D32F2F;
+	background-color: #d32f2f;
 	justify-content: left;
 	border-radius: 4px 0 0 4px;
 }
 
 .positiveScore {
-	background-color: #4CAF50;
+	background-color: #4caf50;
 	justify-content: right;
 	border-radius: 0 4px 4px 0;
 }
 
-#star{
-	vertical-align: middle; 
-	margin-left:center;
-	margin-right:center;
+#star {
+	vertical-align: middle;
+	margin-left: center;
+	margin-right: center;
 }
 
 #stats {
-	visibility:hidden;
+	visibility: hidden;
 	width: 50%;
 	color: white;
 	text-align: center;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	border-collapse: collapse;
 	border-radius: 7px;
 	margin: 30px auto;
@@ -560,7 +582,7 @@ nav {
 }
 
 .explored {
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	background-color: black;
 	border-top-left-radius: 7px;
 	border-top-right-radius: 7px;
@@ -584,7 +606,7 @@ nav {
 	text-align: center;
 	border-bottom-left-radius: 7px;
 	border-bottom-right-radius: 7px;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	background-color: #252525;
 	padding: 15px 0;
 	margin: 0;
@@ -706,7 +728,7 @@ nav {
 	border-radius: 5px;
 	font-size: 14px;
 	white-space: nowrap;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 #simulation {
@@ -729,7 +751,7 @@ nav {
 	padding: 20px;
 	margin-bottom: 1em;
 	background-color: #303030;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	border-radius: 7px;
 	display: grid;
 	grid-template-columns: auto auto;
@@ -751,7 +773,8 @@ nav {
 	margin-right: 10px;
 }
 
-#legend .icon svg, #legend .icon .fillSpan {
+#legend .icon svg,
+#legend .icon .fillSpan {
 	width: 30px;
 	height: 30px;
 }
@@ -766,7 +789,7 @@ nav {
 #gameDetails {
 	border-radius: 7px;
 	background-color: #303030;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -786,7 +809,7 @@ nav {
 	position: relative;
 	margin-left: 1em;
 	overflow: hidden;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	border-radius: 7px;
 	--animate-duration: 1s !important;
 }
@@ -826,7 +849,7 @@ nav {
 	background-color: #454545;
 	border-radius: 7px;
 	width: 22vw;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 .notificationIcon {
@@ -857,12 +880,14 @@ input {
 	color: white;
 }
 
-button, select, option {
+button,
+select,
+option {
 	font-family: 'Montserrat', 'sans-serif';
 	font-size: 14px;
 	margin: 10px;
 	padding: 10px 20px;
-	box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
+	box-shadow: 0 7px 14px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22);
 	position: relative;
 	overflow: hidden;
 	background-color: #252525;
@@ -873,19 +898,28 @@ button, select, option {
 	transition: 0.3s;
 }
 
-button:hover, select:hover, option {
+button:hover,
+select:hover,
+option {
 	background-color: #303030;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	cursor: pointer;
 }
 
-button:disabled, button[disabled], button[disabled]:hover, button[disabled]:focus, button[disabled]:active {
-	background-color: #3C3C3C;
+button:disabled,
+button[disabled],
+button[disabled]:hover,
+button[disabled]:focus,
+button[disabled]:active {
+	background-color: #3c3c3c;
 	color: #777777;
 	cursor: not-allowed;
 	box-shadow: none;
 }
 
-h1, h2, h3, p {
+h1,
+h2,
+h3,
+p {
 	margin: 0;
 }
