@@ -132,8 +132,8 @@ var humanLeft,
 	botBottom;
 var intervalCount = 0,
 	half = 0,
-	intervals = 6,
-	duration = 5,
+	intervals = 10,
+	duration = 25,
 	agentNum = 1;
 var log = [[], []];
 
