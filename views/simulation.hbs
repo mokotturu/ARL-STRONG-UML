@@ -367,7 +367,17 @@
 						</div>
 					</div> }}
 					</div>
-					<div class='tableItems'></div>
+					<div
+						class='tableItemsWrapper'
+						style='background-color:#505050;border-radius:7px;padding:2rem;'
+					>
+						<p
+							style='color:white;font-size:1.5rem;text-align:center;'
+						>
+							Your decisions
+						</p>
+						<div class='tableItems'></div>
+					</div>
 					<div class='userInputButtons'>
 						<button
 							onclick='showPostIntegratePrompt()'
@@ -495,75 +505,6 @@
 							</div>
 						</div>
 						<div class='questionContainer'>
-							<h4>Please rate your teammate.<br />(1 = poor
-								teammate, 7 = excellent teammate)</h4>
-							<div class='optionsContainer'>
-								<label
-									for='twoOne'
-									class='radio-inline grid-item'
-								><input
-										id='twoOne'
-										type='radio'
-										name='teammateRating'
-										value='1'
-									/>1</label>
-								<label
-									for='twoTwo'
-									class='radio-inline grid-item'
-								><input
-										id='twoTwo'
-										type='radio'
-										name='teammateRating'
-										value='2'
-									/>2</label>
-								<label
-									for='twoThree'
-									class='radio-inline grid-item'
-								><input
-										id='twoThree'
-										type='radio'
-										name='teammateRating'
-										value='3'
-									/>3</label>
-								<label
-									for='twoFour'
-									class='radio-inline grid-item'
-								><input
-										id='twoFour'
-										type='radio'
-										name='teammateRating'
-										value='4'
-									/>4</label>
-								<label
-									for='twoFive'
-									class='radio-inline grid-item'
-								><input
-										id='twoFive'
-										type='radio'
-										name='teammateRating'
-										value='5'
-									/>5</label>
-								<label
-									for='twoSix'
-									class='radio-inline grid-item'
-								><input
-										id='twoSix'
-										type='radio'
-										name='teammateRating'
-										value='6'
-									/>6</label>
-								<label
-									for='twoSeven'
-									class='radio-inline grid-item'
-								><input
-										id='twoSeven'
-										type='radio'
-										name='teammateRating'
-										value='7'
-									/>7</label>
-							</div>
-						</div>
-						<div class='questionContainer'>
 							<h4>Please rate your teammate's benevolence.<br />(1
 								= not benevolent, 7 = very benevolent)</h4>
 							<div class='optionsContainer'>
@@ -630,79 +571,6 @@
 										name='benevolenceRating'
 										value='7'
 									/>7</label>
-							</div>
-						</div>
-						<div class='questionContainer'>
-							<h4>What influenced your decision to
-								integrate/discard the map the most?</h4>
-							<div class='fullWidthOptions'>
-								<label
-									for='longOne'
-									class='fullWidthOption grid-item'
-								><input
-										id='longOne'
-										type='radio'
-										name='decisionInfluence'
-										value='1'
-										onclick='toggleTextInput()'
-									/>Good performance of my teammate in the
-									current and previous rounds</label>
-								<label
-									for='longTwo'
-									class='fullWidthOption grid-item'
-								><input
-										id='longTwo'
-										type='radio'
-										name='decisionInfluence'
-										value='2'
-										onclick='toggleTextInput()'
-									/>Bad performance of my teammate in the
-									current and previous rounds</label>
-								<label
-									for='longThree'
-									class='fullWidthOption grid-item'
-								><input
-										id='longThree'
-										type='radio'
-										name='decisionInfluence'
-										value='3'
-										onclick='toggleTextInput()'
-									/>I was sure my team would add their score
-									to the team score</label>
-								<label
-									for='longFour'
-									class='fullWidthOption grid-item'
-								><input
-										id='longFour'
-										type='radio'
-										name='decisionInfluence'
-										value='4'
-										onclick='toggleTextInput()'
-									/>I was not sure if my team would add their
-									score to the team score</label>
-								<label
-									for='longFive'
-									class='fullWidthOption grid-item'
-									id='otherRadioButton'
-								><input
-										id='longFive'
-										type='radio'
-										name='decisionInfluence'
-										value='5'
-										onclick='toggleTextInput()'
-									/>
-									Other
-									<input
-										type='text'
-										name='decisionInfluenceText'
-										id='decisionInfluenceText'
-										class='hideTextArea'
-										placeholder='Please mention why'
-									/><sup
-										class='hideTextArea'
-										style='font-size: 11px;color: red; display: none; align-self: flex-start;'
-									>*</sup>
-								</label>
 							</div>
 						</div>
 					</form>

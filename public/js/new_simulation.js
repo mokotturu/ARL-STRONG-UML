@@ -132,8 +132,8 @@ var humanLeft,
 	botBottom;
 var intervalCount = 0,
 	half = 0,
-	intervals = 10,
-	duration = 25,
+	intervals = 6,
+	duration = 5,
 	agentNum = 1;
 var log = [[], []];
 
@@ -1087,19 +1087,9 @@ function hideExploredInfo() {
 		rawIntervalSurveyData.find(
 			data => data.name == 'performanceRating'
 		) || { name: 'performanceRating', value: '' },
-		rawIntervalSurveyData.find(data => data.name == 'teammateRating') || {
-			name: 'teammateRating',
-			value: '',
-		},
 		rawIntervalSurveyData.find(
 			data => data.name == 'benevolenceRating'
 		) || { name: 'benevolenceRating', value: '' },
-		rawIntervalSurveyData.find(
-			data => data.name == 'decisionInfluence'
-		) || { name: 'decisionInfluence', value: '' },
-		rawIntervalSurveyData.find(
-			data => data.name == 'decisionInfluenceText'
-		) || { name: 'decisionInfluenceText', value: '' },
 	];
 	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse =
 		updatedIntervalSurveyData;
