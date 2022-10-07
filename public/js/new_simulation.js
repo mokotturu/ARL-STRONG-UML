@@ -84,7 +84,7 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ gold: 3, addedTo: 'team' },
+	{ gold: 2, addedTo: 'team' },
 	{ gold: 1, addedTo: 'team' },
 	{ gold: 2, addedTo: 'team' },
 	{ gold: 0, addedTo: 'individual' },
