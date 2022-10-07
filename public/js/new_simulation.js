@@ -594,9 +594,7 @@ async function startMatching() {
 	$('#matching-modal')[0].style.setProperty('width', '30em', 'important');
 	$('#matching-modal')[0].style.setProperty('height', '20em', 'important');
 
-	$('#matching-heading').text(
-		`You are matched with a ${Math.random() > 0.5 ? 'human' : 'robot'}.`
-	);
+	$('#matching-heading').text(`You are matched with a human.`);
 	$('#endMatchingBtn').prop('disabled', false);
 }
 
