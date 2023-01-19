@@ -132,7 +132,7 @@ var humanLeft,
 	botBottom;
 var intervalCount = 0,
 	half = 0,
-	intervals = 10,
+	intervals = 6,
 	duration = 25,
 	agentNum = 1;
 var log = [[], []];
@@ -1074,25 +1074,15 @@ function hideExploredInfo() {
 	$('#curAgentScoreDetailsBlock').toggleClass(
 		'animate__animated animate__heartBeat'
 	);
+
+	// validate inputs
 	let rawIntervalSurveyData = $('#intervalSurvey').serializeArray();
-	/* console.log(intervalSurveyData)
-	if (intervalSurveyData[0].name != 'performanceRating' || intervalSurveyData[1].name != 'teammateRating' || intervalSurveyData[2].name != 'decisionInfluence' || (intervalSurveyData[2].value == '5'  && intervalSurveyData[3].value == '')) {
-		console.error('This field is required.')
-		$endRoundModal.scrollTop(-10000);
+	if (rawIntervalSurveyData.length != 3 || rawIntervalSurveyData[2].value == '') {
 		$('#intervalSurveyRQMsg').css('display', 'initial');
 		return;
-	} */
+	}
 
-	let updatedIntervalSurveyData = [
-		rawIntervalSurveyData.find(
-			data => data.name == 'performanceRating'
-		) || { name: 'performanceRating', value: '' },
-		rawIntervalSurveyData.find(
-			data => data.name == 'benevolenceRating'
-		) || { name: 'benevolenceRating', value: '' },
-	];
-	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse =
-		updatedIntervalSurveyData;
+	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = rawIntervalSurveyData;
 
 	if (agentNum < agents.length) {
 		// agents[agentNum - 1].tempTargetsFound.positive = 0;

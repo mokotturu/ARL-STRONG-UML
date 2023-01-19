@@ -344,6 +344,10 @@ nav {
 	margin: 5px;
 }
 
+.grid-text-item {
+	width: 100%;
+}
+
 .optionsContainer {
 	width: 100%;
 	display: grid;

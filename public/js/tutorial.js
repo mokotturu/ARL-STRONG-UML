@@ -85,7 +85,7 @@ let fakeBotImageScales = [
 
 let fakeAgentScores = [
 	{ gold: 3, addedTo: 'team' },
-	{ gold: 1, addedTo: 'individual' },
+	{ gold: 3, addedTo: 'team' },
 	{ gold: 2, addedTo: 'team' },
 	{ gold: 2, addedTo: 'individual' },
 	{ gold: 1, addedTo: 'team' },
