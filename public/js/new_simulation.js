@@ -39,6 +39,7 @@ const colors = {
 	victim: 'red',
 	hazard: 'yellow',
 	goodTarget: '#ffc72c',
+	darkGoodTarget: '#956d00',
 	badTarget: '#ff4848',
 	selfishTarget: '#ff48ff',
 };
@@ -83,16 +84,16 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ gold: 3, addedTo: 'team' },
-	{ gold: 1, addedTo: 'individual' },
-	{ gold: 2, addedTo: 'team' },
-	{ gold: 2, addedTo: 'individual' },
-	{ gold: 1, addedTo: 'team' },
-	{ gold: 0, addedTo: 'individual' },
-	{ gold: 0, addedTo: 'team' },
-	{ gold: 0, addedTo: 'individual' },
-	{ gold: 2, addedTo: 'team' },
-	{ gold: 4, addedTo: 'individual' },
+	{ gold: 3, gamblePayback: 0.6 },
+	{ gold: 1, gamblePayback: 0.5 },
+	{ gold: 2, gamblePayback: 0.6 },
+	{ gold: 2, gamblePayback: 0.5 },
+	{ gold: 1, gamblePayback: 0.6 },
+	{ gold: 0, gamblePayback: 0.5 },
+	{ gold: 0, gamblePayback: 0.6 },
+	{ gold: 0, gamblePayback: 0.5 },
+	{ gold: 2, gamblePayback: 0.6 },
+	{ gold: 4, gamblePayback: 0.5 },
 ];
 
 var fakeAgentNum = 0;
@@ -105,15 +106,10 @@ var initialTimeStamp = 0,
 
 var human, agent1;
 var agents = [];
-var pastHumanIndScore,
-	pastHumanTeamScore,
-	currHumanIndScore,
-	currHumanTeamScore,
-	currAgentIndScore,
-	currAgentTeamScore,
-	totalAgentTeamScore = 0,
-	totalAgentIndScore = 0,
-	totalTeamScore = 0;
+var totalHumanScore = 0,
+	currHumanScore,
+	currAgentScore,
+	totalAgentScore = 0;
 
 var seconds = 0,
 	timeout,
@@ -133,7 +129,7 @@ var humanLeft,
 var intervalCount = 0,
 	half = 0,
 	intervals = 6,
-	duration = 25,
+	duration = 5,
 	agentNum = 1;
 var log = [[], []];
 
@@ -179,7 +175,7 @@ class Player {
 		this.explored = new Set();
 		this.tempExplored = new Set();
 		this.tempTargetsFound = { gold: [] };
-		this.totalTargetsFound = { teamGold: [], individualGold: [] };
+		this.totalTargetsFound = { gold: [] };
 	}
 
 	spawn(size) {
@@ -374,10 +370,11 @@ class Agent extends Player {
 }
 
 class Obstacle {
-	constructor(x, y, color, variant) {
+	constructor(x, y, color, darkColor, variant) {
 		this.x = x;
 		this.y = y;
 		this.color = color;
+		this.darkColor = darkColor;
 		this.isFound = false;
 		this.variant = variant;
 		this.isPicked = false;
@@ -412,16 +409,24 @@ class Obstacle {
 					sides: 3,
 				});
 			} else if (this.variant == 'gold') {
-				$('canvas').drawPolygon({
+				$('canvas').drawEllipse({
 					fromCenter: true,
+					strokeWidth: 2,
+					strokeStyle: this.isPicked ? '#39ff14' : this.darkColor,
 					fillStyle: this.color,
-					strokeStyle: this.isPicked ? '#39ff14' : 'white',
-					strokeWidth: this.isPicked ? 3 : 1,
 					x: this.x * boxWidth + boxWidth / 2,
 					y: this.y * boxHeight + boxHeight / 2,
-					radius: boxWidth * 2,
-					sides: 5,
-					concavity: 0.5,
+					width: boxWidth * 3, height: boxHeight * 3,
+				});
+				$('canvas').drawText({
+					fromCenter: true,
+					fillStyle: this.darkColor,
+					x: this.x * boxWidth + boxWidth / 2,
+					y: this.y * boxHeight + boxHeight / 2,
+					fontSize: boxWidth * 2,
+					fontFamily: 'monospace',
+					text: '$',
+
 				});
 			} else if (this.variant == 'red') {
 				$map.drawEllipse({
@@ -491,6 +496,7 @@ $(document).ready(async () => {
 				obstacleLocs[0][i][0],
 				obstacleLocs[0][i][1],
 				colors.goodTarget,
+				colors.darkGoodTarget,
 				'gold'
 			)
 		);
@@ -499,7 +505,7 @@ $(document).ready(async () => {
 	for (let i = 0; i < 40; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(
-			new Obstacle(...tempObstLoc, colors.goodTarget, 'gold')
+			new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
 		);
 	}
 
@@ -709,11 +715,8 @@ function showTrustPrompt() {
 	$trustConfirmModal.css('visibility', 'visible');
 	$trustConfirmModal.css('opacity', '1');
 	$('#popupRoundDetails').text(
-		`You picked ${
-			human.tempTargetsFound.gold.length
-		} target(s) and gained ${
-			human.tempTargetsFound.gold.length * 100
-		} points.`
+		`You collected ${human.tempTargetsFound.gold.length
+		} coin(s).`
 	);
 
 	initialTimeStamp = performance.now();
@@ -734,24 +737,20 @@ function showPostIntegratePrompt() {
 // *** CLEAN UP THIS FUNCTION ***
 function showExploredInfo() {
 	// NEW STUFF
-	pastHumanIndScore = human.totalTargetsFound.individualGold.length * 100;
-	pastHumanTeamScore = human.totalTargetsFound.teamGold.length * 200;
+	currHumanScore = human.tempTargetsFound.gold.length;
+	currAgentScore = fakeAgentScores[fakeAgentNum].gold;
 
-	if (log[agentNum - 1][intervalCount - 1].addedTo == 'Team') {
-		currHumanTeamScore = human.tempTargetsFound.gold.length * 200;
-		currHumanIndScore = 0;
-	} else {
-		currHumanTeamScore = 0;
-		currHumanIndScore = human.tempTargetsFound.gold.length * 100;
+	if (log[agentNum - 1][intervalCount - 1].decision == 'Gambled') {
+		let gambledTotal = (currAgentScore + currHumanScore) * 2;
+		currHumanScore = Math.round(fakeAgentScores[fakeAgentNum].gamblePayback * gambledTotal);
+		currAgentScore = Math.round((1 - fakeAgentScores[fakeAgentNum].gamblePayback) * gambledTotal);
 	}
 
-	// CALCULATIONS
-	totalTeamScore += currHumanTeamScore + currAgentTeamScore;
-	totalAgentIndScore += currAgentIndScore;
+	totalHumanScore += currHumanScore;
+	totalAgentScore += currAgentScore;
 
-	$('#teamScoreMain').text(`${totalTeamScore}`);
-	$('#humanIndMain').text(`${pastHumanIndScore}`);
-	$('#agentIndMain').text(`${totalAgentIndScore}`);
+	$('#humanIndMain').text(`${totalHumanScore}`);
+	$('#agentIndMain').text(`${totalAgentScore}`);
 
 	$detailsModal.css('display', 'flex');
 	$detailsModal.css('visibility', 'visible');
@@ -770,20 +769,13 @@ function showExploredInfo() {
 	$agentText.toggleClass(`agent${agentNum}`, true);
 	++fakeAgentNum;
 
-	// tempTeamScore = teamScore;
 	if (log[agentNum - 1][intervalCount - 1] != null) {
 		log[agentNum - 1].forEach((data, i) => {
 			$log.append(
-				`<p style='background-color: ${colors.lightAgent1};'>Interval ${
-					i + 1
-				}: Added to ${data.addedTo} score</p>`
+				`<p style='background-color: ${colors.lightAgent2};'>Interval ${i + 1}: ${data.decision} coins</p>`
 			);
 		});
 	}
-
-	// getSetBoundaries(human.tempExplored, 0);
-	// fakeGetSetBoundaries();
-	// scaleImages();
 
 	setTimeout(() => {
 		$detailsModal.scrollTop(-10000);
@@ -792,190 +784,108 @@ function showExploredInfo() {
 		$log.scrollLeft(10000);
 	}, 500);
 
-	/*Adding updated star display messages*/
-
 	updateResults();
 }
 
-//Update the display for star count for targets on the results display
+// Update the display for star count for targets on the results display
 function updateResults() {
-	/* let tempString = human.tempTargetsFound.gold.length > 0 ? `` : `No gold targets found`;
-	for (let i = 0; i < human.tempTargetsFound.gold.length; i++){
-		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
-	}
-	$("div.hYellowStar").html(tempString); */
+	tempString = fakeAgentScores[fakeAgentNum - 1].gold > 0
+		? `` : `No coins found`;
 
-	tempString =
-		fakeAgentScores[fakeAgentNum - 1].gold > 0
-			? ``
-			: `No gold targets found`;
-	for (let k = 0; k < fakeAgentScores[fakeAgentNum - 1].gold; k++) {
-		tempString += `<span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>`;
+	if (log[agentNum - 1][intervalCount - 1].decision == 'Gambled') {
+		$('#gambleInfo').text(`Your teammate gave you ${fakeAgentScores[fakeAgentNum - 1].gamblePayback * 100}% back after you gambled.`);
+	} else {
+		$('#gambleInfo').text(``);
+	}
+
+	// <span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>
+	for (let k = 0; k < currHumanScore; ++k) {
+		tempString += `<img src='img/coin.svg' style='width: 30px; height: 30px; padding: 0 0.25rem;' />`;
+	}
+	$('div.hYellowStar').html(tempString);
+
+	tempString = '';
+	for (let k = 0; k < currAgentScore; ++k) {
+		tempString += `<img src='img/coin.svg' style='width: 30px; height: 30px; padding: 0 0.25rem;' />`;
 	}
 	$('div.aYellowStar').html(tempString);
 
-	if (fakeAgentScores[fakeAgentNum - 1].addedTo == 'team') {
-		$('#curAgentScoreDetails').text(
-			`Added to team score: ${
-				fakeAgentScores[fakeAgentNum - 1].gold * 200
-			} pts`
-		);
-	} else {
-		$('#curAgentScoreDetails').text(
-			`Added to individual score: ${
-				fakeAgentScores[fakeAgentNum - 1].gold * 100
-			} pts`
-		);
-	}
+	$('#curHumanScoreDetails').text(
+		`${currHumanScore} coin(s) gained`
+	);
 
-	if (totalTeamScore >= 0) {
-		$('#overallTeamScorePositiveGraph').css(
-			'width',
-			`${(totalTeamScore / 100) * 8}`
-		);
-		$('#overallTeamScorePositive').text(`${totalTeamScore} pts`);
-		$('#overallTeamScoreNegativeGraph').css('width', `0`);
-		$('#overallTeamScoreNegative').text(``);
-	} else {
-		$('#overallTeamScoreNegativeGraph').css(
-			'width',
-			`${Math.abs((totalTeamScore / 100) * 8)}`
-		);
-		$('#overallTeamScoreNegative').text(`${totalTeamScore} pts`);
-		$('#overallTeamScorePositiveGraph').css('width', `0`);
-		$('#overallTeamScorePositive').text(``);
-	}
+	$('#curAgentScoreDetails').text(
+		`${currAgentScore} coin(s) gained`
+	);
 
-	if (currHumanTeamScore + currAgentTeamScore >= 0) {
-		$('#currTeamScorePositiveGraph').css(
-			'width',
-			`${((currHumanTeamScore + currAgentTeamScore) / 100) * 8}`
-		);
-		$('#currTeamScorePositive').text(
-			`${currHumanTeamScore + currAgentTeamScore} pts`
-		);
-		$('#currTeamScoreNegativeGraph').css('width', `0`);
-		$('#currTeamScoreNegative').text(``);
-	} else {
-		$('#currTeamScoreNegativeGraph').css(
-			'width',
-			`${Math.abs(((currHumanTeamScore + currAgentTeamScore) / 100) * 8)}`
-		);
-		$('#currTeamScoreNegative').text(
-			`${currHumanTeamScore + currAgentTeamScore} pts`
-		);
-		$('#currTeamScorePositiveGraph').css('width', `0`);
-		$('#currTeamScorePositive').text(``);
-	}
-
-	// let tempCurrAgentIndScore = ((fakeAgentScores[fakeAgentNum - 1].pink) * 100);
-	// let tempCurrAgentTeamScore = (fakeAgentScores[fakeAgentNum - 1].gold - fakeAgentScores[fakeAgentNum - 1].pink - fakeAgentScores[fakeAgentNum - 1].red) * 100;
-
-	if (currAgentIndScore >= 0) {
+	if (currAgentScore >= 0) {
 		$('#agentIndScorePositiveGraph').css(
 			'width',
-			`${(currAgentIndScore / 100) * 8}`
+			`${(currAgentScore * 8)}`
 		);
-		$('#agentIndScorePositive').text(`${currAgentIndScore} pts`);
+		$('#agentIndScorePositive').text(`${currAgentScore} coins`);
 		$('#agentIndScoreNegativeGraph').css('width', `0`);
 		$('#agentIndScoreNegative').text(``);
 	} else {
 		$('#agentIndScoreNegativeGraph').css(
 			'width',
-			`${Math.abs((currAgentIndScore / 100) * 8)}`
+			`${Math.abs((currAgentScore * 8))}`
 		);
-		$('#agentIndScoreNegative').text(`${currAgentIndScore} pts`);
+		$('#agentIndScoreNegative').text(`${currAgentScore} coins`);
 		$('#agentIndScorePositiveGraph').css('width', `0`);
 		$('#agentIndScorePositive').text(``);
 	}
 
-	if (currAgentTeamScore >= 0) {
-		$('#agentTeamScorePositiveGraph').css(
-			'width',
-			`${(currAgentTeamScore / 100) * 8}`
-		);
-		$('#agentTeamScorePositive').text(`${currAgentTeamScore} pts`);
-		$('#agentTeamScoreNegativeGraph').css('width', `0`);
-		$('#agentTeamScoreNegative').text(``);
-	} else {
-		$('#agentTeamScoreNegativeGraph').css(
-			'width',
-			`${Math.abs((currAgentTeamScore / 100) * 8)}`
-		);
-		$('#agentTeamScoreNegative').text(`${currAgentTeamScore} pts`);
-		$('#agentTeamScorePositiveGraph').css('width', `0`);
-		$('#agentTeamScorePositive').text(``);
-	}
-
-	if (currHumanIndScore >= 0) {
+	if (currHumanScore >= 0) {
 		$('#humanIndScorePositiveGraph').css(
 			'width',
-			`${(currHumanIndScore / 100) * 8}`
+			`${(currHumanScore * 8)}`
 		);
-		8;
-		$('#humanIndScorePositive').text(`${currHumanIndScore} pts`);
+		$('#humanIndScorePositive').text(`${currHumanScore} coins`);
 		$('#humanIndScoreNegativeGraph').css('width', `0`);
 		$('#humanIndScoreNegative').text(``);
 	} else {
 		$('#humanIndScoreNegativeGraph').css(
 			'width',
-			`${Math.abs((currHumanIndScore / 100) * 8)}`
+			`${Math.abs((currHumanScore * 8))}`
 		);
-		$('#humanIndScoreNegative').text(`${currHumanIndScore} pts`);
+		$('#humanIndScoreNegative').text(`${currHumanScore} coins`);
 		$('#humanIndScorePositiveGraph').css('width', `0`);
 		$('#humanIndScorePositive').text(``);
 	}
 
-	if (currHumanTeamScore >= 0) {
-		$('#humanTeamScorePositiveGraph').css(
-			'width',
-			`${(currHumanTeamScore / 100) * 8}`
-		);
-		$('#humanTeamScorePositive').text(`${currHumanTeamScore} pts`);
-		$('#humanTeamScoreNegativeGraph').css('width', `0`);
-		$('#humanTeamScoreNegative').text(``);
-	} else {
-		$('#humanTeamScoreNegativeGraph').css(
-			'width',
-			`${Math.abs((currHumanTeamScore / 100) * 8)}`
-		);
-		$('#humanTeamScoreNegative').text(`${currHumanTeamScore} pts`);
-		$('#humanTeamScorePositiveGraph').css('width', `0`);
-		$('#humanTeamScorePositive').text(``);
-	}
-
-	if (pastHumanIndScore >= 0) {
+	if (totalHumanScore >= 0) {
 		$('#overallHumanIndScorePositiveGraph').css(
 			'width',
-			`${(pastHumanIndScore / 100) * 8}`
+			`${(totalHumanScore * 8)}`
 		);
-		$('#overallHumanIndScorePositive').text(`${pastHumanIndScore} pts`);
+		$('#overallHumanIndScorePositive').text(`${totalHumanScore} coins`);
 		$('#overallHumanIndScoreNegativeGraph').css('width', `0`);
 		$('#overallHumanIndScoreNegative').text(``);
 	} else {
 		$('#overallHumanIndScoreNegativeGraph').css(
 			'width',
-			`${Math.abs((pastHumanIndScore / 100) * 8)}`
+			`${Math.abs((totalHumanScore * 8))}`
 		);
-		$('#overallHumanIndScoreNegative').text(`${pastHumanIndScore} pts`);
+		$('#overallHumanIndScoreNegative').text(`${totalHumanScore} coins`);
 		$('#overallHumanIndScorePositiveGraph').css('width', `0`);
 		$('#overallHumanIndScorePositive').text(``);
 	}
 
-	if (totalAgentIndScore >= 0) {
+	if (totalAgentScore >= 0) {
 		$('#overallAgentIndScorePositiveGraph').css(
 			'width',
-			`${(totalAgentIndScore / 100) * 8}`
+			`${(totalAgentScore * 8)}`
 		);
-		$('#overallAgentIndScorePositive').text(`${totalAgentIndScore} pts`);
+		$('#overallAgentIndScorePositive').text(`${totalAgentScore} coins`);
 		$('#overallAgentIndScoreNegativeGraph').css('width', `0`);
 		$('#overallAgentIndScoreNegative').text(``);
 	} else {
 		$('#overallAgentIndScoreNegativeGraph').css(
 			'width',
-			`${Math.abs((totalAgentIndScore / 100) * 8)}`
+			`${Math.abs((totalAgentScore * 8))}`
 		);
-		$('#overallAgentIndScoreNegative').text(`${totalAgentIndScore} pts`);
+		$('#overallAgentIndScoreNegative').text(`${totalAgentScore} coins`);
 		$('#overallAgentIndScorePositiveGraph').css('width', `0`);
 		$('#overallAgentIndScorePositive').text(``);
 	}
@@ -1007,23 +917,15 @@ function hideTrustMessage() {
 	$trustCueModal.css('opacity', '0');
 }
 
-function addIndividual() {
+function keepCoins() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
 
-	human.totalTargetsFound.individualGold.push(...human.tempTargetsFound.gold);
-
-	if (fakeAgentScores[fakeAgentNum].addedTo == 'team') {
-		currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 200;
-		currAgentIndScore = 0;
-	} else {
-		currAgentTeamScore = 0;
-		currAgentIndScore = fakeAgentScores[fakeAgentNum].gold * 100;
-	}
+	human.totalTargetsFound.gold.push(...human.tempTargetsFound.gold);
 
 	log[agentNum - 1].push({
 		interval: intervalCount,
-		addedTo: 'Individual',
+		decision: 'Kept',
 		timeTaken: finalTimeStamp - initialTimeStamp,
 		humanGoldTargetsCollected: human.tempTargetsFound.gold.length,
 	});
@@ -1037,23 +939,15 @@ function addIndividual() {
 	showExploredInfo();
 }
 
-function addTeam() {
+function gambleCoins() {
 	finalTimeStamp = performance.now();
 	++intervalCount;
 
-	human.totalTargetsFound.teamGold.push(...human.tempTargetsFound.gold);
-
-	if (fakeAgentScores[fakeAgentNum].addedTo == 'team') {
-		currAgentTeamScore = fakeAgentScores[fakeAgentNum].gold * 200;
-		currAgentIndScore = 0;
-	} else {
-		currAgentTeamScore = 0;
-		currAgentIndScore = fakeAgentScores[fakeAgentNum].gold * 100;
-	}
+	human.totalTargetsFound.gold.push(...human.tempTargetsFound.gold);
 
 	log[agentNum - 1].push({
 		interval: intervalCount,
-		addedTo: 'Team',
+		decision: 'Gambled',
 		timeTaken: finalTimeStamp - initialTimeStamp,
 		humanGoldTargetsCollected: human.tempTargetsFound.gold.length,
 	});
@@ -1558,7 +1452,7 @@ function randomWalk(agent) {
 function moveAgent(agent) {
 	agent.drawCells([
 		grid[agent.traversal[agent.stepCount - 1].loc.x][
-			agent.traversal[agent.stepCount - 1].loc.y
+		agent.traversal[agent.stepCount - 1].loc.y
 		],
 	]);
 	agent.updateLoc(

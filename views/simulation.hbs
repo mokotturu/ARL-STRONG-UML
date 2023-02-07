@@ -48,89 +48,26 @@
 
 		<div class='popup-modal-container' id='trust-confirm-modal'>
 			<div class='popup-modal' id='trust-confirm-modal-content'>
-				{{! <h2 id="trustConfirmQuestion" style="color: white;font-size: 26px;">Do you want to integrate the map
-					and score of the robot to the overall score?</h2> }}
 				<div>
 					<h3 id='popupRoundDetails' style='color: white;font-size: 200%;'></h3>
-					<h3 style='color: white; margin: 2em 0;'>(Remember that
-						this score will be doubled if you add it to the team
-						score.)</h3>
+					<h3 style='color: white; margin: 2em 0;'>Placeholder text</h3>
 				</div>
 				<div class='userInputButtons'>
-					<button onclick='addIndividual()'>Add to individual
-						score</button>
-					<button onclick='addTeam()'>Add to team score</button>
+					<button onclick='keepCoins()'>Keep it to yourself</button>
+					<button onclick='gambleCoins()'>Gamble</button>
 				</div>
 			</div>
 		</div>
 
 		<div class='popup-modal-container' id='exploration-details-modal'>
 			<div class='popup-modal' id='exploration-details-modal-content'>
-				{{! <div class="map-info">
-					<div id="images-container">
-						<div class="explored stackImgContainer">
-							<div class="img-split">
-								<img src="#" id="minimapAgentOverlay" alt="Entire Map 2">
-							</div>
-							<div class="img-split">
-								<img src="#" id="minimap" alt="Entire Map 1">
-							</div>
-						</div>
-
-						<div class="explored">
-							<img src="#" id="bot-image" alt="Agent explored area">
-						</div>
-						<div class="explored">
-							<img src="#" id="human-image" alt="Human explored area">
-						</div>
-					</div>
-					<div class="headings-container">
-						<p>Entire map</p>
-						<p class="agent-text">Agent explored area</p>
-						<p>Human explored area</p>
-					</div>
-				</div> }}
+				<p id="gambleInfo"></p>
 				<div class='scores'>
 					{{! Team score block }}
 					<div id='oScore' class='scoreBlock'>
 						<div>
-							<p style='margin: 0.5em;'>Overall Team Score</p>
+							<p style='margin: 0.5em;'>Overall Results</p>
 							<div class='resultsBlockItemWrapper'>
-								<div class='graphResultsBlockItemWrapper'>
-									<div class='negativeScoreGraph resultsBlockItemLeft'>
-										<p id='overallTeamScoreNegative' class='scoreText'></p>
-										<div id='overallTeamScoreNegativeGraph' class='negativeScore graph'></div>
-									</div>
-									<svg id='bar' viewBox='0 0 3 30' style='width: 3px; height: 30px; padding: 0 1px;'>
-										<polygon points='0 0, 3 0, 3 30, 0 30' fill='black'
-											style='stroke-linejoin: round;'></polygon>
-									</svg>
-									<div class='positiveScoreGraph resultsBlockItemRight'>
-										<div id='overallTeamScorePositiveGraph' class='positiveScore graph'></div>
-										<p id='overallTeamScorePositive' class='scoreText'></p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div>
-							<p style='margin: 0.5em;'>Overall Individual
-								Scores</p>
-							<div class='resultsBlockItemWrapper'>
-								<p>Teammate</p>
-								<div class='graphResultsBlockItemWrapper'>
-									<div class='negativeScoreGraph resultsBlockItemLeft'>
-										<p id='overallAgentIndScoreNegative' class='scoreText'></p>
-										<div id='overallAgentIndScoreNegativeGraph' class='negativeScore graph'></div>
-									</div>
-									<svg id='bar' viewBox='0 0 3 30' style='width: 3px; height: 30px; padding: 0 1px;'>
-										<polygon points='0 0, 3 0, 3 30, 0 30' fill='black'
-											style='stroke-linejoin: round;'></polygon>
-									</svg>
-									<div class='positiveScoreGraph resultsBlockItemRight'>
-										<div id='overallAgentIndScorePositiveGraph' class='positiveScore graph'></div>
-										<p id='overallAgentIndScorePositive' class='scoreText'></p>
-									</div>
-								</div>
 								<p>You</p>
 								<div class='graphResultsBlockItemWrapper'>
 									<div class='negativeScoreGraph resultsBlockItemLeft'>
@@ -146,12 +83,36 @@
 										<p id='overallHumanIndScorePositive' class='scoreText'></p>
 									</div>
 								</div>
+								<p>Teammate</p>
+								<div class='graphResultsBlockItemWrapper'>
+									<div class='negativeScoreGraph resultsBlockItemLeft'>
+										<p id='overallAgentIndScoreNegative' class='scoreText'></p>
+										<div id='overallAgentIndScoreNegativeGraph' class='negativeScore graph'></div>
+									</div>
+									<svg id='bar' viewBox='0 0 3 30' style='width: 3px; height: 30px; padding: 0 1px;'>
+										<polygon points='0 0, 3 0, 3 30, 0 30' fill='black'
+											style='stroke-linejoin: round;'></polygon>
+									</svg>
+									<div class='positiveScoreGraph resultsBlockItemRight'>
+										<div id='overallAgentIndScorePositiveGraph' class='positiveScore graph'></div>
+										<p id='overallAgentIndScorePositive' class='scoreText'></p>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 					{{! Agent score block }}
 					<div id='aScore' class='scoreBlock'>
-						<p>Teammate targets and scores</p>
+						<p>Your round results</p>
+						<div class='playerBlockHorizontalWrapper'>
+							<div class='resultsBlockItemWrapper'>
+								<div class='hYellowStar resultsBlockItemLeft'></div>
+								<div class='resultsBlockItemWrapper' id='curHumanScoreDetailsBlock'>
+									<p id='curHumanScoreDetails'></p>
+								</div>
+							</div>
+						</div>
+						<p>Teammate round results</p>
 						<div class='playerBlockHorizontalWrapper'>
 							<div class='resultsBlockItemWrapper'>
 								<div class='aYellowStar resultsBlockItemLeft'></div>
@@ -159,81 +120,8 @@
 									<p id='curAgentScoreDetails'></p>
 								</div>
 							</div>
-							<div class='resultsBlockItemWrapper'>
-								<p>Teammate's team score in this round</p>
-								<div class='graphResultsBlockItemWrapper'>
-									<div class='negativeScoreGraph resultsBlockItemLeft'>
-										<p id='agentTeamScoreNegative' class='scoreText'></p>
-										<div id='agentTeamScoreNegativeGraph' class='negativeScore graph'></div>
-									</div>
-									<svg id='bar' viewBox='0 0 3 30' style='width: 3px; height: 30px; padding: 0 1px;'>
-										<polygon points='0 0, 3 0, 3 30, 0 30' fill='black'
-											style='stroke-linejoin: round;'></polygon>
-									</svg>
-									<div class='positiveScoreGraph resultsBlockItemRight'>
-										<div id='agentTeamScorePositiveGraph' class='positiveScore graph'></div>
-										<p id='agentTeamScorePositive' class='scoreText'></p>
-									</div>
-								</div>
-								<p>Teammate's individual score in this round</p>
-								<div class='graphResultsBlockItemWrapper'>
-									<div class='negativeScoreGraph resultsBlockItemLeft'>
-										<p id='agentIndScoreNegative' class='scoreText'></p>
-										<div id='agentIndScoreNegativeGraph' class='negativeScore graph'></div>
-									</div>
-									<svg id='bar' viewBox='0 0 3 30' style='width: 3px; height: 30px; padding: 0 1px;'>
-										<polygon points='0 0, 3 0, 3 30, 0 30' fill='black'
-											style='stroke-linejoin: round;'></polygon>
-									</svg>
-									<div class='positiveScoreGraph resultsBlockItemRight'>
-										<div id='agentIndScorePositiveGraph' class='positiveScore graph'></div>
-										<p id='agentIndScorePositive' class='scoreText'></p>
-									</div>
-								</div>
-							</div>
 						</div>
 					</div>
-					{{! Human score block }}
-					{{! <div id="hScore" class="scoreBlock">
-						<p>Human targets and scores</p>
-						<div class="playerBlockHorizontalWrapper">
-							<div class="resultsBlockItemWrapper">
-								<div class="hYellowStar resultsBlockItemLeft"></div>
-							</div>
-							<div class="resultsBlockItemWrapper">
-								<p>Human team score</p>
-								<div class="graphResultsBlockItemWrapper">
-									<div class="negativeScoreGraph resultsBlockItemLeft">
-										<p id="humanTeamScoreNegative" class="scoreText"></p>
-										<div id="humanTeamScoreNegativeGraph" class="negativeScore graph"></div>
-									</div>
-									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
-										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black"
-											style="stroke-linejoin: round;"></polygon>
-									</svg>
-									<div class="positiveScoreGraph resultsBlockItemRight">
-										<div id="humanTeamScorePositiveGraph" class="positiveScore graph"></div>
-										<p id="humanTeamScorePositive" class="scoreText"></p>
-									</div>
-								</div>
-								<p>Human individual score</p>
-								<div class="graphResultsBlockItemWrapper">
-									<div class="negativeScoreGraph resultsBlockItemLeft">
-										<p id="humanIndScoreNegative" class="scoreText"></p>
-										<div id="humanIndScoreNegativeGraph" class="negativeScore graph"></div>
-									</div>
-									<svg id="bar" viewBox="0 0 3 30" style="width: 3px; height: 30px; padding: 0 1px;">
-										<polygon points="0 0, 3 0, 3 30, 0 30" fill="black"
-											style="stroke-linejoin: round;"></polygon>
-									</svg>
-									<div class="positiveScoreGraph resultsBlockItemRight">
-										<div id="humanIndScorePositiveGraph" class="positiveScore graph"></div>
-										<p id="humanIndScorePositive" class="scoreText"></p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div> }}
 				</div>
 				<div class='tableItemsWrapper' style='background-color:#505050;border-radius:7px;padding:2rem;'>
 					<p style='color:white;font-size:1.5rem;text-align:center;'>
@@ -249,36 +137,13 @@
 		<div id='simulation'>
 			<div id='info'>
 				<div id='legend'>
-					{{! <div class="icon"><span class="fillSpan"
-							style="background-color: #9999ff; border-radius: 7px;"></span></div>
-					<p>Human explored region</p>
-					<div class="icon"><span class="fillSpan"
-							style="background-color: #99ffb7; border-radius: 7px;"></span></div>
-					<p>Agent explored region</p> }}
-					{{! <div class="icon"><span class="material-icons" style="color: #ffc72c; font-size: 35px;"
-							;>star_rate</span></div>
-					<p>+100 Team, 0 Individual</p>
-					<div class="icon"><svg id="triangle" viewBox="0 0 30 30">
-							<polygon points="15 2, 30 26, 0 26" fill="#ff48ff" />
-						</svg></div>
-					<p>-100 Team, +100 Individual</p>
-					<div class="icon"><span class="material-icons" style="color: #ff4848; font-size: 30px;"
-							;>circle</span></div>
-					<p>-100 Team, 0 Individual</p> }}
-					<p class='scoreTitle'>Team Score:</p>
-					<p class='score' id='teamScoreMain'>0</p>
-					<p class='scoreTitle'>Your Individual Score:</p>
+					<p class='scoreTitle'>Your Score:</p>
 					<p class='score' id='humanIndMain'>0</p>
-					<p class='scoreTitle'>Teammate's Individual Score:</p>
+					<p class='scoreTitle'>Teammate's Score:</p>
 					<p class='score' id='agentIndMain'>0</p>
 				</div>
 				<div id='gameDetails'>
 					<div id='timer'>Time elapsed: 0s</div>
-					{{!
-					<hr style="width: 90%;">
-					<div id="teamScoreMain" style="font-size: 18px;">Team Score: 0</div>
-					<div id="humanIndMain" style="font-size: 18px;">Human Individual Score: 0</div>
-					<div id="agentIndMain" style="font-size: 18px;">Agent Individual Score: 0</div> }}
 				</div>
 			</div>
 			<div id='map-container'>
