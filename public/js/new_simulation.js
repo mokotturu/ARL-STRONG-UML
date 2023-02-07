@@ -129,7 +129,7 @@ var humanLeft,
 var intervalCount = 0,
 	half = 0,
 	intervals = 6,
-	duration = 5,
+	duration = 10,
 	agentNum = 1;
 var log = [[], []];
 
