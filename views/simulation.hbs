@@ -13,6 +13,7 @@
 		href='https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp'
 		rel='stylesheet' />
 	<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css' />
+	<link rel='stylesheet' href='css/magic.min.css' />
 	<title>ARL STRONG UML | Simulation</title>
 </head>
 
@@ -54,74 +55,47 @@
 				</div>
 				<div class='userInputButtons'>
 					<button onclick='keepCoins()'>Keep it to yourself</button>
-					<button onclick='gambleCoins()'>Gamble</button>
+					<button onclick='gambleCoins()' id='gambleBtn' class='puffIn'>Gamble</button>
 				</div>
 			</div>
 		</div>
 
 		<div class='popup-modal-container' id='exploration-details-modal'>
 			<div class='popup-modal' id='exploration-details-modal-content'>
-				<p id="gambleInfo"></p>
-				<div class='scores'>
-					{{! Team score block }}
-					<div id='oScore' class='scoreBlock'>
-						<div>
-							<p style='margin: 0.5em;'>Overall Results</p>
-							<div class='resultsBlockItemWrapper'>
-								<p>You</p>
-								<div class='graphResultsBlockItemWrapper'>
-									<div class='negativeScoreGraph resultsBlockItemLeft'>
-										<p id='overallHumanIndScoreNegative' class='scoreText'></p>
-										<div id='overallHumanIndScoreNegativeGraph' class='negativeScore graph'></div>
-									</div>
-									<svg id='bar' viewBox='0 0 3 30' style='width: 3px; height: 30px; padding: 0 1px;'>
-										<polygon points='0 0, 3 0, 3 30, 0 30' fill='black'
-											style='stroke-linejoin: round;'></polygon>
-									</svg>
-									<div class='positiveScoreGraph resultsBlockItemRight'>
-										<div id='overallHumanIndScorePositiveGraph' class='positiveScore graph'></div>
-										<p id='overallHumanIndScorePositive' class='scoreText'></p>
-									</div>
-								</div>
-								<p>Teammate</p>
-								<div class='graphResultsBlockItemWrapper'>
-									<div class='negativeScoreGraph resultsBlockItemLeft'>
-										<p id='overallAgentIndScoreNegative' class='scoreText'></p>
-										<div id='overallAgentIndScoreNegativeGraph' class='negativeScore graph'></div>
-									</div>
-									<svg id='bar' viewBox='0 0 3 30' style='width: 3px; height: 30px; padding: 0 1px;'>
-										<polygon points='0 0, 3 0, 3 30, 0 30' fill='black'
-											style='stroke-linejoin: round;'></polygon>
-									</svg>
-									<div class='positiveScoreGraph resultsBlockItemRight'>
-										<div id='overallAgentIndScorePositiveGraph' class='positiveScore graph'></div>
-										<p id='overallAgentIndScorePositive' class='scoreText'></p>
-									</div>
-								</div>
+				<div class="highlight" id="scoresAnimationContainer">
+					<p class="scoresHeading" id="gamblePoolCoins" style="margin-bottom: 1rem;">Gamble Pool</p>
+					<div class="highlight scoresWrapper">
+						<div class="scoreWrap" style="align-self: start;">
+							<p class="scoresHeading" id="humanCollectedCoinsHeading"></p>
+							<div class="scoresContainer highlight" id="humanScoresContainer"></div>
+						</div>
+						<div class="scoreWrap" style="align-self: start;">
+							<p class="scoresHeading" id="teammateCollectedCoinsHeading"></p>
+							<div class="scoresContainer highlight" id="teammateScoresContainer"></div>
+						</div>
+
+						<svg id="bottomLeftArrow" class="scoresArrow" xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 32 32" fill="transparent" stroke="white" stroke-width="1">
+							<path d="M31.71 1.71 30.29.29 2 28.59V16H0v15a1 1 0 0 0 1 1h16v-2H3.41z"
+								data-name="6-Arrow Down" />
+						</svg>
+						<svg id="bottomRightArrow" class="scoresArrow" xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 32 32" fill="transparent" stroke="white" stroke-width="1">
+							<path d="M30 15v13.59L1.71.29.29 1.71 28.59 30H16v2h15a1 1 0 0 0 1-1V15z"
+								data-name="8-Arrow Down" />
+						</svg>
+
+						<div class="scoreWrap" style="align-self: start;">
+							<p class="scoresHeading" id="humanSplitCoinsHeading"></p>
+							<div class="scoresContainer splitContainer highlight" id="humanScoresSplitContainer"></div>
+						</div>
+						<div class="scoreWrap" style="align-self: start;">
+							<p class="scoresHeading" id="teammateSplitCoinsHeading"></p>
+							<div class="scoresContainer splitContainer highlight" id="teammateScoresSplitContainer">
 							</div>
 						</div>
 					</div>
-					{{! Agent score block }}
-					<div id='aScore' class='scoreBlock'>
-						<p>Your round results</p>
-						<div class='playerBlockHorizontalWrapper'>
-							<div class='resultsBlockItemWrapper'>
-								<div class='hYellowStar resultsBlockItemLeft'></div>
-								<div class='resultsBlockItemWrapper' id='curHumanScoreDetailsBlock'>
-									<p id='curHumanScoreDetails'></p>
-								</div>
-							</div>
-						</div>
-						<p>Teammate round results</p>
-						<div class='playerBlockHorizontalWrapper'>
-							<div class='resultsBlockItemWrapper'>
-								<div class='aYellowStar resultsBlockItemLeft'></div>
-								<div class='resultsBlockItemWrapper' id='curAgentScoreDetailsBlock'>
-									<p id='curAgentScoreDetails'></p>
-								</div>
-							</div>
-						</div>
-					</div>
+					<p id="scrollIndicator" class="scoresHeading" style="display: none;">Scroll for more info</p>
 				</div>
 				<div class='tableItemsWrapper' style='background-color:#505050;border-radius:7px;padding:2rem;'>
 					<p style='color:white;font-size:1.5rem;text-align:center;'>

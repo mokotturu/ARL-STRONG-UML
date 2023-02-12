@@ -84,7 +84,7 @@ var fakeBotImageScales = [
 ];
 
 var fakeAgentScores = [
-	{ gold: 3, gamblePayback: 0.6 },
+	{ gold: 10, gamblePayback: 0.6 },
 	{ gold: 1, gamblePayback: 0.5 },
 	{ gold: 2, gamblePayback: 0.6 },
 	{ gold: 2, gamblePayback: 0.5 },
@@ -109,6 +109,8 @@ var agents = [];
 var totalHumanScore = 0,
 	currHumanScore,
 	currAgentScore,
+	splitHumanScore,
+	splitAgentScore,
 	totalAgentScore = 0;
 
 var seconds = 0,
@@ -129,7 +131,7 @@ var humanLeft,
 var intervalCount = 0,
 	half = 0,
 	intervals = 6,
-	duration = 10,
+	duration = 1,
 	agentNum = 1;
 var log = [[], []];
 
@@ -426,7 +428,6 @@ class Obstacle {
 					fontSize: boxWidth * 2,
 					fontFamily: 'monospace',
 					text: '$',
-
 				});
 			} else if (this.variant == 'red') {
 				$map.drawEllipse({
@@ -734,39 +735,25 @@ function showPostIntegratePrompt() {
 	}, 500);
 }
 
-// *** CLEAN UP THIS FUNCTION ***
 function showExploredInfo() {
-	// NEW STUFF
 	currHumanScore = human.tempTargetsFound.gold.length;
 	currAgentScore = fakeAgentScores[fakeAgentNum].gold;
 
-	if (log[agentNum - 1][intervalCount - 1].decision == 'Gambled') {
-		let gambledTotal = (currAgentScore + currHumanScore) * 2;
-		currHumanScore = Math.round(fakeAgentScores[fakeAgentNum].gamblePayback * gambledTotal);
-		currAgentScore = Math.round((1 - fakeAgentScores[fakeAgentNum].gamblePayback) * gambledTotal);
-	}
+	let gambledTotal = (currAgentScore + currHumanScore) * 2;
+	splitHumanScore = Math.round(fakeAgentScores[fakeAgentNum].gamblePayback * gambledTotal);
+	splitAgentScore = Math.round((1 - fakeAgentScores[fakeAgentNum].gamblePayback) * gambledTotal);
 
-	totalHumanScore += currHumanScore;
-	totalAgentScore += currAgentScore;
-
-	$('#humanIndMain').text(`${totalHumanScore}`);
-	$('#agentIndMain').text(`${totalAgentScore}`);
+	totalHumanScore += log[agentNum - 1][intervalCount - 1].decision == 'Gambled' ? splitHumanScore : currHumanScore;
+	totalAgentScore += log[agentNum - 1][intervalCount - 1].decision == 'Gambled' ? splitAgentScore : currAgentScore;
 
 	$detailsModal.css('display', 'flex');
 	$detailsModal.css('visibility', 'visible');
 	$detailsModal.css('opacity', '1');
+	$detailsModal.scrollTop(-10000);
 
-	setTimeout(() => {
-		$('#curAgentScoreDetailsBlock').toggleClass(
-			'animate__animated animate__heartBeat'
-		);
-	}, 100);
+	animateScores();
 
 	$log.empty();
-
-	$agentText.toggleClass(`agent${agentNum - 1}`, false);
-	$agentText.toggleClass(`agent${agentNum + 1}`, false);
-	$agentText.toggleClass(`agent${agentNum}`, true);
 	++fakeAgentNum;
 
 	if (log[agentNum - 1][intervalCount - 1] != null) {
@@ -777,14 +764,83 @@ function showExploredInfo() {
 		});
 	}
 
-	setTimeout(() => {
-		$detailsModal.scrollTop(-10000);
-	}, 500);
-	setTimeout(() => {
-		$log.scrollLeft(10000);
-	}, 500);
-
 	updateResults();
+}
+
+async function animateScores() {
+	let humanScoresHTMLString = '';
+	let teammateScoresHTMLString = '';
+	let humanScoresSplitHTMLString = '';
+	let teammateScoresSplitHTMLString = '';
+
+	// reset
+	$('#humanCollectedCoinsHeading').html('');
+	$('#teammateCollectedCoinsHeading').html('');
+	$('#humanScoresContainer').html('');
+	$('#teammateScoresContainer').html('');
+	$('#humanScoresSplitContainer').html('');
+	$('#teammateScoresSplitContainer').html('');
+	$('#scrollIndicator').css('display', 'none');
+	$('#humanScoresContainer').css('left', `0px`);
+	$('#teammateScoresContainer').css('left', `0px`);
+	$('#scrollIndicator').removeClass('animate__animated animate__fadeIn');
+	$('#humanSplitCoinsHeading, #teammateSplitCoinsHeading').css('display', 'none');
+	$('#humanSplitCoinsHeading, #teammateSplitCoinsHeading').html('');
+	$('.scoresArrow').css('display', 'none');
+
+	for (let i = 0; i < human.tempTargetsFound.gold.length; ++i) {
+		humanScoresHTMLString += (`<img class='animate__animated animate__fadeInDown' src='img/coin.svg' style='width: 30px; height: 30px; padding: 0 5px; animation-delay: ${i * 0.1}s; animation-duration: 300ms;'>`);
+	}
+
+	for (let i = 0; i < fakeAgentScores[fakeAgentNum].gold; ++i) {
+		teammateScoresHTMLString += (`<img class='animate__animated animate__fadeInDown' src='img/coin.svg' style='width: 30px; height: 30px; padding: 0 5px; animation-delay: ${i * 0.1}s; animation-duration: 300ms;'>`);
+	}
+
+	$('#humanCollectedCoinsHeading').html(`You collected ${human.tempTargetsFound.gold.length} coin(s)`);
+	$('#teammateCollectedCoinsHeading').html(`Teammate collected ${fakeAgentScores[fakeAgentNum].gold} coin(s)`);
+	$('#humanScoresContainer').html(humanScoresHTMLString);
+	$('#teammateScoresContainer').html(teammateScoresHTMLString);
+
+	await sleep(2000);
+
+	$('#humanScoresContainer').append(humanScoresHTMLString);
+	$('#teammateScoresContainer').append(teammateScoresHTMLString);
+	$('#humanCollectedCoinsHeading').append(` &times; 2`);
+	$('#teammateCollectedCoinsHeading').append(` &times; 2`);
+
+	await sleep(2000);
+
+	let scoresWrapperRect = $('.scoresWrapper')[0].getBoundingClientRect();
+	let scoresWrapperCenter = scoresWrapperRect.left + scoresWrapperRect.width / 2;
+	let teammateMarginShift = $('#teammateScoresContainer')[0].getBoundingClientRect().left - scoresWrapperCenter;
+	let humanMarginShift = scoresWrapperCenter - $('#humanScoresContainer')[0].getBoundingClientRect().right;
+
+	$('#humanScoresContainer').css('left', `${humanMarginShift}px`);
+	$('#teammateScoresContainer').css('left', `-${teammateMarginShift}px`);
+
+	await sleep(1000);
+
+	for (let i = 0; i < splitHumanScore; ++i) {
+		humanScoresSplitHTMLString += (`<img class='animate__animated animate__fadeInDown' src='img/coin.svg' style='width: 30px; height: 30px; padding: 0 5px; animation-delay: ${i * 0.1}s; animation-duration: 300ms;'>`);
+	}
+
+	for (let i = 0; i < splitAgentScore; ++i) {
+		teammateScoresSplitHTMLString += (`<img class='animate__animated animate__fadeInDown' src='img/coin.svg' style='width: 30px; height: 30px; padding: 0 5px; animation-delay: ${i * 0.1}s; animation-duration: 300ms;'>`);
+	}
+
+	$('#humanScoresSplitContainer').html(humanScoresSplitHTMLString);
+	$('#teammateScoresSplitContainer').html(teammateScoresSplitHTMLString);
+
+	$('.scoresArrow').css('display', 'initial');
+
+	$('#humanSplitCoinsHeading, #teammateSplitCoinsHeading').css('display', 'initial');
+	$('#humanSplitCoinsHeading').append(`You ${log[agentNum - 1][intervalCount - 1].decision == 'Gambled' ? 'received' : 'would have received'} ${splitHumanScore} coin(s)!`);
+	$('#teammateSplitCoinsHeading').append(`Teammate ${log[agentNum - 1][intervalCount - 1].decision == 'Gambled' ? 'received' : 'would have received'} ${splitAgentScore} coin(s)!`);
+
+	await sleep(2000);
+
+	$('#scrollIndicator').css('display', 'initial');
+	$('#scrollIndicator').addClass('animate__animated animate__fadeIn');
 }
 
 // Update the display for star count for targets on the results display

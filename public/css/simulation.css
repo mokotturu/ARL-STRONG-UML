@@ -857,6 +857,104 @@ nav {
 	display: none;
 }
 
+#scoresAnimationContainer {
+	height: 90%;
+	padding: 2rem;
+	display: grid;
+	grid-template-rows: min-content;
+}
+
+#scoresCanvas {
+	border-radius: 7px;
+	width: 100%;
+	height: 100%;
+}
+
+.scoresWrapper {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: min-content;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.scoresContainer {
+	width: 50%;
+	place-self: center;
+	transition: all 0.5s ease-in-out;
+	position: relative;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+
+.scoresHeadings {
+	width: 100%;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+#gambleBtn {
+	-webkit-animation: heartbeat 1.5s ease-in-out infinite both;
+	animation: heartbeat 1.5s ease-in-out infinite both;
+}
+
+#humanScoresContainer, #humanScoresSplitContainer {
+	text-align: right;
+}
+
+#teammateScoresContainer, #teammateScoresSplitContainer {
+	text-align: left;
+}
+
+#mergeScoresWrapper {
+	grid-column-end: span 2;
+}
+
+#humanSplitCoinsHeading, #teammateSplitCoinsHeading {
+	display: none;
+}
+
+/* .highlight {
+	border: 1px solid red;
+} */
+
+.scoresHeading {
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	color: white;
+	justify-self: center;
+	text-align: center;
+}
+
+.scoreWrap {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.scoresArrow {
+	width: 5rem;
+	margin: 0 3rem;
+	display: none;
+	stroke-dasharray: 1000;
+	stroke-dashoffset: 1000;
+	animation: dash 3s ease-in-out forwards;
+}
+
+#bottomLeftArrow {
+	justify-self: end;
+	align-self: center;
+}
+
+#bottomRightArrow {
+	justify-self: start;
+	align-self: center;
+}
+
 #terminate {
 	margin: 20px 0px;
 	font-size: 14px;
@@ -865,6 +963,88 @@ nav {
 
 #map {
 	background-color: #252525;
+}
+
+@-webkit-keyframes dash {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes dash {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@-webkit-keyframes heartbeat {
+	from {
+		-webkit-transform: scale(1);
+				transform: scale(1);
+		-webkit-transform-origin: center center;
+				transform-origin: center center;
+		-webkit-animation-timing-function: ease-out;
+				animation-timing-function: ease-out;
+	}
+	10% {
+		-webkit-transform: scale(0.91);
+				transform: scale(0.91);
+		-webkit-animation-timing-function: ease-in;
+				animation-timing-function: ease-in;
+	}
+	17% {
+		-webkit-transform: scale(0.98);
+				transform: scale(0.98);
+		-webkit-animation-timing-function: ease-out;
+				animation-timing-function: ease-out;
+	}
+	33% {
+		-webkit-transform: scale(0.87);
+				transform: scale(0.87);
+		-webkit-animation-timing-function: ease-in;
+				animation-timing-function: ease-in;
+	}
+	45% {
+		-webkit-transform: scale(1);
+				transform: scale(1);
+		-webkit-animation-timing-function: ease-out;
+				animation-timing-function: ease-out;
+	}
+}
+
+@keyframes heartbeat {
+	from {
+		-webkit-transform: scale(1);
+				transform: scale(1);
+		-webkit-transform-origin: center center;
+				transform-origin: center center;
+		-webkit-animation-timing-function: ease-out;
+				animation-timing-function: ease-out;
+	}
+	10% {
+		-webkit-transform: scale(0.91);
+				transform: scale(0.91);
+		-webkit-animation-timing-function: ease-in;
+				animation-timing-function: ease-in;
+	}
+	17% {
+		-webkit-transform: scale(0.98);
+				transform: scale(0.98);
+		-webkit-animation-timing-function: ease-out;
+				animation-timing-function: ease-out;
+	}
+	33% {
+		-webkit-transform: scale(0.87);
+				transform: scale(0.87);
+		-webkit-animation-timing-function: ease-in;
+				animation-timing-function: ease-in;
+	}
+	45% {
+		-webkit-transform: scale(1);
+				transform: scale(1);
+		-webkit-animation-timing-function: ease-out;
+				animation-timing-function: ease-out;
+	}
 }
 
 input[type='radio'] {
