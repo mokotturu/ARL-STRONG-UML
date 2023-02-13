@@ -131,14 +131,17 @@ var humanLeft,
 var intervalCount = 0,
 	half = 0,
 	intervals = 6,
-	duration = 1,
+	duration = 20,
 	agentNum = 1;
 var log = [[], []];
 
-var victimMarker = new Image();
-var hazardMarker = new Image();
-victimMarker.src = 'img/victim-marker-big.png';
-hazardMarker.src = 'img/hazard-marker-big.png';
+// sound effects
+let sounds = {
+	'bg': { 'file': new Audio('audio/bg.ogg'), shouldLoop: true },
+	'move': { 'file': new Audio('audio/spinning.ogg'), shouldLoop: true },
+	'pick': { 'file': new Audio('audio/picked_coin.wav'), shouldLoop: false },
+	'gold_sack': { 'file': new Audio('audio/gold_sack.wav'), shouldLoop: false },
+}
 
 /* Trust cue messages to add to the game below.
    Note: Not all rounds in the game will need a trust cue message.
@@ -276,8 +279,10 @@ class Player {
 		if (pickedObstacle.length == 0) return;
 		if (!pickedObstacle[0].isPicked) {
 			pickedObstacle[0].isPicked = true;
-			if (pickedObstacle[0].variant == 'gold')
+			if (pickedObstacle[0].variant == 'gold') {
+				sounds['pick'].file.play();
 				this.tempTargetsFound.gold.push(pickedObstacle[0]);
+			}
 		}
 		refreshMap();
 	}
@@ -514,6 +519,20 @@ $(document).ready(async () => {
 	$('.body-container').css('visibility', 'visible');
 	$('.body-container').css('opacity', '1');
 
+	// sounds
+	for (const effect in sounds) {
+		if (sounds[effect].shouldLoop) {
+			sounds[effect].file.addEventListener('timeupdate', e => {
+				// if (e.target.src == 'audio/bg.ogg') console.log(e.target.currentTime, e.target.duration)
+				let buffer = 0.44;
+				if (e.target.currentTime > e.target.duration - buffer) {
+					e.target.currentTime = 0;
+					e.target.play();
+				}
+			}, false);
+		}
+	}
+
 	await startMatching();
 });
 
@@ -635,6 +654,7 @@ function endMatching() {
 	refreshMap();
 
 	currentFrame = requestAnimationFrame(loop);
+	sounds['bg'].file.play();
 	// currentFrame = setInterval(loop, 100);
 }
 
@@ -642,8 +662,10 @@ function preTerminationPrompt() {
 	// end game
 	pause = true;
 	clearInterval(timeout);
-	$(document).off();
+	$(document).off('keydown');
 	cancelAnimationFrame(currentFrame);
+	// sounds['move'].pause();
+	// sounds['move'].currentTime = 0;
 
 	// show survey
 	$('#endGameQContainer').css('display', 'flex');
@@ -696,7 +718,7 @@ function terminate() {
 }
 
 function showTrustPrompt() {
-	$(document).off();
+	$(document).off('keydown');
 	cancelAnimationFrame(currentFrame);
 	// clearInterval(currentFrame);
 
@@ -800,6 +822,8 @@ async function animateScores() {
 	$('#teammateCollectedCoinsHeading').html(`Teammate collected ${fakeAgentScores[fakeAgentNum].gold} coin(s)`);
 	$('#humanScoresContainer').html(humanScoresHTMLString);
 	$('#teammateScoresContainer').html(teammateScoresHTMLString);
+
+	sounds['gold_sack'].file.play();
 
 	await sleep(2000);
 
