@@ -864,6 +864,7 @@ async function animateScores() {
 	});
 
 	Composite.add(engine.world, teammateCoinStack);
+	sounds['gold_sack'].file.play();
 
 	// show human score
 	await sleep(2000);
@@ -893,6 +894,7 @@ async function animateScores() {
 	});
 
 	Composite.add(engine.world, humanCoinStack);
+	sounds['gold_sack'].file.play();
 
 	await sleep(2000);
 	$('#animationCaption').toggleClass('animate__fadeIn animate__fadeOut');
@@ -923,6 +925,7 @@ async function animateScores() {
 			});
 
 			Composite.add(engine.world, teamCoinStack);
+			sounds['gold_sack'].file.play();
 		} else {
 			// remove all coins if team score is 0
 			Composite.remove(engine.world, walls);
