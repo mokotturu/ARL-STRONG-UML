@@ -243,7 +243,7 @@ nav {
 #matching-modal-content {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-around;
+	justify-content: space-evenly;
 	align-items: center;
 	text-align: center;
 }
@@ -871,11 +871,17 @@ nav {
 }
 
 .scoresWrapper {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: min-content;
-	justify-content: space-evenly;
+	display: flex;
+	flex-direction: column;
 	align-items: center;
+	gap: 2rem;
+}
+
+.resultsScore {
+	padding: 1rem;
+	border-radius: 7px;
+	/* box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22); */
+	border: 1px solid rgb(255, 255, 255, 0.8);
 }
 
 .scoresContainer {
@@ -917,12 +923,69 @@ nav {
 	display: none;
 }
 
+#coinBucket {
+	border-radius: 7px;
+	width: 50%;
+	border: 1px solid rgb(255, 255, 255, 0.8);
+	justify-self: center;
+	display: flex;
+	align-items: end;
+	min-height: 50%;
+}
+
+#scoresTextContainer {
+	margin: 0 80px;
+	display: flex;
+}
+
+#scoresTextContainer > p {
+	font-size: 1rem;
+	text-align: center;
+	margin: 1rem;
+	color: white;
+}
+
 /* .highlight {
 	border: 1px solid red;
 } */
 
+#animationCaption {
+	font-size: 1.25rem;
+	margin-bottom: 1rem;
+	color: white;
+	justify-self: center;
+	text-align: center;
+}
+
+/* glow effect */
+#addToTeamBtn {
+	-webkit-animation: glow 1s ease-in-out infinite alternate;
+	animation: glow 1s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow {
+	0% {
+		box-shadow: 0 0 40px #F6BE00;
+	}
+
+	100% {
+		box-shadow: 0 0 20px #F6BE00;
+	}
+}
+
+@keyframes glow {
+	0% {
+		box-shadow: 0 0 40px #F6BE00;
+	}
+
+	100% {
+		box-shadow: 0 0 20px #F6BE00;
+	}
+}
+
+
 .scoresHeading {
-	font-size: 1.5rem;
+	font-size: 2rem;
 	margin-bottom: 1rem;
 	color: white;
 	justify-self: center;

@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <html>
 
 <head>
@@ -53,8 +55,10 @@
 					<h3 id='popupRoundDetails' style='color: white;font-size: 200%;'></h3>
 				</div>
 				<div class='userInputButtons'>
-					<button onclick='keepCoins()'>Keep it to yourself</button>
-					<button onclick='gambleCoins()' id='gambleBtn' class='puffIn'>Gamble</button>
+					<button onclick='addToIndividual()'>Add to individual score</button>
+					<button onclick='addToTeam()' style="background-color: #F6BE00; color: black;" id='addToTeamBtn'>
+						Add to team score
+					</button>
 				</div>
 			</div>
 		</div>
@@ -62,39 +66,16 @@
 		<div class='popup-modal-container' id='exploration-details-modal'>
 			<div class='popup-modal' id='exploration-details-modal-content'>
 				<div class="highlight" id="scoresAnimationContainer">
-					<p class="scoresHeading" id="gamblePoolCoins" style="margin-bottom: 1rem;">Gamble Pool</p>
+					<p class="scoresHeading" id="gamblePoolCoins" style="margin-bottom: 2rem;">Round results</p>
 					<div class="highlight scoresWrapper">
-						<div class="scoreWrap" style="align-self: start;">
-							<p class="scoresHeading" id="humanCollectedCoinsHeading"></p>
-							<div class="scoresContainer highlight" id="humanScoresContainer"></div>
-						</div>
-						<div class="scoreWrap" style="align-self: start;">
-							<p class="scoresHeading" id="teammateCollectedCoinsHeading"></p>
-							<div class="scoresContainer highlight" id="teammateScoresContainer"></div>
-						</div>
-
-						<svg id="bottomLeftArrow" class="scoresArrow" xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 32 32" fill="transparent" stroke="white" stroke-width="1">
-							<path d="M31.71 1.71 30.29.29 2 28.59V16H0v15a1 1 0 0 0 1 1h16v-2H3.41z"
-								data-name="6-Arrow Down" />
-						</svg>
-						<svg id="bottomRightArrow" class="scoresArrow" xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 32 32" fill="transparent" stroke="white" stroke-width="1">
-							<path d="M30 15v13.59L1.71.29.29 1.71 28.59 30H16v2h15a1 1 0 0 0 1-1V15z"
-								data-name="8-Arrow Down" />
-						</svg>
-
-						<div class="scoreWrap" style="align-self: start;">
-							<p class="scoresHeading" id="humanSplitCoinsHeading"></p>
-							<div class="scoresContainer splitContainer highlight" id="humanScoresSplitContainer"></div>
-						</div>
-						<div class="scoreWrap" style="align-self: start;">
-							<p class="scoresHeading" id="teammateSplitCoinsHeading"></p>
-							<div class="scoresContainer splitContainer highlight" id="teammateScoresSplitContainer">
-							</div>
+						<p id="animationCaption" class="animate__animated"></p>
+						<div id="coinBucket" class="animate__animated"></div>
+						<div id="scoresTextContainer" class="animate__animated">
+							<p class="resultsScore" id="humanScoreCoins"></p>
+							<p class="resultsScore" id="teammateScoreCoins"></p>
+							<p class="resultsScore" id="teamScoreCoins"></p>
 						</div>
 					</div>
-					<p id="scrollIndicator" class="scoresHeading" style="display: none;">Scroll for more info</p>
 				</div>
 				<div class='tableItemsWrapper' style='background-color:#505050;border-radius:7px;padding:2rem;'>
 					<p style='color:white;font-size:1.5rem;text-align:center;'>
@@ -110,10 +91,12 @@
 		<div id='simulation'>
 			<div id='info'>
 				<div id='legend'>
-					<p class='scoreTitle'>Your Score:</p>
+					<p class='scoreTitle'>Your Individual Score:</p>
 					<p class='score' id='humanIndMain'>0</p>
-					<p class='scoreTitle'>Teammate's Score:</p>
-					<p class='score' id='agentIndMain'>0</p>
+					<p class='scoreTitle'>Teammate's Individual Score:</p>
+					<p class='score' id='teammateIndMain'>0</p>
+					<p class='scoreTitle'>Team Score:</p>
+					<p class='score' id='teamMain'>0</p>
 				</div>
 				<div id='gameDetails'>
 					<div id='timer'>Time elapsed: 0s</div>
@@ -247,6 +230,7 @@
 	<!-- If CDN fails to load, then serve up the local version -->
 	<script>window.jQuery || document.write(`<script
 			src="js/jquery-3.5.1.min.js"><\/script>`)</script>
+	<script type='text/javascript' src='/js/matter.min.js'></script>
 	<script type='text/javascript' src='/js/jcanvas.min.js'></script>
 	<script type='text/javascript' src='/js/new_simulation.js'></script>
 </body>
