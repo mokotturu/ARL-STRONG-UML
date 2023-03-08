@@ -109,7 +109,10 @@ let totalHumanScore = 0,
 	totalTeamScore = 0,
 	currentHumanScore = 0,
 	currentTeammateScore = 0,
-	currentTeamScore = 0;
+	currentTeamScore = 0,
+	modCurrentHumanScore = 0,
+	modCurrentTeammateScore = 0,
+	modCurrentTeamScore = 0;
 
 let seconds = 0,
 	timeout,
@@ -747,23 +750,26 @@ function showExploredInfo() {
 	currentHumanScore = human.tempTargetsFound.gold.length;
 	currentTeammateScore = fakeAgentScores[fakeAgentNum].gold;
 
-	currentTeamScore = currentTeammateScore * currentHumanScore * 2;
-
-	if (log[agentNum - 1][intervalCount - 1].decision == 'team' && fakeAgentScores[fakeAgentNum].addedTo == 'team') {
-		totalTeamScore += currentTeamScore;
-		currentHumanScore = 0;
+	if (log[agentNum - 1][intervalCount - 1].decision == 'team' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
+		totalTeammateScore += currentTeammateScore;
 		currentTeammateScore = 0;
-	} else {
+	} else if (log[agentNum - 1][intervalCount - 1].decision == 'individual' && fakeAgentScores[fakeAgentNum].addedTo == 'team') {
+		totalHumanScore += currentHumanScore;
+		currentHumanScore = 0;
+	} else if (log[agentNum - 1][intervalCount - 1].decision == 'individual' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
 		totalHumanScore += currentHumanScore;
 		totalTeammateScore += currentTeammateScore;
 	}
 
+	currentTeamScore = currentTeammateScore * currentHumanScore * 2;
+	totalTeamScore += currentTeamScore;
+
 	$detailsModal.css('display', 'flex');
 	$detailsModal.css('visibility', 'visible');
 	$detailsModal.css('opacity', '1');
+	$detailsModal.css('width', '70em');
+	$detailsModal.css('height', 'max-content');
 	$detailsModal.scrollTop(-10000);
-
-	animateScores();
 
 	$log.empty();
 	++fakeAgentNum;
@@ -776,187 +782,112 @@ function showExploredInfo() {
 		});
 	}
 
+	animateFormula();
+
 	updateResults();
 }
 
-async function animateScores() {
+async function animateFormula() {
 	// resets
-	$('#animationCaption').css('display', 'none');
-	$('#coinBucket').css('display', 'none');
-	$('#scoresTextContainer').css('display', 'none');
+	$('#preresultsContinueBtn').css('display', 'initial');
+	$('#preresultsContinueBtn').prop('disabled', true);
+	$('#resultsContinueBtn').css('display', 'none');
+	$('#formulaContainer').css('display', 'revert')
+	$('#formulaHeading').css('visibility', 'hidden');
+	$('#formula').css('visibility', 'hidden');
+	$('#humanIndScoreFormula').css('visibility', 'hidden');
+	$('#teammateIndScoreFormula').css('visibility', 'hidden');
+	$('#teamScoreFormula').css('visibility', 'hidden');
 
-	$('#coinBucket').removeClass('animate__fadeIn');
-	$('#animationCaption').removeClass('animate__fadeIn animate__fadeOut');
-	$('#scoresTextContainer').removeClass('animate__fadeIn');
+	$('#scoresAnimationContainer').css('display', 'none');
+	$('#pastDecisionsTable').css('display', 'none');
 
-	await sleep(500);
-
-	// show teammmate's score
-	$('#animationCaption').html(
-		`Your teammate collected ${fakeAgentScores[fakeAgentNum - 1].gold} coin(s).`
-	);
-	$('#animationCaption').css('display', 'initial');
-	$('#animationCaption').toggleClass('animate__fadeIn');
-
-	await sleep(500);
-
-	$('#coinBucket').css('display', 'flex');
-	$('#coinBucket').toggleClass('animate__fadeIn');
-
-	if (!engineInited) {
-		engineInited = true;
-		bucketWidth = document.querySelector('#coinBucket').scrollWidth;
-		bucketHeight = document.querySelector('#coinBucket').scrollHeight;
-
-		let render = Render.create({
-			element: document.querySelector('#coinBucket'),
-			engine: engine,
-			options: {
-				width: bucketWidth,
-				height: bucketHeight,
-				wireframes: false,
-				background: 'transparent'
-			},
-		});
-		Render.run(render);
-
-		let runner = Runner.create();
-		Runner.run(runner, engine);
-	}
-
-	// add walls
-	let wallOptions = {
-		restitution: 0.8,
-		friction: 0.1,
-		isStatic: true,
-		render: {
-			strokeStyle: 'transparent',
-			fillStyle: 'transparent',
-		},
-	};
-
-	walls = [
-		Bodies.rectangle(bucketWidth / 2, bucketHeight, bucketWidth, 10, {
-			...wallOptions,
-			id: 'floor'
-		}),
-		Bodies.rectangle(0, bucketHeight / 2, 1, bucketHeight, wallOptions),
-		Bodies.rectangle(bucketWidth, bucketHeight / 2, 1, bucketHeight, wallOptions),
-	]
-
-	Composite.add(engine.world, walls);
+	$('#formulaContainer').find('*').removeClass('animate__fadeIn animate__fadeOut');
 
 	await sleep(1000);
 
-	// width of the small coin is 20px * 20px
-	teammateCoinStack = Composites.stack(0, 0, fakeAgentScores[fakeAgentNum - 1].gold, 1, 0, 0, (x, y) => {
-		return Bodies.circle(x, y, 20, {
-			restitution: 0.8,
-			friction: 0.1,
-			render: {
-				sprite: {
-					texture: 'img/coin_small.svg',
-					xScale: 2,
-					yScale: 2,
-				},
-			},
-		});
-	});
+	// show initial heading
+	$('#formulaHeading').html(`Let's see the scores!`);
+	$('#formulaHeading').css('visibility', 'visible');
+	$('#formulaHeading').toggleClass('animate__fadeIn');
+	await sleep(1000);
 
-	Composite.add(engine.world, teammateCoinStack);
-	sounds['gold_sack'].file.play();
+	// show initial formula outline
+	$('#formula').css('visibility', 'visible');
+	$('#formula').toggleClass('animate__fadeIn');
+	await sleep(3000);
+
+	// show human score heading
+	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
+	await sleep(800);
+	$('#formulaHeading').html(`You picked ${human.tempTargetsFound.gold.length} coin(s) in this round and added them to ${log[agentNum - 1][intervalCount - 1].decision == 'team' ? 'the team' : 'your individual'} score`);
+	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
+	await sleep(1000);
 
 	// show human score
-	await sleep(2000);
+	$('#humanIndScoreFormula').html(`${currentHumanScore}`);
+	$('#humanIndScoreFormula').css('visibility', 'visible');
+	$('#humanIndScoreFormula').toggleClass('animate__fadeIn');
+	await sleep(5000);
 
-	$('#animationCaption').toggleClass('animate__fadeIn animate__fadeOut');
-
+	// "now let's fetch your teammate's score and decision"
+	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800);
+	$('#formulaHeading').html(`Now let's fetch your teammate's score and decision`);
+	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
+	await sleep(4000);
 
-	$('#animationCaption').html(`You collected ${human.tempTargetsFound.gold.length} coin(s).`);
-	$('#animationCaption').toggleClass('animate__fadeIn animate__fadeOut');
-
+	// show teammate score heading
+	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
+	await sleep(800);
+	$('#formulaHeading').html(`Your teammate picked ${fakeAgentScores[fakeAgentNum - 1].gold} coin(s) in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the team' : 'their individual'} score`);
+	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000);
 
-	// width of the small coin is 20px * 20px
-	humanCoinStack = Composites.stack(0, 0, human.tempTargetsFound.gold.length, 1, 0, 0, (x, y) => {
-		return Bodies.circle(x, y, 20, {
-			restitution: 0.8,
-			friction: 0.1,
-			render: {
-				sprite: {
-					texture: 'img/coin_small.svg',
-					xScale: 2,
-					yScale: 2,
-				},
-			},
-		});
-	});
+	// show teammate score
+	$('#teammateIndScoreFormula').html(`${currentTeammateScore}`);
+	$('#teammateIndScoreFormula').css('visibility', 'visible');
+	$('#teammateIndScoreFormula').toggleClass('animate__fadeIn');
+	await sleep(5000);
 
-	Composite.add(engine.world, humanCoinStack);
+	// show final team score heading
+	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
+	await sleep(800);
+	$('#formulaHeading').html(`The team score for this round is ${currentTeamScore}!`);
+	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
+	await sleep(1000);
+
+	// show final team score
+	$('#teamScoreFormula').html(`${currentTeamScore}`);
+	$('#teamScoreFormula').css('visibility', 'visible');
+	$('#teamScoreFormula').toggleClass('animate__fadeIn');
 	sounds['gold_sack'].file.play();
 
-	await sleep(2000);
-	$('#animationCaption').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(800);
+	// enable continue button
+	$('#preresultsContinueBtn').prop('disabled', false);
+}
 
-	if (log[agentNum - 1][intervalCount - 1].decision == 'team' && fakeAgentScores[fakeAgentNum - 1].addedTo == 'team') {
-		$('#animationCaption').html(`You and your teammate added the coins to the team score!<br>The team score for this round is ${human.tempTargetsFound.gold.length} &times; ${fakeAgentScores[fakeAgentNum - 1].gold} &times; 2 &equals; ${currentTeamScore}!`);
-		$('#animationCaption').toggleClass('animate__fadeIn animate__fadeOut');
+async function animateScores() {
+	// resets for animateFormula()
+	$('#formulaContainer').css('display', 'none');
+	$('#scoresAnimationContainer').css('display', 'revert');
+	$('#pastDecisionsTable').css('display', 'revert');
+	$('#preresultsContinueBtn').css('display', 'none');
+	$('#resultsContinueBtn').css('display', 'revert');
+	$detailsModal.css('width', '97%');
+	$detailsModal.css('height', '97%');
 
-		await sleep(1000);
+	// normal resets
+	$('#scoresTextContainer').css('display', 'none');
+	$('#scoresTextContainer').removeClass('animate__fadeIn');
 
-		let subTeamScore = currentTeamScore - fakeAgentScores[fakeAgentNum - 1].gold - human.tempTargetsFound.gold.length;
-		console.log(subTeamScore)
+	$('#humanIndPiggyBankText').html(`${totalHumanScore} &times; <img src="img/coin.svg" style="width: 1.5em; height: 1.5em; vertical-align: middle;">`);
+	$('#teammateIndPiggyBankText').html(`${totalTeammateScore} &times; <img src="img/coin.svg" style="width: 1.5em; height: 1.5em; vertical-align: middle;">`);
+	$('#teamPiggyBankText').html(`${totalTeamScore} &times; <img src="img/coin.svg" style="width: 1.5em; height: 1.5em; vertical-align: middle;">`);
 
-		if (subTeamScore > 0) {
-			teamCoinStack = Composites.stack(0, 0, currentTeamScore - fakeAgentScores[fakeAgentNum - 1].gold - human.tempTargetsFound.gold.length, 1, 0, 0, (x, y) => {
-				return Bodies.circle(x, y, 20, {
-					restitution: 0.8,
-					friction: 0.1,
-					render: {
-						sprite: {
-							texture: 'img/coin_small.svg',
-							xScale: 2,
-							yScale: 2,
-						},
-					},
-				});
-			});
-
-			Composite.add(engine.world, teamCoinStack);
-			sounds['gold_sack'].file.play();
-		} else {
-			// remove all coins if team score is 0
-			Composite.remove(engine.world, walls);
-			await sleep(250);
-			Composite.remove(engine.world, humanCoinStack);
-			Composite.remove(engine.world, teammateCoinStack);
-		}
-
-		$('#humanScoreCoins').html(`Your individual score: ${currentHumanScore}`);
-		$('#teammateScoreCoins').html(`Teammate's individual score: ${currentTeammateScore}`);
-		$('#teamScoreCoins').html(`Team score: ${currentTeamScore}`);
-	} else {
-		$('#animationCaption').html(`You added your coins to your ${log[agentNum - 1][intervalCount - 1].decision} score and your teammate added their coins to the ${fakeAgentScores[fakeAgentNum - 1].addedTo} score!<br>The team score for this round would have been ${human.tempTargetsFound.gold.length} &times; ${fakeAgentScores[fakeAgentNum - 1].gold} &times; 2 &equals; ${currentTeamScore} if both of you added to the team score!`);
-		$('#animationCaption').toggleClass('animate__fadeIn animate__fadeOut');
-
-		$('#humanScoreCoins').html(`Your individual score: ${currentHumanScore}`);
-		$('#teammateScoreCoins').html(`Teammate's individual score: ${currentTeammateScore}`);
-		$('#teamScoreCoins').html(`Team score: 0`);
-	}
-
-	await sleep(2000);
-
-	$('#scoresTextContainer').css('display', 'flex');
-	$('#scoresTextContainer').toggleClass('animate__fadeIn');
-
-	$('#humanIndMain').html(`${totalHumanScore}`);
-	$('#teammateIndMain').html(`${totalTeammateScore}`);
-	$('#teamMain').html(`${totalTeamScore}`);
-
-	await sleep(2000);
-	$('#animationCaption').append(`<p id="resultsScrollInd" style="margin-top: 1rem;" class="animate__animated animate__fadeIn"><br>Scroll to continue</p>`);
+	$('#humanIndMain').text(totalHumanScore);
+	$('#teammateIndMain').text(totalTeammateScore);
+	$('#teamMain').text(totalTeamScore);
 }
 
 // Update the display for star count for targets on the results display

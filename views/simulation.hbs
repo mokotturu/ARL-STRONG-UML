@@ -65,26 +65,51 @@
 
 		<div class='popup-modal-container' id='exploration-details-modal'>
 			<div class='popup-modal' id='exploration-details-modal-content'>
-				<div class="highlight" id="scoresAnimationContainer">
-					<p class="scoresHeading" id="gamblePoolCoins" style="margin-bottom: 2rem;">Round results</p>
-					<div class="highlight scoresWrapper">
-						<p id="animationCaption" class="animate__animated"></p>
-						<div id="coinBucket" class="animate__animated"></div>
-						<div id="scoresTextContainer" class="animate__animated">
-							<p class="resultsScore" id="humanScoreCoins"></p>
-							<p class="resultsScore" id="teammateScoreCoins"></p>
-							<p class="resultsScore" id="teamScoreCoins"></p>
+				<div id="formulaContainer">
+					<p class="scoresHeading animate__animated" id="formulaHeading">&nbsp;</p>
+					<div id="formula" class="highlight animate__animated">
+						<div class="formulaUnderline">
+							<div class="animate__animated" id="humanIndScoreFormula"></div>
+						</div>
+						<div class="times">&times;</div>
+						<div class="formulaUnderline">
+							<div class="animate__animated" id="teammateIndScoreFormula"></div>
+						</div>
+						<div class="times">&times;</div>
+						<div>2</div>
+						<div class="equals">&equals;</div>
+						<div class="formulaUnderline">
+							<div class="animate__animated" id="teamScoreFormula"></div>
 						</div>
 					</div>
 				</div>
-				<div class='tableItemsWrapper' style='background-color:#505050;border-radius:7px;padding:2rem;'>
+				<div class="highlight" id="scoresAnimationContainer">
+					<p class="scoresHeading" id="gamblePoolCoins" style="margin-bottom: 2rem;">Round results</p>
+					<div id="piggyBanksWrapper" class="highlight">
+						<div id="humanIndPiggyBank" class="piggyBank">
+							<p id="humanIndPiggyBankText"></p>
+						</div>
+						<div id="teamPiggyBank" class="piggyBank">
+							<p id="teamPiggyBankText"></p>
+						</div>
+						<div id="teammateIndPiggyBank" class="piggyBank">
+							<p id="teammateIndPiggyBankText"></p>
+						</div>
+						<p>Your individual score</p>
+						<p>Team score</p>
+						<p>Teammate individual score</p>
+					</div>
+				</div>
+				<div id="pastDecisionsTable" class='tableItemsWrapper'
+					style='background-color:#505050;border-radius:7px;padding:2rem;'>
 					<p style='color:white;font-size:1.5rem;text-align:center;'>
 						Your decisions
 					</p>
 					<div class='tableItems'></div>
 				</div>
 				<div class='userInputButtons'>
-					<button onclick='showPostIntegratePrompt()'>Continue</button>
+					<button id="preresultsContinueBtn" onclick='animateScores()'>Continue</button>
+					<button id="resultsContinueBtn" onclick='showPostIntegratePrompt()'>Continue</button>
 				</div>
 			</div>
 		</div>
