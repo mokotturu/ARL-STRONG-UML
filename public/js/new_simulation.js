@@ -107,6 +107,9 @@ let agents = [];
 let totalHumanScore = 0,
 	totalTeammateScore = 0,
 	totalTeamScore = 0,
+	prevTotalHumanScore = 0,
+	prevTotalTeammateScore = 0,
+	prevTotalTeamScore = 0,
 	currentHumanScore = 0,
 	currentTeammateScore = 0,
 	currentTeamScore = 0,
@@ -149,18 +152,23 @@ let sounds = {
 }
 
 // matter js engine
-let Engine = Matter.Engine,
-	Render = Matter.Render,
-	Runner = Matter.Runner,
-	Bodies = Matter.Bodies,
-	Composite = Matter.Composite,
-	Composites = Matter.Composites;
+let Engines = [Matter.Engine, Matter.Engine, Matter.Engine],
+	Renders = [Matter.Render, Matter.Render, Matter.Render],
+	Runners = [Matter.Runner, Matter.Runner, Matter.Runner],
+	Bodiess = [Matter.Bodies, Matter.Bodies, Matter.Bodies],
+	Composites = [Matter.Composite, Matter.Composite, Matter.Composite],
+	Compositess = [Matter.Composites, Matter.Composites, Matter.Composites];
 
-let engine = Engine.create();
-let walls = [], humanCoinStack = [], teammateCoinStack = [], teamCoinStack = [];
+let engines = [];
+
+Engines.forEach(engine => {
+	engines.push(engine.create());
+});
+
+let tempStacks = [];
 
 let engineInited = false;
-let bucketWidth, bucketHeight;
+let smallBucketWidth, smallBucketHeight, bigBucketWidth, bigBucketHeight;
 
 class Player {
 	constructor(x, y, dir, fovSize) {
@@ -730,10 +738,9 @@ function showTrustPrompt() {
 }
 
 function showPostIntegratePrompt() {
-	Composite.remove(engine.world, walls);
-	Composite.remove(engine.world, humanCoinStack);
-	Composite.remove(engine.world, teammateCoinStack);
-	Composite.remove(engine.world, teamCoinStack);
+	Compositess.forEach((_Composites, i) => {
+		Composites[i].remove(engines[i].world, tempStacks[i]);
+	});
 
 	$('#intervalSurvey')[0].reset();
 	$('#decisionInfluenceText').css('display', 'none');
@@ -750,18 +757,24 @@ function showExploredInfo() {
 	currentHumanScore = human.tempTargetsFound.gold.length;
 	currentTeammateScore = fakeAgentScores[fakeAgentNum].gold;
 
-	if (log[agentNum - 1][intervalCount - 1].decision == 'team' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
+	if (log[agentNum - 1][intervalCount - 1].decision == 'team' && fakeAgentScores[fakeAgentNum].addedTo == 'team') {
+		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
+		currentHumanScore = 0;
+		currentTeammateScore = 0;
+	} else if (log[agentNum - 1][intervalCount - 1].decision == 'team' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
 		totalTeammateScore += currentTeammateScore;
 		currentTeammateScore = 0;
+		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
 	} else if (log[agentNum - 1][intervalCount - 1].decision == 'individual' && fakeAgentScores[fakeAgentNum].addedTo == 'team') {
 		totalHumanScore += currentHumanScore;
 		currentHumanScore = 0;
+		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
 	} else if (log[agentNum - 1][intervalCount - 1].decision == 'individual' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
 		totalHumanScore += currentHumanScore;
 		totalTeammateScore += currentTeammateScore;
+		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
 	}
 
-	currentTeamScore = currentTeammateScore * currentHumanScore * 2;
 	totalTeamScore += currentTeamScore;
 
 	$detailsModal.css('display', 'flex');
@@ -769,6 +782,7 @@ function showExploredInfo() {
 	$detailsModal.css('opacity', '1');
 	$detailsModal.css('width', '70em');
 	$detailsModal.css('height', 'max-content');
+	$detailsModal.css('max-height', '97%');
 	$detailsModal.scrollTop(-10000);
 
 	$log.empty();
@@ -820,12 +834,13 @@ async function animateFormula() {
 	// show human score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800);
-	$('#formulaHeading').html(`You picked ${human.tempTargetsFound.gold.length} coin(s) in this round and added them to ${log[agentNum - 1][intervalCount - 1].decision == 'team' ? 'the team' : 'your individual'} score`);
+	$('#formulaHeading').html(`You picked <span class="text-highlight">${human.tempTargetsFound.gold.length} coin(s)</span> in this round and added them to ${log[agentNum - 1][intervalCount - 1].decision == 'team' ? 'the <span class="text-highlight">team' : 'your <span class="text-highlight">individual</span>'} score`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000);
 
 	// show human score
-	$('#humanIndScoreFormula').html(`${currentHumanScore}`);
+	if (log[agentNum - 1][intervalCount - 1].decision == 'team') $('#humanIndScoreFormula').html(`${human.tempTargetsFound.gold.length}`);
+	else $('#humanIndScoreFormula').html(`<img src="img/no-sign.svg" style="width: 5rem; height 5rem;">`);
 	$('#humanIndScoreFormula').css('visibility', 'visible');
 	$('#humanIndScoreFormula').toggleClass('animate__fadeIn');
 	await sleep(5000);
@@ -840,12 +855,13 @@ async function animateFormula() {
 	// show teammate score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800);
-	$('#formulaHeading').html(`Your teammate picked ${fakeAgentScores[fakeAgentNum - 1].gold} coin(s) in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the team' : 'their individual'} score`);
+	$('#formulaHeading').html(`Your teammate picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team</span>' : 'their <span class="text-highlight">individual</span>'} score`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000);
 
 	// show teammate score
-	$('#teammateIndScoreFormula').html(`${currentTeammateScore}`);
+	if (fakeAgentScores[fakeAgentNum - 1].addedTo == 'team') $('#teammateIndScoreFormula').html(`${fakeAgentScores[fakeAgentNum - 1].gold}`);
+	else $('#humanIndScoreFormula').html(`<img src="img/no-sign.svg" style="width: 5rem; height 5rem;">`);
 	$('#teammateIndScoreFormula').css('visibility', 'visible');
 	$('#teammateIndScoreFormula').toggleClass('animate__fadeIn');
 	await sleep(5000);
@@ -875,7 +891,6 @@ async function animateScores() {
 	$('#preresultsContinueBtn').css('display', 'none');
 	$('#resultsContinueBtn').css('display', 'revert');
 	$detailsModal.css('width', '97%');
-	$detailsModal.css('height', '97%');
 
 	// normal resets
 	$('#scoresTextContainer').css('display', 'none');
@@ -888,6 +903,92 @@ async function animateScores() {
 	$('#humanIndMain').text(totalHumanScore);
 	$('#teammateIndMain').text(totalTeammateScore);
 	$('#teamMain').text(totalTeamScore);
+
+	// matter js
+	if (!engineInited) {
+		engineInited = true;
+
+		smallBucketWidth = document.querySelector('#humanIndPiggyBank').scrollWidth;
+		smallBucketHeight = document.querySelector('#humanIndPiggyBank').scrollHeight;
+		bigBucketWidth = document.querySelector('#teamPiggyBank').scrollWidth;
+		bigBucketHeight = document.querySelector('#teamPiggyBank').scrollHeight;
+
+		Renders.forEach((Render, i) => {
+			let tempElement;
+			switch (i) {
+				case 0:
+					tempElement = document.querySelector('#humanIndPiggyBank');
+					break;
+				case 1:
+					tempElement = document.querySelector('#teammateIndPiggyBank');
+					break;
+				case 2:
+					tempElement = document.querySelector('#teamPiggyBank');
+					break;
+			}
+
+			let render = Render.create({
+				element: tempElement,
+				engine: engines[i],
+				options: {
+					width: i == 2 ? bigBucketWidth : smallBucketWidth,
+					height: i == 2 ? bigBucketHeight : smallBucketHeight,
+					wireframes: false,
+					background: 'transparent'
+				},
+			});
+
+			Render.run(render);
+			Runners[i].run(Runners[i].create(), engines[i]);
+		});
+	}
+
+	// animate human piggy bank
+	tempStacks = [];
+	Compositess.forEach((_Composites, i) => {
+		let tempScore, tempX, tempY;
+
+		switch (i) {
+			case 0:
+				tempScore = totalHumanScore - prevTotalHumanScore;
+				tempX = smallBucketWidth / 2;
+				tempY = smallBucketHeight / 2;
+				break;
+			case 1:
+				tempScore = totalTeammateScore - prevTotalTeammateScore;
+				tempX = smallBucketWidth / 2;
+				tempY = smallBucketHeight / 2;
+				break;
+			case 2:
+				tempScore = totalTeamScore - prevTotalTeamScore;
+				tempX = bigBucketWidth / 2;
+				tempY = bigBucketHeight / 2;
+				break;
+		}
+
+		let tempStack = _Composites.stack(tempX, tempY, tempScore / 2, tempScore / 2, 20, 20, (x, y) => {
+			return Bodiess[0].circle(x, y, 10, {
+				restitution: 0.5,
+				friction: 0.1,
+				positionPrev: { x: x + Math.random() * 5, y: y + Math.random() * 5 },
+				render: {
+					sprite: {
+						texture: 'img/coin_small.svg',
+						xScale: 1,
+						yScale: 1,
+					},
+				},
+			});
+		});
+
+		tempStacks.push(tempStack);
+		engines[i].timing.timeScale = 0.3;
+		Composites[i].add(engines[i].world, tempStack);
+	});
+
+	prevTotalHumanScore = totalHumanScore;
+	prevTotalTeammateScore = totalTeammateScore;
+	prevTotalTeamScore = totalTeamScore;
 }
 
 // Update the display for star count for targets on the results display
