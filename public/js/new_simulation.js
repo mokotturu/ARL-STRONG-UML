@@ -145,11 +145,13 @@ let log = [[], []];
 
 // sound effects
 let sounds = {
-	'bg': { 'file': new Audio('audio/bg.ogg'), shouldLoop: true },
-	'move': { 'file': new Audio('audio/spinning.ogg'), shouldLoop: true },
-	'pick': { 'file': new Audio('audio/picked_coin.wav'), shouldLoop: false },
-	'gold_sack': { 'file': new Audio('audio/gold_sack.wav'), shouldLoop: false },
+	'bg': { fileName: 'audio/ambient.mp3', 'file': new Audio('audio/ambient.mp3'), shouldLoop: true },
+	'pick': { fileName: 'audio/coin-drop.mp3', 'file': new Audio('audio/coin-drop.mp3'), shouldLoop: false },
+	'coins_drop': { fileName: 'audio/coins-drop.mp3', 'file': new Audio('audio/coins-drop.mp3'), shouldLoop: false },
+	'gold_sack': { fileName: 'audio/gold_sack.wav', 'file': new Audio('audio/gold_sack.wav'), shouldLoop: false },
 }
+
+const gaplessPlayer = new Gapless5({ loop: true });
 
 // matter js engine
 let Engines = [Matter.Engine, Matter.Engine, Matter.Engine],
@@ -165,7 +167,7 @@ Engines.forEach(engine => {
 	engines.push(engine.create());
 });
 
-let tempStacks = [];
+let tempStacks = [], walls = [];
 
 let engineInited = false;
 let smallBucketWidth, smallBucketHeight, bigBucketWidth, bigBucketHeight;
@@ -524,17 +526,9 @@ $(document).ready(async () => {
 	// sounds
 	for (const effect in sounds) {
 		if (sounds[effect].shouldLoop) {
-			sounds[effect].file.addEventListener('timeupdate', e => {
-				let buffer = 0.44;
-				if (e.target.currentTime > e.target.duration - buffer) {
-					e.target.currentTime = 0;
-					e.target.play();
-				}
-			}, false);
+			gaplessPlayer.addTrack(sounds[effect].fileName);
 		}
 	}
-
-	sounds.bg.file.volume = 0.5;
 
 	await startMatching();
 });
@@ -655,8 +649,8 @@ function endMatching() {
 
 	refreshMap();
 
+	gaplessPlayer.play();
 	currentFrame = requestAnimationFrame(loop);
-	sounds['bg'].file.play();
 }
 
 function preTerminationPrompt() {
@@ -740,6 +734,7 @@ function showTrustPrompt() {
 function showPostIntegratePrompt() {
 	Compositess.forEach((_Composites, i) => {
 		Composites[i].remove(engines[i].world, tempStacks[i]);
+		Composites[i].remove(engines[i].world, walls[i]);
 	});
 
 	$('#intervalSurvey')[0].reset();
@@ -821,7 +816,7 @@ async function animateFormula() {
 	await sleep(1000);
 
 	// show initial heading
-	$('#formulaHeading').html(`Let's see the scores!`);
+	$('#formulaHeading').html(`Let's see the teamwork results!`);
 	$('#formulaHeading').css('visibility', 'visible');
 	$('#formulaHeading').toggleClass('animate__fadeIn');
 	await sleep(1000);
@@ -861,7 +856,7 @@ async function animateFormula() {
 
 	// show teammate score
 	if (fakeAgentScores[fakeAgentNum - 1].addedTo == 'team') $('#teammateIndScoreFormula').html(`${fakeAgentScores[fakeAgentNum - 1].gold}`);
-	else $('#humanIndScoreFormula').html(`<img src="img/no-sign.svg" style="width: 5rem; height 5rem;">`);
+	else $('#teammateIndScoreFormula').html(`<img src="img/no-sign.svg" style="width: 5rem; height 5rem;">`);
 	$('#teammateIndScoreFormula').css('visibility', 'visible');
 	$('#teammateIndScoreFormula').toggleClass('animate__fadeIn');
 	await sleep(5000);
@@ -869,15 +864,29 @@ async function animateFormula() {
 	// show final team score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800);
-	$('#formulaHeading').html(`The team score for this round is ${currentTeamScore}!`);
+	if (
+		log[agentNum - 1][intervalCount - 1].decision == 'team' &&
+		fakeAgentScores[fakeAgentNum - 1].addedTo == 'team'
+	) {
+		$('#formulaHeading').html(`The team score for this round is ${currentTeamScore}!`);
+	} else {
+		$('#formulaHeading').html(`No successful teamwork in this round :(`);
+	}
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000);
 
 	// show final team score
-	$('#teamScoreFormula').html(`${currentTeamScore}`);
+	if (
+		log[agentNum - 1][intervalCount - 1].decision == 'team' &&
+		fakeAgentScores[fakeAgentNum - 1].addedTo == 'team'
+	) {
+		$('#teamScoreFormula').html(`${currentTeamScore}`);
+		sounds['gold_sack'].file.play();
+	} else {
+		$('#teamScoreFormula').html(`<img src="img/no-sign.svg" style="width: 5rem; height 5rem;">`);
+	}
 	$('#teamScoreFormula').css('visibility', 'visible');
 	$('#teamScoreFormula').toggleClass('animate__fadeIn');
-	sounds['gold_sack'].file.play();
 
 	// enable continue button
 	$('#preresultsContinueBtn').prop('disabled', false);
@@ -944,7 +953,7 @@ async function animateScores() {
 	}
 
 	// animate human piggy bank
-	tempStacks = [];
+	walls = [], tempStacks = [];
 	Compositess.forEach((_Composites, i) => {
 		let tempScore, tempX, tempY;
 
@@ -966,16 +975,31 @@ async function animateScores() {
 				break;
 		}
 
-		let tempStack = _Composites.stack(tempX, tempY, tempScore / 2, tempScore / 2, 20, 20, (x, y) => {
-			return Bodiess[0].circle(x, y, 10, {
+		let tempWall = Bodiess[0].rectangle(tempX, tempY / 2, 40, 10, {
+			restitution: 0.8,
+			friction: 0.1,
+			isStatic: true,
+			angle: -10,
+			render: {
+				strokeStyle: 'transparent',
+				fillStyle: 'transparent',
+			},
+		});
+
+		walls.push(tempWall);
+
+		Composites[i].add(engines[i].world, tempWall);
+
+		let tempStack = _Composites.stack(tempX, -200, 1, tempScore, 10, 10, (x, y) => {
+			return Bodiess[0].circle(x, y, 20, {
 				restitution: 0.5,
-				friction: 0.1,
-				positionPrev: { x: x + Math.random() * 5, y: y + Math.random() * 5 },
+				friction: 0,
+				positionPrev: { x: x + 1, y: y - 1 },
 				render: {
 					sprite: {
 						texture: 'img/coin_small.svg',
-						xScale: 1,
-						yScale: 1,
+						xScale: 2,
+						yScale: 2,
 					},
 				},
 			});
@@ -984,6 +1008,7 @@ async function animateScores() {
 		tempStacks.push(tempStack);
 		engines[i].timing.timeScale = 0.3;
 		Composites[i].add(engines[i].world, tempStack);
+		sounds['coins_drop'].file.play();
 	});
 
 	prevTotalHumanScore = totalHumanScore;
