@@ -737,6 +737,15 @@ function showPostIntegratePrompt() {
 		Composites[i].remove(engines[i].world, walls[i]);
 	});
 
+	$('#humanIndPiggyBankText').removeClass('animate__animated animate__pulse');
+	$('#teammateIndPiggyBankText').removeClass('animate__animated animate__pulse');
+	$('#teamPiggyBankText').removeClass('animate__animated animate__pulse');
+
+	$('#humanIndPiggyBankText').css('filter', 'initial');
+	$('#teammateIndPiggyBankText').css('filter', 'initial');
+	$('#teamPiggyBankText').css('filter', 'initial');
+
+
 	$('#intervalSurvey')[0].reset();
 	$('#decisionInfluenceText').css('display', 'none');
 	$('#decisionInfluenceText').val('');
@@ -908,6 +917,21 @@ async function animateScores() {
 	$('#humanIndPiggyBankText').html(`${totalHumanScore} &times; <img src="img/coin.svg" style="width: 1.5em; height: 1.5em; vertical-align: middle;">`);
 	$('#teammateIndPiggyBankText').html(`${totalTeammateScore} &times; <img src="img/coin.svg" style="width: 1.5em; height: 1.5em; vertical-align: middle;">`);
 	$('#teamPiggyBankText').html(`${totalTeamScore} &times; <img src="img/coin.svg" style="width: 1.5em; height: 1.5em; vertical-align: middle;">`);
+
+	if (totalHumanScore > prevTotalHumanScore) {
+		$('#humanIndPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
+		$('#humanIndPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	}
+
+	if (totalTeammateScore > prevTotalTeammateScore) {
+		$('#teammateIndPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
+		$('#teammateIndPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	}
+
+	if (totalTeamScore > prevTotalTeamScore) {
+		$('#teamPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
+		$('#teamPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	}
 
 	$('#humanIndMain').text(totalHumanScore);
 	$('#teammateIndMain').text(totalTeammateScore);
