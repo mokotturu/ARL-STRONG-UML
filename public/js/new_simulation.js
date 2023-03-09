@@ -167,7 +167,7 @@ Engines.forEach(engine => {
 	engines.push(engine.create());
 });
 
-let tempStacks = [], walls = [];
+let tempCoinArrs = [], walls = [];
 
 let engineInited = false;
 let smallBucketWidth, smallBucketHeight, bigBucketWidth, bigBucketHeight;
@@ -733,7 +733,7 @@ function showTrustPrompt() {
 
 function showPostIntegratePrompt() {
 	Compositess.forEach((_Composites, i) => {
-		Composites[i].remove(engines[i].world, tempStacks[i]);
+		Composites[i].remove(engines[i].world, tempCoinArrs[i]);
 		Composites[i].remove(engines[i].world, walls[i]);
 	});
 
@@ -829,7 +829,7 @@ async function animateFormula() {
 	// show human score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800);
-	$('#formulaHeading').html(`You picked <span class="text-highlight">${human.tempTargetsFound.gold.length} coin(s)</span> in this round and added them to ${log[agentNum - 1][intervalCount - 1].decision == 'team' ? 'the <span class="text-highlight">team' : 'your <span class="text-highlight">individual</span>'} score`);
+	$('#formulaHeading').html(`You picked <span class="text-highlight">${human.tempTargetsFound.gold.length} coin(s)</span> in this round and added them to ${log[agentNum - 1][intervalCount - 1].decision == 'team' ? 'the <span class="text-highlight">team' : 'your <span class="text-highlight">individual'} score</span>`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000);
 
@@ -850,7 +850,7 @@ async function animateFormula() {
 	// show teammate score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800);
-	$('#formulaHeading').html(`Your teammate picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team</span>' : 'their <span class="text-highlight">individual</span>'} score`);
+	$('#formulaHeading').html(`Your teammate picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000);
 
@@ -953,31 +953,29 @@ async function animateScores() {
 	}
 
 	// animate human piggy bank
-	walls = [], tempStacks = [];
+	walls = [], tempCoinArrs = [];
 	Compositess.forEach((_Composites, i) => {
 		let tempScore, tempX, tempY;
 
 		switch (i) {
 			case 0:
-				tempScore = totalHumanScore - prevTotalHumanScore;
+				tempScore = totalHumanScore == prevTotalHumanScore ? 0 : 6;
 				tempX = smallBucketWidth / 2;
 				tempY = smallBucketHeight / 2;
 				break;
 			case 1:
-				tempScore = totalTeammateScore - prevTotalTeammateScore;
+				tempScore = totalTeammateScore == prevTotalTeammateScore ? 0 : 6;
 				tempX = smallBucketWidth / 2;
 				tempY = smallBucketHeight / 2;
 				break;
 			case 2:
-				tempScore = totalTeamScore - prevTotalTeamScore;
+				tempScore = totalTeamScore == prevTotalTeamScore ? 0 : 6;
 				tempX = bigBucketWidth / 2;
 				tempY = bigBucketHeight / 2;
 				break;
 		}
 
 		let tempWall = Bodiess[0].rectangle(tempX, tempY / 2, 40, 10, {
-			restitution: 0.8,
-			friction: 0.1,
 			isStatic: true,
 			angle: -10,
 			render: {
@@ -987,14 +985,12 @@ async function animateScores() {
 		});
 
 		walls.push(tempWall);
-
 		Composites[i].add(engines[i].world, tempWall);
 
-		let tempStack = _Composites.stack(tempX, -200, 1, tempScore, 10, 10, (x, y) => {
-			return Bodiess[0].circle(x, y, 20, {
-				restitution: 0.5,
-				friction: 0,
-				positionPrev: { x: x + 1, y: y - 1 },
+		let tempCoinArr = [];
+		for (let idx = 0; idx < tempScore; ++idx) {
+			tempCoinArr.push(Bodiess[0].circle(tempX, 0, 20, {
+				// positionPrev: { x: tempX + 1, y: -50 },
 				render: {
 					sprite: {
 						texture: 'img/coin_small.svg',
@@ -1002,18 +998,29 @@ async function animateScores() {
 						yScale: 2,
 					},
 				},
-			});
-		});
+			}));
+		}
 
-		tempStacks.push(tempStack);
-		engines[i].timing.timeScale = 0.3;
-		Composites[i].add(engines[i].world, tempStack);
-		sounds['coins_drop'].file.play();
+		tempCoinArrs.push(tempCoinArr);
+		tempCoinArr.forEach((coin, coinIdx) => {
+			setTimeout(() => {
+				Composites[i].add(engines[i].world, coin);
+			}, 100 * coinIdx + 100);
+		});
+		if (tempScore != 0) sounds['coins_drop'].file.play();
 	});
 
 	prevTotalHumanScore = totalHumanScore;
 	prevTotalTeammateScore = totalTeammateScore;
 	prevTotalTeamScore = totalTeamScore;
+
+	Compositess.forEach((_Composites, i) => {
+		for (let idx = 0; idx < tempCoinArrs[i].length; ++idx) {
+			setTimeout(() => {
+				Composites[i].remove(engines[i].world, tempCoinArrs[i][idx]);
+			}, 100 * idx + 500);
+		}
+	});
 }
 
 // Update the display for star count for targets on the results display
