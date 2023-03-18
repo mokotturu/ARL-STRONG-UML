@@ -787,6 +787,7 @@ function showExploredInfo() {
 	$detailsModal.css('width', '70em');
 	$detailsModal.css('height', 'max-content');
 	$detailsModal.css('max-height', '97%');
+	$detailsModal.css('overflow-y', 'initial');
 	$detailsModal.scrollTop(-10000);
 
 	$log.empty();
@@ -909,6 +910,7 @@ async function animateScores() {
 	$('#preresultsContinueBtn').css('display', 'none');
 	$('#resultsContinueBtn').css('display', 'revert');
 	$detailsModal.css('width', '97%');
+	$detailsModal.css('overflow-y', 'scroll');
 
 	// normal resets
 	$('#scoresTextContainer').css('display', 'none');
