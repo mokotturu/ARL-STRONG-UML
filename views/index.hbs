@@ -6,13 +6,8 @@
 </div>
 <div class='main-content'>
 	<h1>ARL STRONG - UMass Lowell</h1>
-	{{! <button id="watch" onclick="displayVideo()">Watch Instructions Video</button> }}
 	<button id='begin' onclick='showConsentForm()'>Begin Tutorial</button>
-	<button
-		id='skip'
-		onclick="window.location.href='/simulation'"
-		style='display: none;'
-	>Skip to Game</button>
+	<button id='skip' onclick="window.location.href='/simulation'" style='display: none;'>Skip to Game</button>
 </div>
 
 <div class='popup-modal-container' id='instructionsContainer'>
@@ -21,17 +16,10 @@
 		<p style='margin-bottom: 2em;'>Please watch the video completely to
 			continue.</p>
 		<video controls>
-			<source
-				src='img/retaliation_game_instructions.webm'
-				type='video/webm'
-			/>
+			<source src='img/retaliation_game_instructions.webm' type='video/webm' />
 		</video>
 		<div id='userInputButtons'>
-			<button
-				id='startTut'
-				onclick="window.location.href = '/tutorial'"
-				disabled
-			>Continue</button>
+			<button id='startTut' onclick="window.location.href = '/tutorial'" disabled>Continue</button>
 		</div>
 	</div>
 </div>
@@ -40,11 +28,7 @@
 	<div class='popup-modal' id='consentFormContent'>
 		<h4 class='modal-heading'>Consent Form</h4>
 		<div id='consent-form'>
-			<object
-				data='src\Consent form.pdf'
-				type='application/pdf'
-				id='pdf'
-			></object>
+			<object data='src\Consent form.pdf' type='application/pdf' id='pdf'></object>
 		</div>
 		<div id='userInputButtons'>
 			<button onclick='agree()'>Agree</button>
@@ -52,85 +36,5 @@
 		</div>
 	</div>
 </div>
-{{! <div id="instructions">
-	<h2>Instructions</h2>
-	<p>[instructions.mp4]</p>
-	<div class="content-block fadeIn">
-		<p>
-			Your goal is to explore a set of rooms and find as many victims and hazards as possible. You will 
-			have help from two autonomous agents. You do not need to do anything when you find a victim or a 
-			hazard, the system will record your exploration as you move.
-		</p>
-	</div>
-	<div class="content-block fadeIn">
-		<p>
-			The blue colored square represents a human on the map. 
-			The light blue colored area shaded around the human is the area of the map 
-			visible to (human's field of view)/explored by the human.
-		</p>
-		<img src='img/blue.png'>
-	</div>
-
-	<div class="content-block fadeIn">
-		<img src='img/green.png'>
-		<p>
-			The red colored square marked by "1" represents the first agent on the map that moves autonomously.
-			The green colored area shaded around the agent is the area of the map 
-			visible to (agent's field of view)/explored by the agent in the current interval.
-		</p>
-	</div>
-
-	<div class="content-block fadeIn">
-		<p>
-			The red colored square marked by "2" represents the second agent on the map that moves autonomously.
-			The orange colored area shaded around the agent is the area of the map 
-			visible to (agent's field of view)/explored by the agent in the current interval.
-		</p>
-		<img src='img/orange.png'>
-	</div>
-
-	<div class="content-block fadeIn">
-		<img src='img/red.png'>
-		<p>
-			The light red colored area shaded on the map is the area of the map
-			that has been explored by the agent in the past intervals and has been integrated by the human.
-		</p>
-	</div>
-
-	<div class="content-block fadeIn">
-		<p>
-			The yellow colored area shaded on the map is the area of the map
-			that has been explored by both the agent and the human in the past intervals and has been integrated by the human.
-		</p>
-		<img src='img/yellow.png'>
-	</div>
-
-	<div class="content-block fadeIn">
-		<img src='img/victim-marker-front.png'>
-		<p>
-			This marker on the minimap in the trust confirmatin pop-up means that a victim has been found on the map.
-		</p>
-	</div>
-
-	<div class="content-block fadeIn">
-		<p>
-			This marker on the minimap in the trust confirmation pop-up means that a hazard has been found on the map.
-		</p>
-		<img src='img/hazard-marker-front.png'>
-	</div>
-
-	<div class="content-block fadeIn">
-		<img src='img/pop-up.png'>
-		<p>
-			Use the arrow keys or awsd (or hjkl if you're a vim power user) to control the human. After every 30 seconds, you will be shown the images of 
-			the current state of the whole map, the human explored area, and the agent explored area. You will be prompted 
-			to either integrate or discard both agents' explored regions (Agent 1 and Agent 2). If you choose to integrate, the agent explored region 
-			(shaded green/orange) will turn red. If you choose to discard this area, the green/orange colored region will disappear and is 
-			considered unexplored.
-		</p>
-	</div>
-	
-	<button id="begin" class="fadeIn" onclick="showConsentForm()">Begin Tutorial</button>
-</div> }}
 
 <script type='text/javascript' src='js/landing-page.js'></script>

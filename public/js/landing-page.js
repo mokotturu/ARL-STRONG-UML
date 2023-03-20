@@ -4,10 +4,6 @@ var timer = null,
 $('#instructionsContent > video').on('play', () => startPlaying());
 $('#instructionsContent > video').on('pause', () => pausePlaying());
 
-/* $('#instructionsContent > video').on('ended', () => {
-	$('#startTut').prop('disabled', false);
-}); */
-
 $(document).ready(() => {
 	if (
 		localStorage.getItem('failedTutorial') != 'true' ||
@@ -29,13 +25,6 @@ $(document).ready(() => {
 
 	$('#startTut').prop('disabled', true);
 });
-
-/* $(window).scroll(() => {
-	let fadeInElems = document.getElementsByClassName('fadeIn');
-	for (const elem of fadeInElems) {
-		if (elem.getBoundingClientRect().top + elem.offsetHeight < window.innerHeight) elem.style.opacity = 1;
-	}
-}); */
 
 function startPlaying() {
 	timer = window.setInterval(() => ++timeWatched, 1000);
@@ -59,17 +48,13 @@ $(window).on('click', e => {
 });
 
 function showConsentForm() {
-	if (!sessionStorage.getItem('consent')) {
-		$('#consentFormContainer').css({
-			visibility: 'visible',
-			opacity: '1',
-		});
-		$('nav').addClass('disabled');
-		$('.main-content').addClass('disabled');
-		$('#instructions').addClass('disabled');
-	} else {
-		displayVideo();
-	}
+	$('#consentFormContainer').css({
+		visibility: 'visible',
+		opacity: '1',
+	});
+	$('nav').addClass('disabled');
+	$('.main-content').addClass('disabled');
+	$('#instructions').addClass('disabled');
 }
 
 function displayVideo() {
@@ -88,15 +73,7 @@ function beginTutorial() {
 }
 
 function agree() {
-	sessionStorage.setItem('consent', true);
-	$('#consentFormContainer').css({
-		visibility: 'hidden',
-		opacity: '0',
-	});
-	$('nav').addClass('disabled');
-	$('.main-content').addClass('disabled');
-	$('#instructions').addClass('disabled');
-	displayVideo();
+	window.location.href = '/tutorial';
 }
 
 function decline() {
