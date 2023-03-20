@@ -202,9 +202,6 @@ nav {
 
 .popup-modal {
 	width: 100%;
-	/* display: flex;
-	flex-direction: column;
-	justify-content: space-between; */
 }
 
 #exploration-details-modal-content {
@@ -213,8 +210,8 @@ nav {
 
 #matching-modal {
 	width: 50em !important;
-	height: 35em !important;
-	padding: 0 50px;
+	height: max-content !important;
+	padding: 2rem 2rem 1rem 2rem;
 	overflow: hidden;
 }
 
@@ -228,9 +225,10 @@ nav {
 
 #trust-confirm-modal {
 	width: 50em !important;
-	height: 25em !important;
+	height: max-content !important;
 	padding: 0 50px;
 	overflow: hidden;
+	padding: 3rem;
 }
 
 #trust-confirm-modal-content {
@@ -239,11 +237,8 @@ nav {
 	justify-content: space-evenly;
 	align-items: center;
 	text-align: center;
+	gap: 3rem;
 }
-
-/* .trustCueMessage{
-	margin-top: 5em;
-} */
 
 #trust-cue-modal {
 	width: 45em !important;
@@ -394,7 +389,6 @@ nav {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: center;
 }
 
 #legend {

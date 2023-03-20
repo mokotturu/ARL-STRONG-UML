@@ -420,7 +420,7 @@ class Obstacle {
 					sides: 3,
 				});
 			} else if (this.variant == 'gold') {
-				$('canvas').drawEllipse({
+				$map.drawEllipse({
 					fromCenter: true,
 					strokeWidth: 2,
 					strokeStyle: this.isPicked ? '#39ff14' : this.darkColor,
@@ -429,7 +429,7 @@ class Obstacle {
 					y: this.y * boxHeight + boxHeight / 2,
 					width: boxWidth * 3, height: boxHeight * 3,
 				});
-				$('canvas').drawText({
+				$map.drawText({
 					fromCenter: true,
 					fillStyle: this.darkColor,
 					x: this.x * boxWidth + boxWidth / 2,
@@ -614,7 +614,7 @@ async function startMatching() {
 	$('#matching-modal').css('visibility', 'visible');
 	$('#matching-modal').css('opacity', '1');
 	$('#matching-modal')[0].style.setProperty('width', '30em', 'important');
-	$('#matching-modal')[0].style.setProperty('height', '20em', 'important');
+	$('#matching-modal')[0].style.setProperty('height', 'max-content', 'important');
 
 	$('#matching-heading').text(
 		`You are matched with a ${Math.random() > 0.5 ? 'human' : 'robot'}.`
@@ -802,8 +802,6 @@ function showExploredInfo() {
 	}
 
 	animateFormula();
-
-	updateResults();
 }
 
 async function animateFormula() {
@@ -1047,110 +1045,6 @@ async function animateScores() {
 			}, 100 * idx + 500);
 		}
 	});
-}
-
-// Update the display for star count for targets on the results display
-function updateResults() {
-	tempString = fakeAgentScores[fakeAgentNum - 1].gold > 0
-		? `` : `No coins found`;
-
-	if (log[agentNum - 1][intervalCount - 1].decision == 'Gambled') {
-		$('#gambleInfo').text(`Your teammate gave you ${fakeAgentScores[fakeAgentNum - 1].payback * 100}% back after you gambled.`);
-	} else {
-		$('#gambleInfo').text(``);
-	}
-
-	// <span class="material-icons" style="color: #ffc72c; font-size: 30px;";>star_rate</span>
-	for (let k = 0; k < currentHumanScore; ++k) {
-		tempString += `<img src='img/coin.svg' style='width: 30px; height: 30px; padding: 0 0.25rem;' />`;
-	}
-	$('div.hYellowStar').html(tempString);
-
-	tempString = '';
-	for (let k = 0; k < currentTeammateScore; ++k) {
-		tempString += `<img src='img/coin.svg' style='width: 30px; height: 30px; padding: 0 0.25rem;' />`;
-	}
-	$('div.aYellowStar').html(tempString);
-
-	$('#curHumanScoreDetails').text(
-		`${currentHumanScore} coin(s) gained`
-	);
-
-	$('#curAgentScoreDetails').text(
-		`${currentTeammateScore} coin(s) gained`
-	);
-
-	if (currentTeammateScore >= 0) {
-		$('#agentIndScorePositiveGraph').css(
-			'width',
-			`${(currentTeammateScore * 8)}`
-		);
-		$('#agentIndScorePositive').text(`${currentTeammateScore} coins`);
-		$('#agentIndScoreNegativeGraph').css('width', `0`);
-		$('#agentIndScoreNegative').text(``);
-	} else {
-		$('#agentIndScoreNegativeGraph').css(
-			'width',
-			`${Math.abs((currentTeammateScore * 8))}`
-		);
-		$('#agentIndScoreNegative').text(`${currentTeammateScore} coins`);
-		$('#agentIndScorePositiveGraph').css('width', `0`);
-		$('#agentIndScorePositive').text(``);
-	}
-
-	if (currentHumanScore >= 0) {
-		$('#humanIndScorePositiveGraph').css(
-			'width',
-			`${(currentHumanScore * 8)}`
-		);
-		$('#humanIndScorePositive').text(`${currentHumanScore} coins`);
-		$('#humanIndScoreNegativeGraph').css('width', `0`);
-		$('#humanIndScoreNegative').text(``);
-	} else {
-		$('#humanIndScoreNegativeGraph').css(
-			'width',
-			`${Math.abs((currentHumanScore * 8))}`
-		);
-		$('#humanIndScoreNegative').text(`${currentHumanScore} coins`);
-		$('#humanIndScorePositiveGraph').css('width', `0`);
-		$('#humanIndScorePositive').text(``);
-	}
-
-	if (totalHumanScore >= 0) {
-		$('#overallHumanIndScorePositiveGraph').css(
-			'width',
-			`${(totalHumanScore * 8)}`
-		);
-		$('#overallHumanIndScorePositive').text(`${totalHumanScore} coins`);
-		$('#overallHumanIndScoreNegativeGraph').css('width', `0`);
-		$('#overallHumanIndScoreNegative').text(``);
-	} else {
-		$('#overallHumanIndScoreNegativeGraph').css(
-			'width',
-			`${Math.abs((totalHumanScore * 8))}`
-		);
-		$('#overallHumanIndScoreNegative').text(`${totalHumanScore} coins`);
-		$('#overallHumanIndScorePositiveGraph').css('width', `0`);
-		$('#overallHumanIndScorePositive').text(``);
-	}
-
-	if (totalTeammateScore >= 0) {
-		$('#overallAgentIndScorePositiveGraph').css(
-			'width',
-			`${(totalTeammateScore * 8)}`
-		);
-		$('#overallAgentIndScorePositive').text(`${totalTeammateScore} coins`);
-		$('#overallAgentIndScoreNegativeGraph').css('width', `0`);
-		$('#overallAgentIndScoreNegative').text(``);
-	} else {
-		$('#overallAgentIndScoreNegativeGraph').css(
-			'width',
-			`${Math.abs((totalTeammateScore * 8))}`
-		);
-		$('#overallAgentIndScoreNegative').text(`${totalTeammateScore} coins`);
-		$('#overallAgentIndScorePositiveGraph').css('width', `0`);
-		$('#overallAgentIndScorePositive').text(``);
-	}
 }
 
 function updateTrustMessage() {
