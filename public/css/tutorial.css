@@ -125,6 +125,7 @@ html {
 	0% {
 		-webkit-transform: rotate(0deg);
 	}
+
 	100% {
 		-webkit-transform: rotate(360deg);
 	}
@@ -134,6 +135,7 @@ html {
 	0% {
 		transform: rotate(0deg);
 	}
+
 	100% {
 		transform: rotate(360deg);
 	}
@@ -175,7 +177,7 @@ nav {
 }
 
 #exploration-details-modal {
-	box-shadow: 0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 0 0 9999px #000000AA, 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 #exploration-details-modal-content {
@@ -442,7 +444,7 @@ nav {
 #simulation {
 	height: 100vh;
 	display: flex;
-	justify-content: space-around;
+	justify-content: right;
 	padding: 0 15px;
 	align-items: center;
 	color: white;
@@ -489,7 +491,7 @@ nav {
 	height: 30px;
 }
 
-#legend > p {
+#legend>p {
 	display: flex;
 	align-items: center;
 	max-width: 200px;
@@ -508,7 +510,7 @@ nav {
 	margin-top: 10px;
 }
 
-#gameDetails > div {
+#gameDetails>div {
 	margin: 10px 0;
 	text-align: center;
 }
@@ -613,7 +615,7 @@ nav {
 	text-align: center;
 }
 
-#formula > div {
+#formula>div {
 	padding: 0 1.5rem;
 }
 
@@ -668,6 +670,7 @@ nav {
 		box-shadow: 0 0 20px #F6BE00;
 	}
 }
+
 .scoresHeading {
 	font-size: 2rem;
 	margin-bottom: 1rem;
@@ -695,70 +698,78 @@ nav {
 @-webkit-keyframes heartbeat {
 	from {
 		-webkit-transform: scale(1);
-				transform: scale(1);
+		transform: scale(1);
 		-webkit-transform-origin: center center;
-				transform-origin: center center;
+		transform-origin: center center;
 		-webkit-animation-timing-function: ease-out;
-				animation-timing-function: ease-out;
+		animation-timing-function: ease-out;
 	}
+
 	10% {
 		-webkit-transform: scale(0.91);
-				transform: scale(0.91);
+		transform: scale(0.91);
 		-webkit-animation-timing-function: ease-in;
-				animation-timing-function: ease-in;
+		animation-timing-function: ease-in;
 	}
+
 	17% {
 		-webkit-transform: scale(0.98);
-				transform: scale(0.98);
+		transform: scale(0.98);
 		-webkit-animation-timing-function: ease-out;
-				animation-timing-function: ease-out;
+		animation-timing-function: ease-out;
 	}
+
 	33% {
 		-webkit-transform: scale(0.87);
-				transform: scale(0.87);
+		transform: scale(0.87);
 		-webkit-animation-timing-function: ease-in;
-				animation-timing-function: ease-in;
+		animation-timing-function: ease-in;
 	}
+
 	45% {
 		-webkit-transform: scale(1);
-				transform: scale(1);
+		transform: scale(1);
 		-webkit-animation-timing-function: ease-out;
-				animation-timing-function: ease-out;
+		animation-timing-function: ease-out;
 	}
 }
 
 @keyframes heartbeat {
 	from {
 		-webkit-transform: scale(1);
-				transform: scale(1);
+		transform: scale(1);
 		-webkit-transform-origin: center center;
-				transform-origin: center center;
+		transform-origin: center center;
 		-webkit-animation-timing-function: ease-out;
-				animation-timing-function: ease-out;
+		animation-timing-function: ease-out;
 	}
+
 	10% {
 		-webkit-transform: scale(0.91);
-				transform: scale(0.91);
+		transform: scale(0.91);
 		-webkit-animation-timing-function: ease-in;
-				animation-timing-function: ease-in;
+		animation-timing-function: ease-in;
 	}
+
 	17% {
 		-webkit-transform: scale(0.98);
-				transform: scale(0.98);
+		transform: scale(0.98);
 		-webkit-animation-timing-function: ease-out;
-				animation-timing-function: ease-out;
+		animation-timing-function: ease-out;
 	}
+
 	33% {
 		-webkit-transform: scale(0.87);
-				transform: scale(0.87);
+		transform: scale(0.87);
 		-webkit-animation-timing-function: ease-in;
-				animation-timing-function: ease-in;
+		animation-timing-function: ease-in;
 	}
+
 	45% {
 		-webkit-transform: scale(1);
-				transform: scale(1);
+		transform: scale(1);
 		-webkit-animation-timing-function: ease-out;
-				animation-timing-function: ease-out;
+		animation-timing-function: ease-out;
 	}
 }
 

@@ -136,7 +136,7 @@ let humanLeft,
 let intervalCount = 0,
 	half = 0,
 	intervals = 7,
-	duration = 20,
+	duration = 30,
 	agentNum = 1;
 let targetCount = 0,
 	notificationCounter = 0;
@@ -734,19 +734,80 @@ function showInstructions11() {
 		);
 		$('#instructions-button').prop('disabled', false);
 		$('#instructions-content').css('display', 'none');
-		$('#instructions-heading').removeClass('animate__zoomOut');
-		$('#instructions-content').removeClass('animate__zoomOut');
-		$('#instructions-heading').addClass('animate__zoomIn');
-		$('#instructions-content').addClass('animate__zoomIn');
+		$('#instructions-heading').toggleClass('animate__zoomIn animate__zoomOut');
+		$('#instructions-content').toggleClass('animate__zoomIn animate__zoomOut');
 		$(document).off();
 	}, 500);
 }
 
 function showInstructions12() {
+	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
+	$('#instructions-heading').toggleClass('animate__zoomIn');
+	$('#instructions-content').toggleClass('animate__zoomIn');
+	setTimeout(() => {
+		$('#instructions-heading').text('Collecting coins:');
+		$('#instructions-content').html(
+			'Now let\'s practice picking up coins. Move to the center of a coin and press the spacebar to pick it up. You will have 30 seconds to freely move around when you click "Continue". Collect as many coins as you can!<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>'
+		);
+
+		$('#instructions-modal-fp-container').css({
+			'background-color': 'initial',
+			'z-index': 'initial',
+			'justify-content': 'flex-start',
+			'align-items': 'flex-end',
+		});
+
+		$('#instructions-modal-content').css({
+			'align-items': 'flex-start',
+		});
+
+		$('#instructions-content').css('display', 'initial');
+
+		$instructionsModal.toggleClass('animate__fadeOutLeft animate__fadeInLeft');
+	}, 500);
+}
+
+function showInstructions13() {
+	$('#instructions-button').prop('disabled', true);
+	$(document).on('keydown', e => {
+		eventKeyHandlers(e);
+	});
+	human.tutorial.inTutorial = true;
+	human.tutorial.restricted = false;
+	human.tutorial.step = 0;
+	highlightTargets = true;
+
+	for (let i = 0; i < obstacleLocs[0].length; ++i) {
+		obstacles.targets.push(
+			new Obstacle(
+				obstacleLocs[0][i][0],
+				obstacleLocs[0][i][1],
+				colors.goodTarget,
+				colors.darkGoodTarget,
+				'gold'
+			)
+		);
+	}
+
+	for (let i = 0; i < 40; ++i) {
+		let tempObstLoc = getRandomLocRanged(grid, 167, 298, 266, 393);
+		obstacles.targets.push(
+			new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
+		);
+	}
+
+	timeout = setInterval(updateTime, 1000);
+
+	refreshMap();
+}
+
+function showInstructions14() {
+	$(document).off();
 	$('#instructions-heading').removeClass('animate__zoomIn');
 	$('#instructions-content').removeClass('animate__zoomIn');
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
 	setTimeout(() => {
+		$('#instructions-button').prop('disabled', false);
 		$('#instructions-heading').text('Video segment 2');
 		$('#instructions-content').text('');
 
@@ -765,67 +826,9 @@ function showInstructions12() {
 	}, 500);
 }
 
-function showInstructions13() {
-	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
+function showInstructions15() {
+	$instructionsModal.toggleClass('animate__zoomOut animate__zoomIn');
 	setTimeout(() => {
-		$('#instructions-heading').text('Picking up targets:');
-		$('#instructions-content').html(
-			'Now let\'s practice picking up targets. Move to the center of any highlighted target and press the spacebar to pick it up. Take some time and collect as many coins as you can.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>'
-		);
-
-		$('#instructions-modal-fp-container').css({
-			'background-color': 'initial',
-			'z-index': 'initial',
-			'justify-content': 'flex-start',
-			'align-items': 'flex-end',
-		});
-
-		$('#instructions-modal-content').css({
-			'align-items': 'flex-start',
-		});
-
-		$('#instructions-content').css('display', 'initial');
-		$('#instructions-button').css('display', 'none');
-
-		$instructionsModal.toggleClass('animate__zoomOut animate__fadeInLeft');
-		$('#instructions-button').prop('disabled', true);
-		$(document).on('keydown', e => {
-			eventKeyHandlers(e);
-		});
-		human.tutorial.inTutorial = true;
-		human.tutorial.restricted = false;
-		human.tutorial.step = 0;
-		highlightTargets = true;
-
-		for (let i = 0; i < obstacleLocs[0].length; ++i) {
-			obstacles.targets.push(
-				new Obstacle(
-					obstacleLocs[0][i][0],
-					obstacleLocs[0][i][1],
-					colors.goodTarget,
-					colors.darkGoodTarget,
-					'gold'
-				)
-			);
-		}
-
-		for (let i = 0; i < 40; ++i) {
-			let tempObstLoc = getRandomLocRanged(grid, 167, 298, 266, 393);
-			obstacles.targets.push(
-				new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
-			);
-		}
-
-		timeout = setInterval(updateTime, 1000);
-
-		refreshMap();
-	}, 500);
-}
-
-function showInstructions14() {
-	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
-	setTimeout(() => {
-		$(document).off();
 		$('#addTeamBtn').prop('disabled', true);
 		showTrustPrompt();
 		$('#instructions-modal-fp-container').css({
@@ -843,13 +846,13 @@ function showInstructions14() {
 		);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', 'initial');
-		$instructionsModal.toggleClass('animate__fadeOutLeft animate__fadeInDown');
+		$instructionsModal.toggleClass('animate__zoomOut animate__fadeInDown');
 		$('#addToTeamBtn').prop('disabled', true);
 		$('#instructions-button').css('display', 'none');
 	}, 500);
 }
 
-function showInstructions15() {
+function showInstructions16() {
 	$instructionsModal.toggleClass('animate__fadeOutUp');
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
@@ -876,7 +879,7 @@ function showInstructions15() {
 	}, 500);
 }
 
-function showInstructions16() {
+function showInstructions17() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		$('#instructions-heading').text('Scoring:');
@@ -894,38 +897,8 @@ function showInstructions16() {
 	}, 500);
 }
 
-function showInstructions17() {
-	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
-	setTimeout(() => {
-		hideExploredInfo();
-		$('#instructions-modal-fp-container').css({
-			'z-index': 10,
-			'justify-content': 'flex-start',
-		});
-		$('#instructions-heading').text('Picking up targets:');
-		$('#instructions-content').html(
-			'Now let\'s pick up the other target. Move to the center of the other highlighted target and press the spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>'
-		);
-		$('#instructions-content').css('display', 'initial');
-		$instructionsModal.toggleClass('animate__fadeOutRight animate__fadeInLeft');
-		$('#instructions-button').prop('disabled', true);
-		$(document).on('keydown', e => {
-			eventKeyHandlers(e);
-		});
-		human.tutorial.inTutorial = true;
-		human.tutorial.restricted = false;
-		human.tutorial.step = 0;
-
-		highlightTargets = true;
-		clearInterval(timeout);
-		timeout = setInterval(updateTime, 1000);
-
-		refreshMap();
-	}, 500);
-}
-
 function showInstructions18() {
-	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
+	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		showTrustPrompt();
 		$('#instructions-modal-fp-container').css({
@@ -942,7 +915,7 @@ function showInstructions18() {
 
 		$('#instructions-heading').text('Adding to team score:');
 		$('#instructions-content').html(
-			"Now let's add it to the team score. Click on 'Add to Team score'."
+			"Now let's see what happens when you add the coins to the team score. Click on 'Add to Team score'."
 		);
 		$('#instructions-content').css('display', 'initial');
 		$instructionsModal.removeClass('animate__fadeOutLeft');
@@ -952,7 +925,7 @@ function showInstructions18() {
 }
 
 function showInstructions19() {
-	$instructionsModal.toggleClass('animate__fadeInDown animate__fadeOutUp');
+	$instructionsModal.toggleClass('animate__fadeInDown animate__fadeOutRight');
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
 		$('#instructions-modal-fp-container').css({
@@ -1100,7 +1073,6 @@ function updateTime() {
 		human.tutorial.inTutorial = false;
 		nextInstruction();
 	}
-	$timer.text(`Time elapsed: ${seconds}s`);
 }
 
 // game loop
@@ -1454,10 +1426,6 @@ async function animateScores() {
 		$('#teamPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
 		$('#teamPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
 	}
-
-	$('#humanIndMain').text(totalHumanScore);
-	$('#teammateIndMain').text(totalTeammateScore);
-	$('#teamMain').text(totalTeamScore);
 
 	// matter js
 	if (!engineInited) {
@@ -1983,7 +1951,7 @@ function eventKeyHandlers(e) {
 					human.moveLeft();
 					if (
 						human.tutorial.restricted &&
-						++human.tutorial.step >= 30
+						++human.tutorial.step >= 1
 					) {
 						human.tutorial.inTutorial = false;
 						nextInstruction();
@@ -2001,7 +1969,7 @@ function eventKeyHandlers(e) {
 					human.moveUp();
 					if (
 						human.tutorial.restricted &&
-						++human.tutorial.step >= 30
+						++human.tutorial.step >= 1
 					) {
 						human.tutorial.inTutorial = false;
 						nextInstruction();
@@ -2019,7 +1987,7 @@ function eventKeyHandlers(e) {
 					human.moveRight();
 					if (
 						human.tutorial.restricted &&
-						++human.tutorial.step >= 30
+						++human.tutorial.step >= 1
 					) {
 						human.tutorial.inTutorial = false;
 						nextInstruction();
@@ -2037,7 +2005,7 @@ function eventKeyHandlers(e) {
 					human.moveDown();
 					if (
 						human.tutorial.restricted &&
-						++human.tutorial.step >= 30
+						++human.tutorial.step >= 1
 					) {
 						human.tutorial.inTutorial = false;
 						nextInstruction();
