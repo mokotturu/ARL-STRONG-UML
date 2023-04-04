@@ -883,7 +883,7 @@ function showInstructions17() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`Since you added your coins to your individual score and there was no teamwork this round, your team and teammate's scores are 0 even though they added to the team score.`);
+		$('#instructions-content').html(`Since you added your coins to your individual score and there was no teamwork this round, your team and the robot's scores are 0 even though they added to the team score.`);
 
 		$('#humanPiggyBankContainer').css({
 			'box-shadow': 'initial',
@@ -935,7 +935,7 @@ function showInstructions19() {
 			'align-items': 'flex-end',
 		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your team score. Since you and your teammate collaborated and added to the team score, ${currentTeamScore} coins were added to the team score!`);
+		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your team score. Since you and the robot collaborated and added to the team score, ${currentTeamScore} coins were added to the team score!`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -1345,14 +1345,14 @@ async function animateFormula() {
 	// "now let's fetch your teammate's score and decision"
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800 * timescale);
-	$('#formulaHeading').html(`Now let's fetch your teammate's score and decision`);
+	$('#formulaHeading').html(`Now let's fetch the robot's score and decision`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(4000 * timescale);
 
 	// show teammate score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800 * timescale);
-	$('#formulaHeading').html(`Your teammate picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
+	$('#formulaHeading').html(`The robot picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000 * timescale);
 
