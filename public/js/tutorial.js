@@ -987,7 +987,7 @@ function showInstructions21() {
 			'Congratulations! You finished the tutorial. Do you wish to play the main game or replay the tutorial?'
 		);
 		$('#instructions-modal-content > .userInputButtons').html(
-			`<button id="instructions-button" onclick="window.location.href = '/matching';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`
+			`<button id="instructions-button" onclick="window.location.href = '/simulation';">Play Game</button><button id="instructions-button" onclick="location.reload();">Replay Tutorial</button>`
 		);
 		$('#legend').css({
 			'z-index': 0,
