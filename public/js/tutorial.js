@@ -85,12 +85,12 @@ let fakeBotImageScales = [
 
 let fakeAgentScores = [
 	{ gold: 3, addedTo: 'team' },
-	{ gold: 4, addedTo: 'team' },
-	{ gold: 2, addedTo: 'team' },
+	{ gold: 3, addedTo: 'individual' },
+	{ gold: 3, addedTo: 'team' },
 	{ gold: 3, addedTo: 'team' },
 	{ gold: 3, addedTo: 'individual' },
-	{ gold: 2, addedTo: 'individual' },
-	{ gold: 4, addedTo: 'individual' },
+	{ gold: 3, addedTo: 'individual' },
+	{ gold: 3, addedTo: 'individual' },
 ];
 
 let fakeAgentNum = 0;
@@ -546,8 +546,8 @@ function showInstructions1() {
 function showInstructions2() {
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
 	setTimeout(() => {
-		$('#instructions-heading').text('Video segment 1');
-		$('#instructions-content').text('');
+		$('#instructions-heading').text('');
+		$('#instructions-content').html('<iframe src="https://www.youtube.com/embed/QYPDtXwrM8s?cc_load_policy=1&cc_lang_pref=en" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>');
 
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
@@ -560,6 +560,25 @@ function showInstructions2() {
 			'align-items': 'center',
 		});
 
+		$instructionsModal[0].style.setProperty(
+			'width', '100%', 'important',
+		);
+
+		$('#instructions-content').css({
+			'position': 'relative',
+			'padding-bottom': '56.25%',
+			'height': '0px',
+			'overflow': 'hidden',
+		});
+
+		$('#instructions-content iframe').css({
+			'position': 'absolute',
+			'top': '0',
+			'left': '0',
+			'width': '100%',
+			'height': '100%',
+		});
+
 		$instructionsModal.toggleClass('animate__fadeOutLeft animate__zoomIn');
 	}, 500);
 }
@@ -567,6 +586,23 @@ function showInstructions2() {
 function showInstructions3() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
+		resizeInstructionsModal();
+
+		$('#instructions-content').css({
+			'position': 'initial',
+			'padding-bottom': 'initial',
+			'height': 'initial',
+			'overflow': 'initial',
+		});
+
+		$('#instructions-content iframe').css({
+			'position': 'initial',
+			'top': 'initial',
+			'left': 'initial',
+			'width': 'initial',
+			'height': 'initial',
+		});
+
 		$('#instructions-heading').text('How to play:');
 		$('#instructions-content').text(
 			"This is the playground. The dark blue dot in the center represents your current location on the map. The light blue area around the dot is the area in your field of view. To move around the map, you can use your arrow keys, or AWSD, or HJKL. Let's practice!"
@@ -741,13 +777,141 @@ function showInstructions11() {
 }
 
 function showInstructions12() {
+	$(document).off();
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
-	$('#instructions-heading').toggleClass('animate__zoomIn');
-	$('#instructions-content').toggleClass('animate__zoomIn');
 	setTimeout(() => {
+		$('#instructions-heading').text('');
+		$('#instructions-content').html('<iframe src="https://www.youtube.com/embed/x-G60rTudQE?cc_load_policy=1&cc_lang_pref=en" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>');
+
+		$('#instructions-modal-fp-container').css({
+			'background-color': '#000000AA',
+			'z-index': '10',
+			'justify-content': 'center',
+			'align-items': 'center',
+		});
+
+		$('#instructions-modal-content').css({
+			'align-items': 'center',
+		});
+
+		$instructionsModal[0].style.setProperty(
+			'width', '100%', 'important',
+		);
+
+		$('#instructions-content').css({
+			'position': 'relative',
+			'padding-bottom': '56.25%',
+			'height': '0px',
+			'overflow': 'hidden',
+			'display': 'initial',
+		});
+
+		$('#instructions-content iframe').css({
+			'position': 'absolute',
+			'top': '0',
+			'left': '0',
+			'width': '100%',
+			'height': '100%',
+		});
+
+		$instructionsModal.toggleClass('animate__fadeOutLeft animate__zoomIn');
+	}, 500);
+}
+
+function showInstructions13() {
+	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
+	setTimeout(() => {
+		resizeInstructionsModal();
+
+		$('#instructions-content').css({
+			'position': 'initial',
+			'padding-bottom': 'initial',
+			'height': 'initial',
+			'overflow': 'initial',
+		});
+
+		$('#instructions-content iframe').css({
+			'position': 'initial',
+			'top': 'initial',
+			'left': 'initial',
+			'width': 'initial',
+			'height': 'initial',
+		});
+
+		$('#instructions-heading').text('Mid Tutorial Questionnaire');
+		$('#instructions-content').html(
+			'Questions'
+		);
+
+		$instructionsModal.toggleClass('animate__zoomOut animate__zoomIn');
+	}, 500);
+}
+
+function showInstructions14() {
+	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
+	setTimeout(() => {
+		$('#instructions-heading').text('');
+		$('#instructions-content').html('<iframe src="https://www.youtube.com/embed/r7lLDEPk10Q?cc_load_policy=1&cc_lang_pref=en" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>');
+
+		$('#instructions-modal-fp-container').css({
+			'background-color': '#000000AA',
+			'z-index': '10',
+			'justify-content': 'center',
+			'align-items': 'center',
+		});
+
+		$('#instructions-modal-content').css({
+			'align-items': 'center',
+		});
+
+		$instructionsModal[0].style.setProperty(
+			'width', '100%', 'important',
+		);
+
+		$('#instructions-content').css({
+			'position': 'relative',
+			'padding-bottom': '56.25%',
+			'height': '0px',
+			'overflow': 'hidden',
+		});
+
+		$('#instructions-content iframe').css({
+			'position': 'absolute',
+			'top': '0',
+			'left': '0',
+			'width': '100%',
+			'height': '100%',
+		});
+
+		$instructionsModal.toggleClass('animate__zoomOut animate__zoomIn');
+	}, 500);
+}
+
+function showInstructions15() {
+	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
+	setTimeout(() => {
+		resizeInstructionsModal();
+
+		$('#instructions-content').css({
+			'position': 'initial',
+			'padding-bottom': 'initial',
+			'height': 'initial',
+			'overflow': 'initial',
+		});
+
+		$('#instructions-content iframe').css({
+			'position': 'initial',
+			'top': 'initial',
+			'left': 'initial',
+			'width': 'initial',
+			'height': 'initial',
+		});
+
 		$('#instructions-heading').text('Collecting coins:');
 		$('#instructions-content').html(
-			'Now let\'s practice picking up coins. Move to the center of a coin and press the spacebar to pick it up. You will have 30 seconds to freely move around when you click "Continue". Collect as many coins as you can!<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>'
+			'Let\'s practice picking up coins. Move to the center of a coin and press the spacebar to pick it up. You will have 30 seconds to freely move around when you click "Continue". Collect as many coins as you can!<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>'
 		);
 
 		$('#instructions-modal-fp-container').css({
@@ -763,11 +927,11 @@ function showInstructions12() {
 
 		$('#instructions-content').css('display', 'initial');
 
-		$instructionsModal.toggleClass('animate__fadeOutLeft animate__fadeInLeft');
+		$instructionsModal.toggleClass('animate__zoomOut animate__fadeInLeft');
 	}, 500);
 }
 
-function showInstructions13() {
+function showInstructions16() {
 	$('#instructions-button').prop('disabled', true);
 	$(document).on('keydown', e => {
 		eventKeyHandlers(e);
@@ -801,33 +965,8 @@ function showInstructions13() {
 	refreshMap();
 }
 
-function showInstructions14() {
-	$(document).off();
-	$('#instructions-heading').removeClass('animate__zoomIn');
-	$('#instructions-content').removeClass('animate__zoomIn');
+function showInstructions17() {
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
-	setTimeout(() => {
-		$('#instructions-button').prop('disabled', false);
-		$('#instructions-heading').text('Video segment 2');
-		$('#instructions-content').text('');
-
-		$('#instructions-modal-fp-container').css({
-			'background-color': '#000000AA',
-			'z-index': '10',
-			'justify-content': 'center',
-			'align-items': 'center',
-		});
-
-		$('#instructions-modal-content').css({
-			'align-items': 'center',
-		});
-
-		$instructionsModal.toggleClass('animate__fadeOutLeft animate__zoomIn');
-	}, 500);
-}
-
-function showInstructions15() {
-	$instructionsModal.toggleClass('animate__zoomOut animate__zoomIn');
 	setTimeout(() => {
 		$('#addTeamBtn').prop('disabled', true);
 		showTrustPrompt();
@@ -840,19 +979,19 @@ function showInstructions15() {
 		$('#trust-confirm-modal').css({
 			'z-index': 11,
 		});
-		$('#instructions-heading').text('Adding to individual score:');
+		$('#instructions-heading').text('Adding to team score:');
 		$('#instructions-content').html(
-			"Let's practice adding it to your individual score. Click on 'Add to individual score'."
+			"Let's see what happens when you and the robot integrate your coins to the team score. Click on 'Add to team score'."
 		);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', 'initial');
-		$instructionsModal.toggleClass('animate__zoomOut animate__fadeInDown');
-		$('#addToTeamBtn').prop('disabled', true);
+		$('#addToIndividualBtn').prop('disabled', true);
 		$('#instructions-button').css('display', 'none');
+		$instructionsModal.toggleClass('animate__fadeOutLeft animate__fadeInDown');
 	}, 500);
 }
 
-function showInstructions16() {
+function showInstructions18() {
 	$instructionsModal.toggleClass('animate__fadeOutUp');
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
@@ -862,44 +1001,29 @@ function showInstructions16() {
 			'justify-content': 'flex-end',
 			'align-items': 'flex-end',
 		});
+		$('#teamPiggyBankContainer').css({
+			'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 2,
+		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your individual score.`);
+		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score.`);
+		$('#instructions-content').html(`Since both you and the robot collaborated and integrated your coins into the team score, ${currentTeamScore} coins were added to the team score!`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
 		$('#instructions-button').prop('disabled', false);
 		$('#instructions-button').text('OK');
-
-		$('#humanPiggyBankContainer').css({
-			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
-			'z-index': 2,
-		});
 		$('.userInputButtons').css('padding', 0);
 		$instructionsModal.toggleClass('animate__fadeInRight');
 	}, 500);
 }
 
-function showInstructions17() {
+function showInstructions19() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
-		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`Since you added your coins to your individual score and there was no teamwork this round, your team and the robot's scores are 0 even though they added to the team score.`);
-
-		$('#humanPiggyBankContainer').css({
-			'box-shadow': 'initial',
-			'z-index': 'initial',
-		});
-		$('#teamPiggyBankContainer').css({
-			'box-shadow': '0 0 0 9999px #000000AA, 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
-			'z-index': 2,
-		});
-		$instructionsModal.toggleClass('animate__fadeOutRight animate__fadeInRight');
-	}, 500);
-}
-
-function showInstructions18() {
-	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
-	setTimeout(() => {
+		currentTeamScore = 0, currentHumanScore = 0, currentTeammateScore = 0;
+		totalTeamScore = 0, totalHumanScore = 0, totalTeammateScore = 0;
+		prevTotalTeamScore = 0, prevTotalHumanScore = 0, prevTotalTeammateScore = 0;
 		showTrustPrompt();
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
@@ -910,22 +1034,20 @@ function showInstructions18() {
 		$('#trust-confirm-modal').css({
 			'z-index': 11,
 		});
-		$('#addToTeamBtn').prop('disabled', false);
-		$('#addToIndividualBtn').prop('disabled', true);
+		$('#addToTeamBtn').prop('disabled', true);
+		$('#addToIndividualBtn').prop('disabled', false);
 
-		$('#instructions-heading').text('Adding to team score:');
+		$('#instructions-heading').text('Adding to individual score:');
 		$('#instructions-content').html(
-			"Now let's see what happens when you add the coins to the team score. Click on 'Add to Team score'."
+			"Now let's see what happens when you and the robot add to your respective individual scores. Click on 'Add to Individual score'."
 		);
 		$('#instructions-content').css('display', 'initial');
-		$instructionsModal.removeClass('animate__fadeOutLeft');
-		$instructionsModal.addClass('animate__fadeInDown');
 		$('#instructions-button').css('display', 'none');
+		$instructionsModal.toggleClass('animate__fadeOutRight animate__fadeInDown');
 	}, 500);
 }
 
-function showInstructions19() {
-	$instructionsModal.toggleClass('animate__fadeInDown animate__fadeOutRight');
+function showInstructions20() {
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
 		$('#instructions-modal-fp-container').css({
@@ -934,8 +1056,20 @@ function showInstructions19() {
 			'justify-content': 'flex-end',
 			'align-items': 'flex-end',
 		});
+		$('#teamPiggyBankContainer').css({
+			'box-shadow': 'initial',
+			'z-index': 'initial',
+		});
+		$('#humanPiggyBankContainer').css({
+			'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 2,
+		});
+		$('#teammatePiggyBankContainer').css({
+			'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 2,
+		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your team score. Since you and the robot collaborated and added to the team score, ${currentTeamScore} coins were added to the team score!`);
+		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and the robot did not collaborate and added to your individual scores, ${currentHumanScore} point(s) and ${currentTeammateScore} point(s) were added to your and the robot's individual scores respectively.`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -946,11 +1080,77 @@ function showInstructions19() {
 			'z-index': 2,
 		});
 		$('.userInputButtons').css('padding', 0);
-		$instructionsModal.toggleClass('animate__fadeInRight');
+		$instructionsModal.toggleClass('animate__fadeOutUp animate__fadeInRight');
 	}, 500);
 }
 
-function showInstructions20() {
+function showInstructions21() {
+	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
+	setTimeout(() => {
+		currentTeamScore = 0, currentHumanScore = 0, currentTeammateScore = 0;
+		totalTeamScore = 0, totalHumanScore = 0, totalTeammateScore = 0;
+		prevTotalTeamScore = 0, prevTotalHumanScore = 0, prevTotalTeammateScore = 0;
+		showTrustPrompt();
+		$('#instructions-modal-fp-container').css({
+			'background-color': '#000000AA',
+			'z-index': 10,
+			'justify-content': 'center',
+			'align-items': 'flex-start',
+		});
+		$('#trust-confirm-modal').css({
+			'z-index': 11,
+		});
+		$('#addToTeamBtn').prop('disabled', true);
+		$('#addToIndividualBtn').prop('disabled', false);
+
+		$('#instructions-heading').text('Adding to individual score:');
+		$('#instructions-content').html(
+			"Now let's see what happens when you add to your individual score and the robot add to the team score. Click on 'Add to Individual score'."
+		);
+		$('#instructions-content').css('display', 'initial');
+		$('#instructions-button').css('display', 'none');
+		$instructionsModal.toggleClass('animate__fadeOutRight animate__fadeInDown');
+	}, 500);
+}
+
+function showInstructions22() {
+	$('#exploration-results-btn').prop('disabled', true);
+	setTimeout(() => {
+		$('#instructions-modal-fp-container').css({
+			'z-index': 3,
+			'background-color': 'initial',
+			'justify-content': 'flex-end',
+			'align-items': 'flex-end',
+		});
+		$('#teamPiggyBankContainer').css({
+			'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 2,
+		});
+		$('#humanPiggyBankContainer').css({
+			'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 2,
+		});
+		$('#teammatePiggyBankContainer').css({
+			'box-shadow': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+			'z-index': 2,
+		});
+		$('#instructions-heading').text('Scoring:');
+		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and the robot did not collaborate, ${currentHumanScore} point(s) were added to your score as you added them to your individual score, but no points were added to the robot's individual score and the team score as there was no team work.`);
+		$('#instructions-content').css('display', 'initial');
+		$('#instructions-content').css('margin-bottom', '2rem');
+		$('#instructions-button').css('display', 'inline-block');
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-button').text('OK');
+
+		$('#teamPiggyBankContainer').css({
+			'z-index': 2,
+		});
+		$('.userInputButtons').css('padding', 0);
+		$instructionsModal.toggleClass('animate__fadeOutUp animate__fadeInRight');
+	}, 500);
+}
+
+function showInstructions23() {
 	$instructionsModal.removeClass('animate__fadeInLeft');
 	$instructionsModal.addClass('animate__fadeOutRight');
 	$('#overallTeamScoreWrapper').css({
@@ -969,7 +1169,7 @@ function showInstructions20() {
 	}, 500);
 }
 
-function showInstructions21() {
+function showInstructions24() {
 	$endRoundModal.removeClass('animate__zoomIn');
 	$endRoundModal.addClass('animate__zoomOut');
 	setTimeout(() => {
@@ -1260,15 +1460,15 @@ function showExploredInfo() {
 	} else if (log[agentNum - 1][intervalCount - 1].decision == 'team' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
 		totalTeammateScore += currentTeammateScore;
 		currentTeammateScore = 0;
-		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
+		currentTeamScore = 0;
 	} else if (log[agentNum - 1][intervalCount - 1].decision == 'individual' && fakeAgentScores[fakeAgentNum].addedTo == 'team') {
 		totalHumanScore += currentHumanScore;
 		currentHumanScore = 0;
-		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
+		currentTeamScore = 0;
 	} else if (log[agentNum - 1][intervalCount - 1].decision == 'individual' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
 		totalHumanScore += currentHumanScore;
 		totalTeammateScore += currentTeammateScore;
-		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
+		currentTeamScore = 0;
 	}
 
 	totalTeamScore += currentTeamScore;
@@ -1415,16 +1615,25 @@ async function animateScores() {
 	if (totalHumanScore > prevTotalHumanScore) {
 		$('#humanIndPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
 		$('#humanIndPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	} else {
+		$('#humanIndPiggyBankText').css('filter', 'initial');
+		$('#humanIndPiggyBankText').removeClass('animate__animated animate__pulse animate__infinite');
 	}
 
 	if (totalTeammateScore > prevTotalTeammateScore) {
 		$('#teammateIndPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
 		$('#teammateIndPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	} else {
+		$('#teammateIndPiggyBankText').css('filter', 'initial');
+		$('#teammateIndPiggyBankText').removeClass('animate__animated animate__pulse animate__infinite');
 	}
 
 	if (totalTeamScore > prevTotalTeamScore) {
 		$('#teamPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
 		$('#teamPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	} else {
+		$('#teamPiggyBankText').css('filter', 'initial');
+		$('#teamPiggyBankText').removeClass('animate__animated animate__pulse animate__infinite');
 	}
 
 	// matter js
@@ -1473,17 +1682,17 @@ async function animateScores() {
 
 		switch (i) {
 			case 0:
-				tempScore = totalHumanScore == prevTotalHumanScore ? 0 : 6;
+				tempScore = totalHumanScore <= prevTotalHumanScore ? 0 : 6;
 				tempX = smallBucketWidth / 2;
 				tempY = smallBucketHeight / 2;
 				break;
 			case 1:
-				tempScore = totalTeammateScore == prevTotalTeammateScore ? 0 : 6;
+				tempScore = totalTeammateScore <= prevTotalTeammateScore ? 0 : 6;
 				tempX = smallBucketWidth / 2;
 				tempY = smallBucketHeight / 2;
 				break;
 			case 2:
-				tempScore = totalTeamScore == prevTotalTeamScore ? 0 : 6;
+				tempScore = totalTeamScore <= prevTotalTeamScore ? 0 : 6;
 				tempX = bigBucketWidth / 2;
 				tempY = bigBucketHeight / 2;
 				break;
@@ -1951,7 +2160,7 @@ function eventKeyHandlers(e) {
 					human.moveLeft();
 					if (
 						human.tutorial.restricted &&
-						++human.tutorial.step >= 1
+						++human.tutorial.step >= 30
 					) {
 						human.tutorial.inTutorial = false;
 						nextInstruction();
@@ -1969,7 +2178,7 @@ function eventKeyHandlers(e) {
 					human.moveUp();
 					if (
 						human.tutorial.restricted &&
-						++human.tutorial.step >= 1
+						++human.tutorial.step >= 30
 					) {
 						human.tutorial.inTutorial = false;
 						nextInstruction();
@@ -1987,7 +2196,7 @@ function eventKeyHandlers(e) {
 					human.moveRight();
 					if (
 						human.tutorial.restricted &&
-						++human.tutorial.step >= 1
+						++human.tutorial.step >= 30
 					) {
 						human.tutorial.inTutorial = false;
 						nextInstruction();
@@ -2005,7 +2214,7 @@ function eventKeyHandlers(e) {
 					human.moveDown();
 					if (
 						human.tutorial.restricted &&
-						++human.tutorial.step >= 1
+						++human.tutorial.step >= 30
 					) {
 						human.tutorial.inTutorial = false;
 						nextInstruction();

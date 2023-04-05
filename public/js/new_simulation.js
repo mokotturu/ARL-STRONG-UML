@@ -120,7 +120,8 @@ let totalHumanScore = 0,
 let seconds = 0,
 	timeout,
 	startTime,
-	throttle;
+	throttle,
+	timescale = 1;
 
 let eventListenersAdded = false,
 	fullMapDrawn = false,
@@ -768,15 +769,15 @@ function showExploredInfo() {
 	} else if (log[agentNum - 1][intervalCount - 1].decision == 'team' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
 		totalTeammateScore += currentTeammateScore;
 		currentTeammateScore = 0;
-		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
+		currentTeamScore = 0;
 	} else if (log[agentNum - 1][intervalCount - 1].decision == 'individual' && fakeAgentScores[fakeAgentNum].addedTo == 'team') {
 		totalHumanScore += currentHumanScore;
 		currentHumanScore = 0;
-		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
+		currentTeamScore = 0;
 	} else if (log[agentNum - 1][intervalCount - 1].decision == 'individual' && fakeAgentScores[fakeAgentNum].addedTo == 'individual') {
 		totalHumanScore += currentHumanScore;
 		totalTeammateScore += currentTeammateScore;
-		currentTeamScore = currentTeammateScore * currentHumanScore * 2;
+		currentTeamScore = 0;
 	}
 
 	totalTeamScore += currentTeamScore;
@@ -821,57 +822,57 @@ async function animateFormula() {
 
 	$('#formulaContainer').find('*').removeClass('animate__fadeIn animate__fadeOut');
 
-	await sleep(1000);
+	await sleep(1000 * timescale);
 
 	// show initial heading
 	$('#formulaHeading').html(`Let's see the teamwork results!`);
 	$('#formulaHeading').css('visibility', 'visible');
 	$('#formulaHeading').toggleClass('animate__fadeIn');
-	await sleep(1000);
+	await sleep(1000 * timescale);
 
 	// show initial formula outline
 	$('#formula').css('visibility', 'visible');
 	$('#formula').toggleClass('animate__fadeIn');
-	await sleep(3000);
+	await sleep(3000 * timescale);
 
 	// show human score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(800);
+	await sleep(800 * timescale);
 	$('#formulaHeading').html(`You picked <span class="text-highlight">${human.tempTargetsFound.gold.length} coin(s)</span> in this round and added them to ${log[agentNum - 1][intervalCount - 1].decision == 'team' ? 'the <span class="text-highlight">team' : 'your <span class="text-highlight">individual'} score</span>`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(1000);
+	await sleep(1000 * timescale);
 
 	// show human score
 	if (log[agentNum - 1][intervalCount - 1].decision == 'team') $('#humanIndScoreFormula').html(`${human.tempTargetsFound.gold.length}`);
 	else $('#humanIndScoreFormula').html(`<img src="img/no-sign.svg" style="width: 5rem; height 5rem;">`);
 	$('#humanIndScoreFormula').css('visibility', 'visible');
 	$('#humanIndScoreFormula').toggleClass('animate__fadeIn');
-	await sleep(5000);
+	await sleep(5000 * timescale);
 
 	// "now let's fetch your teammate's score and decision"
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(800);
+	await sleep(800 * timescale);
 	$('#formulaHeading').html(`Now let's fetch the robot's score and decision`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(4000);
+	await sleep(4000 * timescale);
 
 	// show teammate score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(800);
+	await sleep(800 * timescale);
 	$('#formulaHeading').html(`The robot picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(1000);
+	await sleep(1000 * timescale);
 
 	// show teammate score
 	if (fakeAgentScores[fakeAgentNum - 1].addedTo == 'team') $('#teammateIndScoreFormula').html(`${fakeAgentScores[fakeAgentNum - 1].gold}`);
 	else $('#teammateIndScoreFormula').html(`<img src="img/no-sign.svg" style="width: 5rem; height 5rem;">`);
 	$('#teammateIndScoreFormula').css('visibility', 'visible');
 	$('#teammateIndScoreFormula').toggleClass('animate__fadeIn');
-	await sleep(5000);
+	await sleep(5000 * timescale);
 
 	// show final team score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(800);
+	await sleep(800 * timescale);
 	if (
 		log[agentNum - 1][intervalCount - 1].decision == 'team' &&
 		fakeAgentScores[fakeAgentNum - 1].addedTo == 'team'
@@ -881,7 +882,7 @@ async function animateFormula() {
 		$('#formulaHeading').html(`No successful teamwork in this round :(`);
 	}
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
-	await sleep(1000);
+	await sleep(1000 * timescale);
 
 	// show final team score
 	if (
@@ -921,16 +922,25 @@ async function animateScores() {
 	if (totalHumanScore > prevTotalHumanScore) {
 		$('#humanIndPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
 		$('#humanIndPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	} else {
+		$('#humanIndPiggyBankText').css('filter', 'initial');
+		$('#humanIndPiggyBankText').removeClass('animate__animated animate__pulse animate__infinite');
 	}
 
 	if (totalTeammateScore > prevTotalTeammateScore) {
 		$('#teammateIndPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
 		$('#teammateIndPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	} else {
+		$('#teammateIndPiggyBankText').css('filter', 'initial');
+		$('#teammateIndPiggyBankText').removeClass('animate__animated animate__pulse animate__infinite');
 	}
 
 	if (totalTeamScore > prevTotalTeamScore) {
 		$('#teamPiggyBankText').css('filter', 'drop-shadow(0 2px 10px #F6BE00)');
 		$('#teamPiggyBankText').addClass('animate__animated animate__pulse animate__infinite');
+	} else {
+		$('#teamPiggyBankText').css('filter', 'initial');
+		$('#teamPiggyBankText').removeClass('animate__animated animate__pulse animate__infinite');
 	}
 
 	$('#humanIndMain').text(totalHumanScore);
