@@ -66,8 +66,8 @@ let mapPaths = [
 ];
 let obstacleLocs = [
 	[
-		[222, 348],
-		[232, 338],
+		[250, 342],
+		[230, 315],
 	],
 	[[232, 338]],
 	[[242, 348]],
@@ -141,6 +141,10 @@ let intervalCount = 0,
 let targetCount = 0,
 	notificationCounter = 0;
 let log = [[], []];
+let firstCoinsPickUp = true;
+
+let timer = null,
+	timeWatched = 0;
 
 // sound effects
 let sounds = {
@@ -530,6 +534,15 @@ function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function startPlaying() {
+	timer = window.setInterval(() => ++timeWatched, 1000);
+}
+
+function pausePlaying(totalTime) {
+	if (timeWatched >= totalTime - 1) $('#instructions-button').prop('disabled', false);
+	if (timer) clearInterval(timer);
+}
+
 function resizeInstructionsModal() {
 	$instructionsModal[0].style.setProperty(
 		'width',
@@ -546,8 +559,17 @@ function showInstructions1() {
 function showInstructions2() {
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
 	setTimeout(() => {
-		$('#instructions-heading').text('');
-		$('#instructions-content').html('<iframe src="https://www.youtube.com/embed/QYPDtXwrM8s?cc_load_policy=1&cc_lang_pref=en" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>');
+		$('#instructions-heading').text('Tutorial Part 1');
+		$('#instructions-content').html(`<video controls style="width:100%;"><source src='video/tutorial_1.webm' type='video/webm' /></video>`);
+
+		$('#instructions-button').prop('disabled', true);
+		let vid = document.querySelector('#instructions-content > video');
+
+		vid.onloadedmetadata = () => {
+			console.log(vid.duration);
+			$('#instructions-content > video').on('play', () => startPlaying());
+			$('#instructions-content > video').on('pause', () => pausePlaying(63));
+		}
 
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
@@ -564,21 +586,6 @@ function showInstructions2() {
 			'width', '100%', 'important',
 		);
 
-		$('#instructions-content').css({
-			'position': 'relative',
-			'padding-bottom': '56.25%',
-			'height': '0px',
-			'overflow': 'hidden',
-		});
-
-		$('#instructions-content iframe').css({
-			'position': 'absolute',
-			'top': '0',
-			'left': '0',
-			'width': '100%',
-			'height': '100%',
-		});
-
 		$instructionsModal.toggleClass('animate__fadeOutLeft animate__zoomIn');
 	}, 500);
 }
@@ -587,21 +594,6 @@ function showInstructions3() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		resizeInstructionsModal();
-
-		$('#instructions-content').css({
-			'position': 'initial',
-			'padding-bottom': 'initial',
-			'height': 'initial',
-			'overflow': 'initial',
-		});
-
-		$('#instructions-content iframe').css({
-			'position': 'initial',
-			'top': 'initial',
-			'left': 'initial',
-			'width': 'initial',
-			'height': 'initial',
-		});
 
 		$('#instructions-heading').text('How to play:');
 		$('#instructions-content').text(
@@ -638,6 +630,19 @@ function showInstructions4() {
 		$instructionsModal.removeClass('animate__fadeOutLeft');
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').prop('disabled', true);
+
+		for (let i = 0; i < obstacleLocs[0].length; ++i) {
+			obstacles.targets.push(
+				new Obstacle(
+					obstacleLocs[0][i][0],
+					obstacleLocs[0][i][1],
+					colors.goodTarget,
+					colors.darkGoodTarget,
+					'gold'
+				)
+			);
+		}
+
 		$(document).on('keydown', e => {
 			eventKeyHandlers(e);
 		});
@@ -782,8 +787,57 @@ function showInstructions12() {
 	$('#instructions-content').removeClass('animate__zoomIn');
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
 	setTimeout(() => {
+		$('#instructions-heading').text('Picking up coins:');
+		$('#instructions-content').css('display', 'initial');
+		$('#instructions-content').html(`Let's practice picking up the gold coins you just discovered while practicing movement. Move to the center of a coin and press spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>`);
+
+		$('#instructions-button').prop('disabled', true);
+		$(document).on('keydown', e => {
+			eventKeyHandlers(e);
+		});
+		human.tutorial.inTutorial = true;
+		human.tutorial.restricted = false;
+		human.tutorial.step = 0;
+		highlightTargets = true;
+
+		refreshMap();
+
+		$instructionsModal.toggleClass('animate__fadeOutLeft animate__fadeInLeft');
+	}, 500);
+}
+
+function showInstructions13() {
+	$(document).off();
+	$('#instructions-heading').addClass('animate__zoomOut');
+	$('#instructions-content').addClass('animate__zoomOut');
+	setTimeout(() => {
+		$('#instructions-heading').html(
+			`Nice! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`
+		);
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-content').css('display', 'none');
+		$('#instructions-heading').toggleClass('animate__zoomIn animate__zoomOut');
+		$('#instructions-content').toggleClass('animate__zoomIn animate__zoomOut');
+	}, 500);
+}
+
+function showInstructions14() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
+	setTimeout(() => {
 		$('#instructions-heading').text('');
-		$('#instructions-content').html('<iframe src="https://www.youtube.com/embed/x-G60rTudQE?cc_load_policy=1&cc_lang_pref=en" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>');
+		$('#instructions-content').css('display', 'initial');
+		$('#instructions-content').html(`<video controls style="width:100%;"><source src='video/tutorial_2.webm' type='video/webm' /></video>`);
+
+		$('#instructions-button').prop('disabled', true);
+		let vid = document.querySelector('#instructions-content > video');
+
+		vid.onloadedmetadata = () => {
+			console.log(vid.duration);
+			$('#instructions-content > video').on('play', () => startPlaying());
+			$('#instructions-content > video').on('pause', () => pausePlaying(63));
+		}
 
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
@@ -800,45 +854,14 @@ function showInstructions12() {
 			'width', '100%', 'important',
 		);
 
-		$('#instructions-content').css({
-			'position': 'relative',
-			'padding-bottom': '56.25%',
-			'height': '0px',
-			'overflow': 'hidden',
-			'display': 'initial',
-		});
-
-		$('#instructions-content iframe').css({
-			'position': 'absolute',
-			'top': '0',
-			'left': '0',
-			'width': '100%',
-			'height': '100%',
-		});
-
 		$instructionsModal.toggleClass('animate__fadeOutLeft animate__zoomIn');
 	}, 500);
 }
 
-function showInstructions13() {
+function showInstructions15() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		resizeInstructionsModal();
-
-		$('#instructions-content').css({
-			'position': 'initial',
-			'padding-bottom': 'initial',
-			'height': 'initial',
-			'overflow': 'initial',
-		});
-
-		$('#instructions-content iframe').css({
-			'position': 'initial',
-			'top': 'initial',
-			'left': 'initial',
-			'width': 'initial',
-			'height': 'initial',
-		});
 
 		$('#instructions-heading').text('Mid Tutorial Questionnaire');
 		$('#instructions-content').html(
@@ -849,11 +872,20 @@ function showInstructions13() {
 	}, 500);
 }
 
-function showInstructions14() {
+function showInstructions16() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		$('#instructions-heading').text('');
-		$('#instructions-content').html('<iframe src="https://www.youtube.com/embed/r7lLDEPk10Q?cc_load_policy=1&cc_lang_pref=en" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>');
+		$('#instructions-content').html(`<video controls style="width:100%;"><source src='video/tutorial_3.webm' type='video/webm' /></video>`);
+
+		$('#instructions-button').prop('disabled', true);
+		let vid = document.querySelector('#instructions-content > video');
+
+		vid.onloadedmetadata = () => {
+			console.log(vid.duration);
+			$('#instructions-content > video').on('play', () => startPlaying());
+			$('#instructions-content > video').on('pause', () => pausePlaying(63));
+		}
 
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
@@ -870,48 +902,18 @@ function showInstructions14() {
 			'width', '100%', 'important',
 		);
 
-		$('#instructions-content').css({
-			'position': 'relative',
-			'padding-bottom': '56.25%',
-			'height': '0px',
-			'overflow': 'hidden',
-		});
-
-		$('#instructions-content iframe').css({
-			'position': 'absolute',
-			'top': '0',
-			'left': '0',
-			'width': '100%',
-			'height': '100%',
-		});
-
 		$instructionsModal.toggleClass('animate__zoomOut animate__zoomIn');
 	}, 500);
 }
 
-function showInstructions15() {
+function showInstructions17() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		resizeInstructionsModal();
 
-		$('#instructions-content').css({
-			'position': 'initial',
-			'padding-bottom': 'initial',
-			'height': 'initial',
-			'overflow': 'initial',
-		});
-
-		$('#instructions-content iframe').css({
-			'position': 'initial',
-			'top': 'initial',
-			'left': 'initial',
-			'width': 'initial',
-			'height': 'initial',
-		});
-
 		$('#instructions-heading').text('Collecting coins:');
 		$('#instructions-content').html(
-			'Let\'s practice picking up coins. Move to the center of a coin and press the spacebar to pick it up. You will have 30 seconds to freely move around when you click "Continue". Collect as many coins as you can!<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>'
+			'Let\'s practice picking up coins again. Move to the center of a coin and press the spacebar to pick it up. You will have 30 seconds to freely move around when you click "Continue". Collect as many coins as you can!<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>'
 		);
 
 		$('#instructions-modal-fp-container').css({
@@ -927,11 +929,18 @@ function showInstructions15() {
 
 		$('#instructions-content').css('display', 'initial');
 
+		for (let i = 0; i < 40; ++i) {
+			let tempObstLoc = getRandomLocRanged(grid, 167, 298, 266, 393);
+			obstacles.targets.push(
+				new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
+			);
+		}
+
 		$instructionsModal.toggleClass('animate__zoomOut animate__fadeInLeft');
 	}, 500);
 }
 
-function showInstructions16() {
+function showInstructions18() {
 	$('#instructions-button').prop('disabled', true);
 	$(document).on('keydown', e => {
 		eventKeyHandlers(e);
@@ -941,31 +950,12 @@ function showInstructions16() {
 	human.tutorial.step = 0;
 	highlightTargets = true;
 
-	for (let i = 0; i < obstacleLocs[0].length; ++i) {
-		obstacles.targets.push(
-			new Obstacle(
-				obstacleLocs[0][i][0],
-				obstacleLocs[0][i][1],
-				colors.goodTarget,
-				colors.darkGoodTarget,
-				'gold'
-			)
-		);
-	}
-
-	for (let i = 0; i < 40; ++i) {
-		let tempObstLoc = getRandomLocRanged(grid, 167, 298, 266, 393);
-		obstacles.targets.push(
-			new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
-		);
-	}
-
 	timeout = setInterval(updateTime, 1000);
 
 	refreshMap();
 }
 
-function showInstructions17() {
+function showInstructions19() {
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#addTeamBtn').prop('disabled', true);
@@ -991,7 +981,7 @@ function showInstructions17() {
 	}, 500);
 }
 
-function showInstructions18() {
+function showInstructions20() {
 	$instructionsModal.toggleClass('animate__fadeOutUp');
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
@@ -1018,7 +1008,7 @@ function showInstructions18() {
 	}, 500);
 }
 
-function showInstructions19() {
+function showInstructions21() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		currentTeamScore = 0, currentHumanScore = 0, currentTeammateScore = 0;
@@ -1047,7 +1037,7 @@ function showInstructions19() {
 	}, 500);
 }
 
-function showInstructions20() {
+function showInstructions22() {
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
 		$('#instructions-modal-fp-container').css({
@@ -1084,7 +1074,7 @@ function showInstructions20() {
 	}, 500);
 }
 
-function showInstructions21() {
+function showInstructions23() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		currentTeamScore = 0, currentHumanScore = 0, currentTeammateScore = 0;
@@ -1113,7 +1103,7 @@ function showInstructions21() {
 	}, 500);
 }
 
-function showInstructions22() {
+function showInstructions24() {
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
 		$('#instructions-modal-fp-container').css({
@@ -1150,7 +1140,7 @@ function showInstructions22() {
 	}, 500);
 }
 
-function showInstructions23() {
+function showInstructions25() {
 	$instructionsModal.removeClass('animate__fadeInLeft');
 	$instructionsModal.addClass('animate__fadeOutRight');
 	$('#overallTeamScoreWrapper').css({
@@ -1169,7 +1159,7 @@ function showInstructions23() {
 	}, 500);
 }
 
-function showInstructions24() {
+function showInstructions26() {
 	$endRoundModal.removeClass('animate__zoomIn');
 	$endRoundModal.addClass('animate__zoomOut');
 	setTimeout(() => {
@@ -2232,6 +2222,10 @@ function eventKeyHandlers(e) {
 				// 	nextInstruction();
 				// }
 				human.pickTarget();
+				if (firstCoinsPickUp && targetCount >= 2) {
+					firstCoinsPickUp = false;
+					nextInstruction();
+				}
 				break;
 			case 49: // 1
 				e.preventDefault();
