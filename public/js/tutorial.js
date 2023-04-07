@@ -566,9 +566,8 @@ function showInstructions2() {
 		let vid = document.querySelector('#instructions-content > video');
 
 		vid.onloadedmetadata = () => {
-			console.log(vid.duration);
 			$('#instructions-content > video').on('play', () => startPlaying());
-			$('#instructions-content > video').on('pause', () => pausePlaying(63));
+			$('#instructions-content > video').on('pause', () => pausePlaying(vid.duration - 1));
 		}
 
 		$('#instructions-modal-fp-container').css({
@@ -803,6 +802,7 @@ function showInstructions12() {
 		refreshMap();
 
 		$instructionsModal.toggleClass('animate__fadeOutLeft animate__fadeInLeft');
+		// nextInstruction();
 	}, 500);
 }
 
@@ -834,9 +834,8 @@ function showInstructions14() {
 		let vid = document.querySelector('#instructions-content > video');
 
 		vid.onloadedmetadata = () => {
-			console.log(vid.duration);
 			$('#instructions-content > video').on('play', () => startPlaying());
-			$('#instructions-content > video').on('pause', () => pausePlaying(63));
+			$('#instructions-content > video').on('pause', () => pausePlaying(vid.duration - 1));
 		}
 
 		$('#instructions-modal-fp-container').css({
@@ -865,7 +864,10 @@ function showInstructions15() {
 
 		$('#instructions-heading').text('Mid Tutorial Questionnaire');
 		$('#instructions-content').html(
-			'Questions'
+			`<div>
+				<div class="mid-tutorial-question">Who will be your teammate in this game?</div>
+				<div class="mid-tutorial-question">Can you see the score and the trust decision of your teammate before making your trust decision?</div>
+			</div>`
 		);
 
 		$instructionsModal.toggleClass('animate__zoomOut animate__zoomIn');
@@ -882,9 +884,8 @@ function showInstructions16() {
 		let vid = document.querySelector('#instructions-content > video');
 
 		vid.onloadedmetadata = () => {
-			console.log(vid.duration);
 			$('#instructions-content > video').on('play', () => startPlaying());
-			$('#instructions-content > video').on('pause', () => pausePlaying(63));
+			$('#instructions-content > video').on('pause', () => pausePlaying(vid.duration - 1));
 		}
 
 		$('#instructions-modal-fp-container').css({

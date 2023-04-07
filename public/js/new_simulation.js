@@ -22,7 +22,7 @@ let rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'Retaliation Game (random condition)';
+const gameMode = 'New PMT Game (base game - NOT FOR EXPERIMENTS)';
 
 const colors = {
 	human: '#3333ff',
@@ -513,7 +513,7 @@ $(document).ready(async () => {
 		);
 	}
 
-	for (let i = 0; i < 40; ++i) {
+	for (let i = 0; i < 20; ++i) {
 		let tempObstLoc = getRandomLoc(grid);
 		obstacles.targets.push(
 			new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
@@ -617,9 +617,6 @@ async function startMatching() {
 	$('#matching-modal')[0].style.setProperty('width', '30em', 'important');
 	$('#matching-modal')[0].style.setProperty('height', 'max-content', 'important');
 
-	$('#matching-heading').text(
-		`You are matched with a ${Math.random() > 0.5 ? 'human' : 'robot'}.`
-	);
 	$('#endMatchingBtn').prop('disabled', false);
 }
 
