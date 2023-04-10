@@ -51,7 +51,7 @@ let data = [
 	{ movement: [], human: [], agents: [], endGame: [] },
 ];
 let obstacles = { victims: [], hazards: [], targets: [] };
-let mapPaths = [
+const mapPaths = [
 	'src/data9.min.json', //  0
 	'src/data9.min.json', //  1
 	'src/data9.min.json', //  2
@@ -68,7 +68,8 @@ let mapPaths = [
 	'src/data13.min.json', // 13
 	'src/data14.min.json', // 14
 ];
-let obstacleLocs = [
+
+const obstacleLocs = [
 	[189, 321],
 	[228, 373],
 	[248, 342],
@@ -89,6 +90,16 @@ let obstacleLocs = [
 	[379, 265],
 	[362, 296],
 	[401, 320],
+];
+
+const cueMessages = [
+	"Great job! Let's keep working as a team.",
+	"Great job! Let's keep working as a team.",
+	"Great job! Let's keep working as a team.",
+	"Great job! Let's keep working as a team.",
+	"Great job! Let's keep working as a team.",
+	"Great job! Let's keep working as a team.",
+	"Great job! Let's keep working as a team.",
 ];
 
 let fakeBotImageScales = [
@@ -544,7 +555,7 @@ $(document).ready(async () => {
 		}
 	}
 
-	await startMatching();
+	startMatching();
 });
 
 function sleep(ms) {
@@ -623,7 +634,7 @@ function refreshMap() {
 	spawn([...obstacles.targets, human /* , ...agents */], 1);
 }
 
-async function startMatching() {
+function startMatching() {
 	$('#matching-modal').css('display', 'flex');
 	$('#matching-modal').css('visibility', 'visible');
 	$('#matching-modal').css('opacity', '1');
@@ -647,6 +658,8 @@ function endMatching() {
 	$('#matching-modal').css('display', 'none');
 	$('#matching-modal').css('visibility', 'hidden');
 	$('#matching-modal').css('opacity', '0');
+	$('#endMatchingBtn')[0].onclick = hideExploredInfo;
+	$('#matching-content').off();
 
 	$progressbar.css(
 		'width',
@@ -766,6 +779,9 @@ function showPostIntegratePrompt() {
 	$('#teammateIndPiggyBankText').css('filter', 'initial');
 	$('#teamPiggyBankText').css('filter', 'initial');
 
+	$detailsModal.css('visibility', 'hidden');
+	$detailsModal.css('display', 'none');
+	$detailsModal.css('opacity', '0');
 
 	$('#intervalSurvey')[0].reset();
 	$('#decisionInfluenceText').css('display', 'none');
@@ -1147,9 +1163,24 @@ function addToTeam() {
 	showExploredInfo();
 }
 
+function showCueMessage() {
+	$endRoundModal.css('visibility', 'hidden');
+	$endRoundModal.css('display', 'none');
+	$endRoundModal.css('opacity', '0');
+
+	$('#matching-content').text(cueMessages[intervalCount - 1]);
+
+	$('#matching-modal').css('display', 'flex');
+	$('#matching-modal').css('visibility', 'visible');
+	$('#matching-modal').css('opacity', '1');
+}
+
 // redraw the map and hide pop-up
 function hideExploredInfo() {
-	// log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = $('#intervalSurvey').serializeArray();
+	$('#matching-modal').css('display', 'none');
+	$('#matching-modal').css('visibility', 'hidden');
+	$('#matching-modal').css('opacity', '0');
+
 	$('#intervalSurveyRQMsg').css('display', 'none');
 	$('#curAgentScoreDetailsBlock').toggleClass(
 		'animate__animated animate__heartBeat'
@@ -1210,13 +1241,6 @@ function hideExploredInfo() {
 		eventKeyHandlers(e);
 	});
 
-	$endRoundModal.css('visibility', 'hidden');
-	$endRoundModal.css('display', 'none');
-	$endRoundModal.css('opacity', '0');
-
-	$detailsModal.css('visibility', 'hidden');
-	$detailsModal.css('display', 'none');
-	$detailsModal.css('opacity', '0');
 	if (intervalCount < intervals) {
 		$progressbar.css(
 			'width',
