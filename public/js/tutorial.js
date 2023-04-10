@@ -64,15 +64,33 @@ let mapPaths = [
 	'src/data13.min.json', // 13
 	'src/data14.min.json', // 14
 ];
-let obstacleLocs = [
-	[
-		[250, 342],
-		[230, 315],
-	],
-	[[232, 338]],
-	[[242, 348]],
+let obstacleLocsPre = [
+	[250, 342],
+	[230, 315],
 ];
 
+let obstacleLocsMain = [
+	[189, 321],
+	[228, 373],
+	[248, 342],
+	[349, 338],
+	[318, 371],
+	[299, 391],
+	[354, 428],
+	[315, 437],
+	[324, 243],
+	[279, 207],
+	[176, 198],
+	[117, 181],
+	[147, 232],
+	[300, 137],
+	[337, 107],
+	[365, 86],
+	[385, 187],
+	[379, 265],
+	[362, 296],
+	[401, 320],
+];
 let fakeBotImageScales = [
 	{ left: 96, right: 119, top: 195, bottom: 257 },
 	{ left: 117, right: 192, top: 229, bottom: 257 },
@@ -675,11 +693,10 @@ function showInstructions4() {
 		$instructionsModal.addClass('animate__fadeInLeft');
 		$('#instructions-button').prop('disabled', true);
 
-		for (let i = 0; i < obstacleLocs[0].length; ++i) {
+		for (let i = 0; i < obstacleLocsPre.length; ++i) {
 			obstacles.targets.push(
 				new Obstacle(
-					obstacleLocs[0][i][0],
-					obstacleLocs[0][i][1],
+					...obstacleLocsPre[i],
 					colors.goodTarget,
 					colors.darkGoodTarget,
 					'gold'
@@ -1049,10 +1066,16 @@ function showInstructions18() {
 		window.onresize = resizeInstructionsModal;
 		resizeInstructionsModal();
 
-		for (let i = 0; i < 40; ++i) {
-			let tempObstLoc = getRandomLoc(grid, 167, 298, 266, 393);
+		obstacles.targets = [];
+
+		for (let i = 0; i < obstacleLocsMain.length; ++i) {
 			obstacles.targets.push(
-				new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
+				new Obstacle(
+					...obstacleLocsMain[i],
+					colors.goodTarget,
+					colors.darkGoodTarget,
+					'gold'
+				)
 			);
 		}
 

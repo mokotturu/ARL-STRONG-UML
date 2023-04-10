@@ -68,7 +68,28 @@ let mapPaths = [
 	'src/data13.min.json', // 13
 	'src/data14.min.json', // 14
 ];
-let obstacleLocs = [[[222, 348]], [[232, 338]], [[242, 348]]];
+let obstacleLocs = [
+	[189, 321],
+	[228, 373],
+	[248, 342],
+	[349, 338],
+	[318, 371],
+	[299, 391],
+	[354, 428],
+	[315, 437],
+	[324, 243],
+	[279, 207],
+	[176, 198],
+	[117, 181],
+	[147, 232],
+	[300, 137],
+	[337, 107],
+	[365, 86],
+	[385, 187],
+	[379, 265],
+	[362, 296],
+	[401, 320],
+];
 
 let fakeBotImageScales = [
 	{ left: 96, right: 192, top: 158, bottom: 242 },
@@ -501,22 +522,14 @@ $(document).ready(async () => {
 		height: canvasHeight,
 	});
 
-	for (let i = 0; i < obstacleLocs[0].length; ++i) {
+	for (let i = 0; i < obstacleLocs.length; ++i) {
 		obstacles.targets.push(
 			new Obstacle(
-				obstacleLocs[0][i][0],
-				obstacleLocs[0][i][1],
+				...obstacleLocs[i],
 				colors.goodTarget,
 				colors.darkGoodTarget,
 				'gold'
 			)
-		);
-	}
-
-	for (let i = 0; i < 20; ++i) {
-		let tempObstLoc = getRandomLoc(grid);
-		obstacles.targets.push(
-			new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
 		);
 	}
 
@@ -616,8 +629,18 @@ async function startMatching() {
 	$('#matching-modal').css('opacity', '1');
 	$('#matching-modal')[0].style.setProperty('width', '30em', 'important');
 	$('#matching-modal')[0].style.setProperty('height', 'max-content', 'important');
+	$('#endMatchingBtn').prop('disabled', true);
 
-	$('#endMatchingBtn').prop('disabled', false);
+	$('#matching-content').on('click', e => {
+		$('#matching-content').text(`Let's work as a team and maximize our team score!`);
+		document.querySelector(':root').style.setProperty('--envelope-scale-y', '-1');
+		document.querySelector(':root').style.setProperty('--envelope-translate-y', '100%');
+		$(e.target).css({
+			'padding': '3rem 1rem',
+		});
+		$('#endMatchingBtn').prop('disabled', false);
+		$(e.target).removeClass('animate__animated animate__pulse animate__infinite');
+	});
 }
 
 function endMatching() {
