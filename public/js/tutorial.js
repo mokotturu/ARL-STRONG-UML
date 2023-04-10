@@ -548,11 +548,51 @@ function resizeInstructionsModal() {
 		'width',
 		`${document.querySelector('#map-container').offsetLeft / parseFloat(getComputedStyle(document.documentElement).fontSize) - 8}rem`, 'important'
 	);
+	$instructionsModal[0].style.setProperty(
+		'height',
+		`auto`
+	);
+	updateScrollingPosition(human.x, human.y);
+}
+
+function resizeInstructionsModalVideo() {
+	document.querySelector('#instructions-modal video').style.height = document.querySelector('body').clientHeight * 0.8 - 2 * parseFloat(getComputedStyle(document.querySelector('#instructions-modal')).paddingTop) - document.querySelector('#instructions-heading').clientHeight - parseFloat(getComputedStyle(document.querySelector('#instructions-heading')).paddingBottom) - document.querySelector('#instructions-modal-content .userInputButtons').clientHeight - parseFloat(getComputedStyle(document.querySelector('#instructions-modal-content .userInputButtons')).paddingTop) + "px";
+	document.querySelector('#instructions-modal').style.height = document.querySelector('body').clientHeight * 0.8 + "px";
+}
+
+function resetMapSettings() {
+	human.x = 232;
+	human.y = 348;
+	human.dir = 1;
+	human.tempTargetsFound.gold = [];
+
+	obstacles.targets.forEach(target => {
+		target.isPicked = false;
+		target.isFound = false;
+	});
+
+	grid.forEach(row => {
+		row.forEach(cell => {
+			cell.isHumanExplored = false;
+		});
+	})
+
+	$map.clearCanvas();
+	$map.drawRect({
+		fillStyle: '#252525',
+		x: 0,
+		y: 0,
+		width: canvasWidth,
+		height: canvasHeight,
+	});
 	updateScrollingPosition(human.x, human.y);
 }
 
 function showInstructions1() {
-	$instructionsModal.css('display', 'flex');
+	$instructionsModal.css({
+		'display': 'flex',
+		'align-items': 'baseline',
+	});
 	$instructionsModal.addClass('animate__animated animate__fadeInLeft');
 }
 
@@ -570,6 +610,9 @@ function showInstructions2() {
 			$('#instructions-content > video').on('pause', () => pausePlaying(vid.duration - 1));
 		}
 
+		window.onresize = resizeInstructionsModalVideo;
+		resizeInstructionsModalVideo();
+
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
 			'z-index': '10',
@@ -583,6 +626,7 @@ function showInstructions2() {
 
 		$instructionsModal[0].style.setProperty(
 			'width', '100%', 'important',
+			'height', '100%', 'important',
 		);
 
 		$instructionsModal.toggleClass('animate__fadeOutLeft animate__zoomIn');
@@ -592,8 +636,6 @@ function showInstructions2() {
 function showInstructions3() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
-		resizeInstructionsModal();
-
 		$('#instructions-heading').text('How to play:');
 		$('#instructions-content').text(
 			"This is the playground. The dark blue dot in the center represents your current location on the map. The light blue area around the dot is the area in your field of view. To move around the map, you can use your arrow keys, or AWSD, or HJKL. Let's practice!"
@@ -609,6 +651,9 @@ function showInstructions3() {
 		$('#instructions-modal-content').css({
 			'align-items': 'flex-start',
 		});
+
+		window.onresize = resizeInstructionsModal;
+		resizeInstructionsModal();
 
 		$instructionsModal.toggleClass('animate__zoomOut animate__fadeInLeft');
 		$mapContainer.addClass('animate__animated animate__shakeX');
@@ -802,7 +847,6 @@ function showInstructions12() {
 		refreshMap();
 
 		$instructionsModal.toggleClass('animate__fadeOutLeft animate__fadeInLeft');
-		// nextInstruction();
 	}, 500);
 }
 
@@ -811,6 +855,7 @@ function showInstructions13() {
 	$('#instructions-heading').addClass('animate__zoomOut');
 	$('#instructions-content').addClass('animate__zoomOut');
 	setTimeout(() => {
+		firstCoinsPickUp = false;
 		$('#instructions-heading').html(
 			`Nice! <span class="material-icons-outlined" style="font-size: 30px; margin-left: 0.5em;">check_circle</span>`
 		);
@@ -838,6 +883,9 @@ function showInstructions14() {
 			$('#instructions-content > video').on('pause', () => pausePlaying(vid.duration - 1));
 		}
 
+		window.onresize = resizeInstructionsModalVideo;
+		resizeInstructionsModalVideo();
+
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
 			'z-index': '10',
@@ -860,21 +908,88 @@ function showInstructions14() {
 function showInstructions15() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
-		resizeInstructionsModal();
-
 		$('#instructions-heading').text('Mid Tutorial Questionnaire');
 		$('#instructions-content').html(
-			`<div>
-				<div class="mid-tutorial-question">Who will be your teammate in this game?</div>
-				<div class="mid-tutorial-question">Can you see the score and the trust decision of your teammate before making your trust decision?</div>
-			</div>`
+			`<p id='mid-tutorial-survey-required-msg' class='requiredMessage'>Please fill out all the fields.</p>
+			<form name="mid-tutorial-survey" id="mid-tutorial-survey" onsubmit="return false;">
+				<div class="mid-tutorial-question-block">
+					<div class="mid-tutorial-question">Who will be your teammate in this game?<sup style='font-size: 11px;color: red;'>*</sup></div>
+					<div class="mid-tutorial-choices">
+						<div class="grid-item" id="mid-tutorial-1-1-box">
+							<input type="radio" id="mid-tutorial-1-1" name="mid-tutorial-1" value="human and i can see and control" required />
+							<label id="mid-tutorial-1-1" for="mid-tutorial-1-1">A human. I can see and control their movement during the game</label>
+						</div>
+						<div class="grid-item" id="mid-tutorial-1-2-box">
+							<input type="radio" id="mid-tutorial-1-2" name="mid-tutorial-1" value="human and i cannot see and control" required />
+							<label id="mid-tutorial-1-2" for="mid-tutorial-1-2">A human. I cannot see and control their movement during the game</label>
+						</div>
+						<div class="grid-item" id="mid-tutorial-1-3-box">
+							<input type="radio" id="mid-tutorial-1-3" name="mid-tutorial-1" value="robot and i can see and control" required />
+							<label id="mid-tutorial-1-3" for="mid-tutorial-1-3">A robot. I can see and control their movement during the game</label>
+						</div>
+						<div class="grid-item" id="mid-tutorial-1-4-box">
+							<input type="radio" id="mid-tutorial-1-4" name="mid-tutorial-1" value="robot and i cannot see and control" required />
+							<label id="mid-tutorial-1-4" for="mid-tutorial-1-4">A robot. I cannot see and control their movement during the game</label>
+						</div>
+					</div>
+				</div>
+				<div class="mid-tutorial-question-block">
+					<div class="mid-tutorial-question">Can you see the score and the trust decision of your teammate before making your trust decision?<sup style='font-size: 11px;color: red;'>*</sup></div>
+					<div class="mid-tutorial-choices">
+						<div class="grid-item" id="mid-tutorial-2-1-box">
+							<input type="radio" id="mid-tutorial-2-1" name="mid-tutorial-2" value="yes" required />
+							<label id="mid-tutorial-2-1" for="mid-tutorial-2-1">Yes, I can see the robot score and trust decision and based on that I can make my trust decision</label>
+						</div>
+						<div class="grid-item" id="mid-tutorial-2-2-box">
+							<input type="radio" id="mid-tutorial-2-2" name="mid-tutorial-2" value="no" required />
+							<label id="mid-tutorial-2-2" for="mid-tutorial-2-2">No, I cannot see the robot score and trust decision before I make my trust decision</label>
+						</div>
+					</div>
+				</div>
+			</form>`
 		);
+
+		window.onresize = resizeInstructionsModal;
+		resizeInstructionsModal();
+
+		$instructionsModal[0].style.setProperty(
+			'width', 'fit-content', 'important',
+			'height', '100%', 'important',
+		);
+		$('#instructions-button').text(`Check Answers`);
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-button')[0].onclick = () => {
+			if ($('#mid-tutorial-survey').serializeArray().length < 2) {
+				$('#mid-tutorial-survey-required-msg').css('display', 'initial');
+			} else {
+				nextInstruction();
+			}
+		}
 
 		$instructionsModal.toggleClass('animate__zoomOut animate__zoomIn');
 	}, 500);
 }
 
 function showInstructions16() {
+	$('#mid-tutorial-1-1-box').css('background-color', 'rgba(150, 0, 0, 0.2');
+	$('#mid-tutorial-1-2-box').css('background-color', 'rgba(150, 0, 0, 0.2');
+	$('#mid-tutorial-1-3-box').css('background-color', 'rgba(150, 0, 0, 0.2');
+	$('#mid-tutorial-1-4-box').css('background-color', 'rgba(0, 150, 0, 0.2');
+
+	$('#mid-tutorial-2-1-box').css('background-color', 'rgba(150, 0, 0, 0.2');
+	$('#mid-tutorial-2-2-box').css('background-color', 'rgba(0, 150, 0, 0.2');
+
+	$('#mid-tutorial-survey-required-msg').css('display', 'none');
+
+	document.querySelectorAll('#mid-tutorial-survey input').forEach(elem => {
+		elem.disabled = true;
+	});
+
+	$('#instructions-button').text(`Continue`);
+	$('#instructions-button')[0].onclick = nextInstruction;
+}
+
+function showInstructions17() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		$('#instructions-heading').text('');
@@ -887,6 +1002,9 @@ function showInstructions16() {
 			$('#instructions-content > video').on('play', () => startPlaying());
 			$('#instructions-content > video').on('pause', () => pausePlaying(vid.duration - 1));
 		}
+
+		window.onresize = resizeInstructionsModalVideo;
+		resizeInstructionsModalVideo();
 
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
@@ -907,11 +1025,9 @@ function showInstructions16() {
 	}, 500);
 }
 
-function showInstructions17() {
+function showInstructions18() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
-		resizeInstructionsModal();
-
 		$('#instructions-heading').text('Collecting coins:');
 		$('#instructions-content').html(
 			'Let\'s practice picking up coins again. Move to the center of a coin and press the spacebar to pick it up. You will have 30 seconds to freely move around when you click "Continue". Collect as many coins as you can!<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>'
@@ -930,8 +1046,11 @@ function showInstructions17() {
 
 		$('#instructions-content').css('display', 'initial');
 
+		window.onresize = resizeInstructionsModal;
+		resizeInstructionsModal();
+
 		for (let i = 0; i < 40; ++i) {
-			let tempObstLoc = getRandomLocRanged(grid, 167, 298, 266, 393);
+			let tempObstLoc = getRandomLoc(grid, 167, 298, 266, 393);
 			obstacles.targets.push(
 				new Obstacle(...tempObstLoc, colors.goodTarget, colors.darkGoodTarget, 'gold')
 			);
@@ -941,22 +1060,24 @@ function showInstructions17() {
 	}, 500);
 }
 
-function showInstructions18() {
+function showInstructions19() {
 	$('#instructions-button').prop('disabled', true);
 	$(document).on('keydown', e => {
 		eventKeyHandlers(e);
 	});
+
 	human.tutorial.inTutorial = true;
 	human.tutorial.restricted = false;
 	human.tutorial.step = 0;
 	highlightTargets = true;
 
-	timeout = setInterval(updateTime, 1000);
+	resetMapSettings();
 
+	timeout = setInterval(updateTime, 1000);
 	refreshMap();
 }
 
-function showInstructions19() {
+function showInstructions20() {
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#addTeamBtn').prop('disabled', true);
@@ -982,7 +1103,7 @@ function showInstructions19() {
 	}, 500);
 }
 
-function showInstructions20() {
+function showInstructions21() {
 	$instructionsModal.toggleClass('animate__fadeOutUp');
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
@@ -1004,17 +1125,23 @@ function showInstructions20() {
 		$('#instructions-button').css('display', 'inline-block');
 		$('#instructions-button').prop('disabled', false);
 		$('#instructions-button').text('OK');
-		$('.userInputButtons').css('padding', 0);
 		$instructionsModal.toggleClass('animate__fadeInRight');
 	}, 500);
 }
 
-function showInstructions21() {
+function showInstructions22() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		currentTeamScore = 0, currentHumanScore = 0, currentTeammateScore = 0;
 		totalTeamScore = 0, totalHumanScore = 0, totalTeammateScore = 0;
 		prevTotalTeamScore = 0, prevTotalHumanScore = 0, prevTotalTeammateScore = 0;
+
+		$('#exploration-details-modal').css({
+			'display': 'none',
+			'visibility': 'hidden',
+			'opacity': '1',
+		});
+
 		showTrustPrompt();
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
@@ -1038,7 +1165,7 @@ function showInstructions21() {
 	}, 500);
 }
 
-function showInstructions22() {
+function showInstructions23() {
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
 		$('#instructions-modal-fp-container').css({
@@ -1070,18 +1197,24 @@ function showInstructions22() {
 		$('#teamPiggyBankContainer').css({
 			'z-index': 2,
 		});
-		$('.userInputButtons').css('padding', 0);
 		$instructionsModal.toggleClass('animate__fadeOutUp animate__fadeInRight');
 	}, 500);
 }
 
-function showInstructions23() {
+function showInstructions24() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		currentTeamScore = 0, currentHumanScore = 0, currentTeammateScore = 0;
 		totalTeamScore = 0, totalHumanScore = 0, totalTeammateScore = 0;
 		prevTotalTeamScore = 0, prevTotalHumanScore = 0, prevTotalTeammateScore = 0;
 		showTrustPrompt();
+
+		$('#exploration-details-modal').css({
+			'display': 'none',
+			'visibility': 'hidden',
+			'opacity': '1',
+		});
+
 		$('#instructions-modal-fp-container').css({
 			'background-color': '#000000AA',
 			'z-index': 10,
@@ -1094,7 +1227,7 @@ function showInstructions23() {
 		$('#addToTeamBtn').prop('disabled', true);
 		$('#addToIndividualBtn').prop('disabled', false);
 
-		$('#instructions-heading').text('Adding to individual score:');
+		$('#instructions-heading').text('One adds to the team score and the other to the individual score:');
 		$('#instructions-content').html(
 			"Now let's see what happens when you add to your individual score and the robot add to the team score. Click on 'Add to Individual score'."
 		);
@@ -1104,7 +1237,7 @@ function showInstructions23() {
 	}, 500);
 }
 
-function showInstructions24() {
+function showInstructions25() {
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
 		$('#instructions-modal-fp-container').css({
@@ -1136,14 +1269,20 @@ function showInstructions24() {
 		$('#teamPiggyBankContainer').css({
 			'z-index': 2,
 		});
-		$('.userInputButtons').css('padding', 0);
 		$instructionsModal.toggleClass('animate__fadeOutUp animate__fadeInRight');
 	}, 500);
 }
 
-function showInstructions25() {
+function showInstructions26() {
 	$instructionsModal.removeClass('animate__fadeInLeft');
 	$instructionsModal.addClass('animate__fadeOutRight');
+
+	$('#exploration-details-modal').css({
+		'display': 'none',
+		'visibility': 'hidden',
+		'opacity': '1',
+	});
+
 	$('#overallTeamScoreWrapper').css({
 		'box-shadow': 'initial',
 		'z-index': 'initial',
@@ -1160,9 +1299,8 @@ function showInstructions25() {
 	}, 500);
 }
 
-function showInstructions26() {
-	$endRoundModal.removeClass('animate__zoomIn');
-	$endRoundModal.addClass('animate__zoomOut');
+function showInstructions27() {
+	$endRoundModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		$detailsModal.css('visibility', 'hidden');
 		$detailsModal.css('display', 'none');
@@ -1172,6 +1310,10 @@ function showInstructions26() {
 		$endRoundModal.css('visibility', 'hidden');
 		$endRoundModal.css('opacity', 0);
 		$endRoundModal.css('z-index', 0);
+
+		$('#instructions-modal-fp-container').css({
+			'background-color': '#000000AA',
+		});
 
 		$('#instructions-heading').text('End of Tutorial');
 		$('#instructions-content').text(
@@ -1213,7 +1355,7 @@ function nextInstruction() {
 }
 
 function validateUser() {
-	if ($('#intervalSurvey').serialize() == 'scoresQuiz=800_400') {
+	if ($('#intervalSurvey').serialize() == 'endTutorialQuizQ1=Team%20score%3A%2012%2C%20Human%20individual%20score%3A%200%2C%20Robot%20individual%20score%3A%200&endTutorialQuizQ2=Team%20score%3A%200%2C%20Human%20individual%20score%3A%202%2C%20Robot%20individual%20score%3A%203&endTutorialQuizQ3=Team%20score%3A%200%2C%20Human%20individual%20score%3A%202%2C%20Robot%20individual%20score%3A%200') {
 		// proceed to next q or game
 		nextInstruction();
 	} else if ($('#intervalSurvey').serialize() == '') {
@@ -1235,15 +1377,19 @@ function validateUser() {
 				console.log(data, status, jqXHR);
 				// window.location.href = '/exit-tutorial';
 
-				$endRoundModal.css('display', 'none');
-				$endRoundModal.css('visibility', 'hidden');
-				$endRoundModal.css('opacity', '0');
-				$endRoundModal.css('z-index', 0);
+				$endRoundModal.css({
+					'display': 'none',
+					'visibility': 'hidden',
+					'opacity': '0',
+					'z-index': 0,
+				});
 
-				$tutorialRedirectModal.css('display', 'flex');
-				$tutorialRedirectModal.css('visibility', 'visible');
-				$tutorialRedirectModal.css('opacity', '1');
-				$tutorialRedirectModal.css('z-index', 999);
+				$tutorialRedirectModal.css({
+					'display': 'flex',
+					'visibility': 'visible',
+					'opacity': '1',
+					'z-index': 999,
+				});
 			},
 			error: (jqXHR, status, err) => {
 				console.log(jqXHR, status, err);

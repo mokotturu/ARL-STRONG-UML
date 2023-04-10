@@ -200,7 +200,7 @@ nav {
 	bottom: initial;
 	left: initial;
 	right: initial;
-	max-width: 40rem;
+	max-width: 90%;
 	max-height: 80%;
 	padding: 2rem;
 	margin: 2em 2em 2em 2em;
@@ -293,8 +293,10 @@ nav {
 }
 
 #endRoundQContainer {
-	width: 45em !important;
-	height: 40em !important;
+	width: fit-content !important;
+	height: 100% !important;
+	max-width: 90%;
+	max-height: 86%;
 	padding: 35px 50px;
 	visibility: visible;
 	opacity: 1;
@@ -306,7 +308,7 @@ nav {
 
 .optionsContainer {
 	width: 100%;
-	font-size: 16px;
+	font-size: 13px;
 }
 
 .optionsContainer input {
@@ -322,6 +324,12 @@ nav {
 #fourText {
 	width: 100%;
 	padding: 0.5rem;
+}
+
+#mid-tutorial-survey {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
 }
 
 #intervalSurvey {
@@ -343,13 +351,14 @@ nav {
 
 .questionContainer h4 {
 	margin: 0.5em 0 1em 0;
-	font-size: 18px;
+	font-size: 13px;
 	line-height: 160%;
 }
 
 .grid-item {
 	display: flex;
 	align-items: center;
+	gap: 0.5rem;
 	background-color: rgb(100, 100, 100);
 	border-radius: 7px;
 	padding: 10px;
@@ -772,6 +781,11 @@ nav {
 		-webkit-animation-timing-function: ease-out;
 		animation-timing-function: ease-out;
 	}
+}
+
+video {
+	background-color: #000;
+	border-radius: 7px;
 }
 
 input {
