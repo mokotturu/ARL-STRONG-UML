@@ -22,7 +22,7 @@ let rows, columns, boxWidth, boxHeight;
 const canvasWidth = $map.width();
 const canvasHeight = $map.height();
 
-const gameMode = 'New PMT Game (base game - NOT FOR EXPERIMENTS)';
+const gameMode = 'New PMT Game (Performance Trust Violation Condition)';
 
 const colors = {
 	human: '#3333ff',
@@ -109,10 +109,10 @@ const cueMessages = [
 	"Great job! Let's keep working as a team.",
 	"Great job! Let's keep working as a team.",
 	"Great job! Let's keep working as a team.",
-	"Great job! Let's keep working as a team.",
-	"Great job! Let's keep working as a team.",
-	"Great job! Let's keep working as a team.",
-	"Great job! Let's keep working as a team.",
+	"I am sorry I didn't find anything in this round, I will try to do better next round. Let's keep working as a team.",
+	"I am sorry I didn't find anything in this round, I will try to do better next round. Let's keep working as a team.",
+	"I am sorry I didn't find anything in this round, I will try to do better next round. Let's keep working as a team.",
+	"I am sorry I didn't find anything in this round, I will try to do better next round. Let's keep working as a team.",
 ];
 
 let fakeBotImageScales = [
@@ -129,13 +129,13 @@ let fakeBotImageScales = [
 ];
 
 let fakeAgentScores = [
-	{ gold: 3, addedTo: 'team' },
-	{ gold: 4, addedTo: 'team' },
 	{ gold: 2, addedTo: 'team' },
 	{ gold: 3, addedTo: 'team' },
-	{ gold: 3, addedTo: 'individual' },
-	{ gold: 2, addedTo: 'individual' },
-	{ gold: 4, addedTo: 'individual' },
+	{ gold: 1, addedTo: 'team' },
+	{ gold: 0, addedTo: 'individual' },
+	{ gold: 0, addedTo: 'individual' },
+	{ gold: 0, addedTo: 'individual' },
+	{ gold: 0, addedTo: 'individual' },
 ];
 
 let fakeAgentNum = 0;
