@@ -108,7 +108,7 @@ nav .items p {
 
 .popup-modal {
 	background-color: #454545;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	color: white;
 	text-align: center;
 	display: flex;
@@ -204,7 +204,7 @@ button {
 	font-size: 14px;
 	margin: 0 10px;
 	padding: 10px 20px;
-	box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
+	box-shadow: 0 7px 14px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22);
 	position: relative;
 	overflow: hidden;
 	background-color: #252525;
@@ -217,7 +217,7 @@ button {
 
 button:hover {
 	background-color: #303030;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	cursor: pointer;
 }
 
@@ -269,7 +269,7 @@ button:hover {
 	border-radius: 2px;
 }
 
-.border-effect ~ .focus-border {
+.border-effect~.focus-border {
 	position: absolute;
 	bottom: 0;
 	left: 50%;
@@ -279,7 +279,7 @@ button:hover {
 	transition: 0.4s;
 }
 
-.border-effect:focus ~ .focus-border {
+.border-effect:focus~.focus-border {
 	width: 100%;
 	transition: 0.4s;
 	left: 0;
@@ -308,9 +308,10 @@ h2 {
 	width: 50px;
 	height: 50px;
 	border-radius: 50%;
-	box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
+	box-shadow: 0 7px 14px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22);
 	display: flex;
-	justify-content: center;;
+	justify-content: center;
+	;
 	align-items: center;
 	visibility: hidden;
 	opacity: 0;
@@ -325,7 +326,7 @@ h2 {
 
 #backToTop:hover {
 	background-color: #ffffff;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	cursor: pointer;
 }
 
@@ -363,6 +364,10 @@ footer a:hover {
 
 div, input, button, select {
 	font-family: 'Montserrat', 'sans-serif';
+}
+
+input[type="radio"] {
+	accent-color: #305dc5;
 }
 
 ::placeholder {

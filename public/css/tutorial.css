@@ -795,6 +795,10 @@ input {
 	color: white;
 }
 
+input[type="radio"] {
+	accent-color: #305dc5;
+}
+
 button,
 select,
 option {

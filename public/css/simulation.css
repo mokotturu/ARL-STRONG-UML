@@ -728,6 +728,7 @@ nav {
 
 input[type='radio'] {
 	margin-right: 1em;
+	accent-color: #305dc5;
 }
 
 input[type='text'] {
