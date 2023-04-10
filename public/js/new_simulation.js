@@ -1157,23 +1157,15 @@ function hideExploredInfo() {
 
 	// validate inputs
 	let rawIntervalSurveyData = $('#intervalSurvey').serializeArray();
-	if (rawIntervalSurveyData.length != 3 || rawIntervalSurveyData[2].value == '') {
-		$('#intervalSurveyRQMsg').css('display', 'initial');
-		return;
-	}
 
 	log[agentNum - 1][log[agentNum - 1].length - 1].surveyResponse = rawIntervalSurveyData;
 
 	if (agentNum < agents.length) {
-		// agents[agentNum - 1].tempTargetsFound.positive = 0;
-		// agents[agentNum - 1].tempTargetsFound.negative = 0;
 		++agentNum;
 		showExploredInfo();
 		return;
 	}
 
-	// agents[agentNum - 1].tempTargetsFound.positive = 0;
-	// agents[agentNum - 1].tempTargetsFound.negative = 0;
 	human.tempTargetsFound.gold = [];
 
 	if (intervalCount == Math.floor(intervals / 2)) {
