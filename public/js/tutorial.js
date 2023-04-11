@@ -104,6 +104,7 @@ const obstacleLocs = [
 	[417, 283],
 	[412, 357],
 	[372, 353],
+	[233, 351],
 ];
 let fakeBotImageScales = [
 	{ left: 96, right: 119, top: 195, bottom: 257 },

@@ -104,6 +104,7 @@ const obstacleLocs = [
 	[417, 283],
 	[412, 357],
 	[372, 353],
+	[233, 351],
 ];
 
 const cueMessages = [
@@ -657,7 +658,7 @@ function startMatching() {
 	$('#endMatchingBtn').prop('disabled', true);
 
 	$('#matching-content').on('click', e => {
-		$('#matching-content').text(`Let's work as a team and maximize our team score!`);
+		$('#matching-content').html(`<span style="display:block;">Robot says:</span>Let's work as a team and maximize our team score!`);
 		document.querySelector(':root').style.setProperty('--envelope-scale-y', '-1');
 		document.querySelector(':root').style.setProperty('--envelope-translate-y', '100%');
 		$(e.target).css({
@@ -1178,15 +1179,19 @@ function addToTeam() {
 }
 
 function showCueMessage() {
-	$endRoundModal.css('visibility', 'hidden');
-	$endRoundModal.css('display', 'none');
-	$endRoundModal.css('opacity', '0');
+	if (intervalCount < 7) {
+		$endRoundModal.css('visibility', 'hidden');
+		$endRoundModal.css('display', 'none');
+		$endRoundModal.css('opacity', '0');
 
-	$('#matching-content').text(cueMessages[intervalCount - 1]);
+		$('#matching-content').html(`<span style="display:block;">Robot says:</span>${cueMessages[intervalCount - 1]}`);
 
-	$('#matching-modal').css('display', 'flex');
-	$('#matching-modal').css('visibility', 'visible');
-	$('#matching-modal').css('opacity', '1');
+		$('#matching-modal').css('display', 'flex');
+		$('#matching-modal').css('visibility', 'visible');
+		$('#matching-modal').css('opacity', '1');
+	} else {
+		hideExploredInfo();
+	}
 }
 
 // redraw the map and hide pop-up
