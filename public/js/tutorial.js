@@ -69,7 +69,7 @@ let obstacleLocsPre = [
 	[230, 315],
 ];
 
-let obstacleLocsMain = [
+const obstacleLocs = [
 	[189, 321],
 	[228, 373],
 	[248, 342],
@@ -90,6 +90,20 @@ let obstacleLocsMain = [
 	[379, 265],
 	[362, 296],
 	[401, 320],
+	[238, 320],
+	[187, 365],
+	[293, 461],
+	[351, 458],
+	[318, 317],
+	[112, 238],
+	[134, 204],
+	[174, 171],
+	[349, 141],
+	[291, 92],
+	[316, 62],
+	[417, 283],
+	[412, 357],
+	[372, 353],
 ];
 let fakeBotImageScales = [
 	{ left: 96, right: 119, top: 195, bottom: 257 },
@@ -933,19 +947,19 @@ function showInstructions15() {
 					<div class="mid-tutorial-question">Who will be your teammate in this game?<sup style='font-size: 11px;color: red;'>*</sup></div>
 					<div class="mid-tutorial-choices">
 						<div class="grid-item" id="mid-tutorial-1-1-box">
-							<input type="radio" id="mid-tutorial-1-1" name="mid-tutorial-1" value="human and i can see and control" required />
+							<input type="radio" id="mid-tutorial-1-1" class="mid-tutorial-checkbox" name="mid-tutorial-1" value="human and i can see and control" required />
 							<label id="mid-tutorial-1-1" for="mid-tutorial-1-1">A human. I can see and control their movement during the game</label>
 						</div>
 						<div class="grid-item" id="mid-tutorial-1-2-box">
-							<input type="radio" id="mid-tutorial-1-2" name="mid-tutorial-1" value="human and i cannot see and control" required />
+							<input type="radio" id="mid-tutorial-1-2" class="mid-tutorial-checkbox" name="mid-tutorial-1" value="human and i cannot see and control" required />
 							<label id="mid-tutorial-1-2" for="mid-tutorial-1-2">A human. I cannot see and control their movement during the game</label>
 						</div>
 						<div class="grid-item" id="mid-tutorial-1-3-box">
-							<input type="radio" id="mid-tutorial-1-3" name="mid-tutorial-1" value="robot and i can see and control" required />
+							<input type="radio" id="mid-tutorial-1-3" class="mid-tutorial-checkbox" name="mid-tutorial-1" value="robot and i can see and control" required />
 							<label id="mid-tutorial-1-3" for="mid-tutorial-1-3">A robot. I can see and control their movement during the game</label>
 						</div>
 						<div class="grid-item" id="mid-tutorial-1-4-box">
-							<input type="radio" id="mid-tutorial-1-4" name="mid-tutorial-1" value="robot and i cannot see and control" required />
+							<input type="radio" id="mid-tutorial-1-4" class="mid-tutorial-checkbox" name="mid-tutorial-1" value="robot and i cannot see and control" required />
 							<label id="mid-tutorial-1-4" for="mid-tutorial-1-4">A robot. I cannot see and control their movement during the game</label>
 						</div>
 					</div>
@@ -954,11 +968,11 @@ function showInstructions15() {
 					<div class="mid-tutorial-question">Can you see the score and the trust decision of your teammate before making your trust decision?<sup style='font-size: 11px;color: red;'>*</sup></div>
 					<div class="mid-tutorial-choices">
 						<div class="grid-item" id="mid-tutorial-2-1-box">
-							<input type="radio" id="mid-tutorial-2-1" name="mid-tutorial-2" value="yes" required />
+							<input type="radio" id="mid-tutorial-2-1" class="mid-tutorial-checkbox" name="mid-tutorial-2" value="yes" required />
 							<label id="mid-tutorial-2-1" for="mid-tutorial-2-1">Yes, I can see the robot score and trust decision and based on that I can make my trust decision</label>
 						</div>
 						<div class="grid-item" id="mid-tutorial-2-2-box">
-							<input type="radio" id="mid-tutorial-2-2" name="mid-tutorial-2" value="no" required />
+							<input type="radio" id="mid-tutorial-2-2" class="mid-tutorial-checkbox" name="mid-tutorial-2" value="no" required />
 							<label id="mid-tutorial-2-2" for="mid-tutorial-2-2">No, I cannot see the robot score and trust decision before I make my trust decision</label>
 						</div>
 					</div>
@@ -988,13 +1002,17 @@ function showInstructions15() {
 }
 
 function showInstructions16() {
-	$('#mid-tutorial-1-1-box').css('background-color', 'rgba(150, 0, 0, 0.2');
-	$('#mid-tutorial-1-2-box').css('background-color', 'rgba(150, 0, 0, 0.2');
-	$('#mid-tutorial-1-3-box').css('background-color', 'rgba(150, 0, 0, 0.2');
-	$('#mid-tutorial-1-4-box').css('background-color', 'rgba(0, 150, 0, 0.2');
+	const checkedElems = [...document.querySelectorAll('.mid-tutorial-checkbox')].filter(elem => elem.checked);
 
-	$('#mid-tutorial-2-1-box').css('background-color', 'rgba(150, 0, 0, 0.2');
+	$('#mid-tutorial-1-4-box').css('background-color', 'rgba(0, 150, 0, 0.2');
+	if (checkedElems[0].value != 'robot and i cannot see and control') {
+		$(`#${checkedElems[0].id}-box`).css('background-color', 'rgba(150, 0, 0, 0.2');
+	}
+
 	$('#mid-tutorial-2-2-box').css('background-color', 'rgba(0, 150, 0, 0.2');
+	if (checkedElems[1].value != 'no') {
+		$(`#${checkedElems[1].id}-box`).css('background-color', 'rgba(150, 0, 0, 0.2');
+	}
 
 	$('#mid-tutorial-survey-required-msg').css('display', 'none');
 
