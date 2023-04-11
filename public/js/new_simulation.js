@@ -132,10 +132,10 @@ let fakeAgentScores = [
 	{ gold: 2, addedTo: 'team' },
 	{ gold: 3, addedTo: 'team' },
 	{ gold: 1, addedTo: 'team' },
-	{ gold: 0, addedTo: 'individual' },
-	{ gold: 0, addedTo: 'individual' },
-	{ gold: 0, addedTo: 'individual' },
-	{ gold: 0, addedTo: 'individual' },
+	{ gold: 0, addedTo: 'team' },
+	{ gold: 0, addedTo: 'team' },
+	{ gold: 0, addedTo: 'team' },
+	{ gold: 0, addedTo: 'team' },
 ];
 
 let fakeAgentNum = 0;
