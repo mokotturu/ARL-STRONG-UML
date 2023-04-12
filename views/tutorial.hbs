@@ -119,10 +119,15 @@
 
 		<div class='popup-modal-container' id='endRoundQContainer'>
 			<div class='popup-modal' id='endRoundQContent'>
-				<h1 id='q3PromptTitle'>Please respond to the following questions:</h1>
-				<p id='intervalSurveyRQMsg' class='requiredMessage'>Please fill out all the fields.</p>
-				<form name='intervalSurvey' id='intervalSurvey' onsubmit='return false;'>
-					<div class='questionContainer'>
+				<h1 id='q3PromptTitle'>End of Tutorial Quiz<span
+						style="display:block;font-size:50%;margin-top:1rem;">You should pass
+						the quiz to be
+						able to continue to the game. Otherwise, you will need to redo the tutorial.</span></h1>
+				<p id='intervalSurveyRQMsg' class='requiredMessage' style='margin:2rem 0 2rem 0;'>Please fill out all
+					the fields.</p>
+				<form name='intervalSurvey' id='intervalSurvey' onsubmit='return false;' data-q-id='1'>
+					<h1 style='align-self:baseline;font-size:1.5rem;'>Question 1/3</h1>
+					<div class='questionContainer' id='endRoundQ1'>
 						<h4 id='endRoundQH4-1'>
 							What will your individual and team scores be if you pick 2 targets, and your teammate picks
 							3 targets in one round of the game and you both add to the team score?
@@ -184,7 +189,9 @@
 								Team score: 0, Human individual score: 2, Robot individual score: 0
 							</label>
 						</div>
-						<h4 id='endRoundQH4-2' style='margin-top: 1rem;'>
+					</div>
+					<div class='questionContainer' id='endRoundQ2' style='display:none'>
+						<h4 id='endRoundQH4-2'>
 							What will your individual and team scores be if you pick 2 targets and your teammate picks 3
 							targets in one round of the game and you both add to the individual score?
 							<sup style='font-size: 11px;color: red;'>*</sup>
@@ -245,7 +252,9 @@
 								Team score: 0, Human individual score: 2, Robot individual score: 0
 							</label>
 						</div>
-						<h4 id='endRoundQH4-3' style='margin-top: 1rem;'>
+					</div>
+					<div class='questionContainer' id='endRoundQ3' style='display:none'>
+						<h4 id='endRoundQH4-3'>
 							What will your individual and team scores be if you pick 2 targets, and your teammate picks
 							3 targets in one round of the game and you add to the individual score and your teammate
 							adds to the team score?
@@ -310,7 +319,7 @@
 					</div>
 				</form>
 				<div class='userInputButtons'>
-					<button id='submitendRoundQ' onclick='validateUser()'>Submit</button>
+					<button id='submitendRoundQ' onclick='nextQuestion()'>Submit</button>
 				</div>
 			</div>
 		</div>

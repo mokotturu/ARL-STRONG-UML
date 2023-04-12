@@ -69,7 +69,7 @@ let obstacleLocsPre = [
 	[230, 315],
 ];
 
-const obstacleLocs = [
+const obstacleLocsMain = [
 	[189, 321],
 	[228, 373],
 	[248, 342],
@@ -1389,6 +1389,53 @@ function showInstructions27() {
 	}, 500);
 }
 
+function nextQuestion() {
+	const endOfTutorialQuizResponses = $('#intervalSurvey').serializeArray();
+	const qNum = $('#intervalSurvey').attr('data-q-id');
+
+	switch (qNum) {
+		case '1':
+			if (endOfTutorialQuizResponses.length == 1) {
+				$('#intervalSurveyRQMsg').css('display', 'none');
+				$('#intervalSurvey').attr('data-q-id', '2');
+				$('#endRoundQ1').css('display', 'none');
+				$('#endRoundQ2').css('display', 'initial');
+				$('#intervalSurvey h1').text('Question 2/3');
+				$('#intervalSurvey').css('margin-top', '2rem');
+			} else {
+				$('#intervalSurveyRQMsg').css('display', 'block');
+				$('#intervalSurvey').css('margin-top', '0rem');
+			}
+			break;
+		case '2':
+			if (endOfTutorialQuizResponses.length == 2) {
+				$('#intervalSurveyRQMsg').css('display', 'none');
+				$('#intervalSurvey').attr('data-q-id', '3');
+				$('#endRoundQ2').css('display', 'none');
+				$('#endRoundQ3').css('display', 'initial');
+				$('#intervalSurvey h1').text('Question 3/3');
+				$('#intervalSurvey').css('margin-top', '2rem');
+			} else {
+				$('#intervalSurveyRQMsg').css('display', 'block');
+				$('#intervalSurvey').css('margin-top', '0rem');
+			}
+			break;
+		case '3':
+			if (endOfTutorialQuizResponses.length == 3) {
+				$('#intervalSurveyRQMsg').css('display', 'none');
+				$('#intervalSurvey').css('margin-top', '2rem');
+				validateUser();
+			} else {
+				$('#intervalSurveyRQMsg').css('display', 'block');
+				$('#intervalSurvey').css('margin-top', '0rem');
+			}
+			break;
+		default:
+			console.err('Invalid question number');
+			break;
+	}
+}
+
 function nextInstruction() {
 	let currInstructionID = $instructionsModal.attr('data-id');
 	window[`showInstructions${++currInstructionID}`]();
@@ -1400,11 +1447,6 @@ function validateUser() {
 	if ($('#intervalSurvey').serialize() == 'endTutorialQuizQ1=Team%20score%3A%2012%2C%20Human%20individual%20score%3A%200%2C%20Robot%20individual%20score%3A%200&endTutorialQuizQ2=Team%20score%3A%200%2C%20Human%20individual%20score%3A%202%2C%20Robot%20individual%20score%3A%203&endTutorialQuizQ3=Team%20score%3A%200%2C%20Human%20individual%20score%3A%202%2C%20Robot%20individual%20score%3A%200') {
 		// proceed to next q or game
 		nextInstruction();
-	} else if ($('#intervalSurvey').serialize() == '') {
-		// what
-		$('#intervalSurvey').append(
-			`<p style="font-size=14px; color: red;">Please select at least one option.</p>`
-		);
 	} else {
 		// oops
 		localStorage.setItem('failedTutorial', true);
