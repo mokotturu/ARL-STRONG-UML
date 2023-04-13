@@ -865,7 +865,7 @@ function showInstructions12() {
 	setTimeout(() => {
 		$('#instructions-heading').text('Picking up coins:');
 		$('#instructions-content').css('display', 'initial');
-		$('#instructions-content').html(`Let's practice picking up the gold coins you just discovered while practicing movement. Move to the center of a coin and press spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>`);
+		$('#instructions-content').html(`Let's practice picking up the gold coins you just discovered while practicing movement. Move to the center of both coins and press spacebar to pick it up.<br><br><div class="keysContainer"><div class="key" style="width: 70% !important;">Space Bar</div></div>`);
 
 		$('#instructions-button').prop('disabled', true);
 		$(document).on('keydown', e => {
@@ -1229,7 +1229,7 @@ function showInstructions23() {
 			'z-index': 2,
 		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and the robot did not collaborate and added to your individual scores, ${currentHumanScore} point(s) and ${currentTeammateScore} point(s) were added to your and the robot's individual scores respectively.`);
+		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and the robot did not collaborate and added to your individual scores, ${currentHumanScore} point(s) were added to your individual score, ${currentTeammateScore} point(s) were added to the robot's individual score, and 0 points were added to the team score.`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -1271,7 +1271,7 @@ function showInstructions24() {
 
 		$('#instructions-heading').text('One adds to the team score and the other to the individual score:');
 		$('#instructions-content').html(
-			"Now let's see what happens when you add to your individual score and the robot add to the team score. Click on 'Add to Individual score'."
+			"Now let's see what happens when one of you adds to the team score and the other adds to the individual score. Click on 'Add to Individual score'."
 		);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-button').css('display', 'none');
@@ -1301,7 +1301,7 @@ function showInstructions25() {
 			'z-index': 2,
 		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and the robot did not collaborate, ${currentHumanScore} point(s) were added to your score as you added them to your individual score, but no points were added to the robot's individual score and the team score as there was no team work.`);
+		$('#instructions-content').html(`You collcted ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score, while the robot collected ${currentTeammateScore} coin(s) and added them to the team score. Since you did not collaborate as a team, ${human.tempTargetsFound.gold.length} point(s) were added to your individual score, but no points were added to the robot's individual score and the team score.`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
