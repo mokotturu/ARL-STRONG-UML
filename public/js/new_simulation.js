@@ -109,10 +109,10 @@ const cueMessages = [
 	"Great job! Let's keep working as a team.",
 	"Great job! Let's keep working as a team.",
 	"Great job! Let's keep working as a team.",
-	"I gained a really good score last round and I decided to keep it for myself, let's work as a team next round!",
-	"I gained a really good score last round and I decided to keep it for myself, let's work as a team next round!",
-	"I gained a really good score last round and I decided to keep it for myself, let's work as a team next round!",
-	"I gained a really good score last round and I decided to keep it for myself, let's work as a team next round!",
+	"I gained a really good score last round and I decided to keep it for myself.",
+	"I gained a really good score last round and I decided to keep it for myself.",
+	"I gained a really good score last round and I decided to keep it for myself.",
+	"I gained a really good score last round and I decided to keep it for myself.",
 ];
 
 let fakeBotImageScales = [
