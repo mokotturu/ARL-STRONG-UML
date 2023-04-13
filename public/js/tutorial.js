@@ -72,7 +72,6 @@ let obstacleLocsPre = [
 const obstacleLocsMain = [
 	[189, 321],
 	[228, 373],
-	[248, 342],
 	[349, 338],
 	[318, 371],
 	[299, 391],
