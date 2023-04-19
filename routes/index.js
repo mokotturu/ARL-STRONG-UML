@@ -119,6 +119,20 @@ router.get('/thank-you', (req, res) => {
 	res.render('thank-you', { title: 'ARL STRONG UML | Thank You' });
 });
 
+router.post('/thank-you', async (req, res) => {
+	console.log(req.body);
+	try {
+		const result = await SimulationResult.updateOne(
+			{ uuid: req.body.uuid },
+			{ fromProlific: true },
+		);
+		res.sendStatus(200);
+	} catch (err) {
+		console.log(err);
+		res.redirect(500, 'error/500');
+	}
+});
+
 router.get('/declined', (req, res) => {
 	res.render('declined', { title: 'ARL STRONG UML | Declined' });
 });

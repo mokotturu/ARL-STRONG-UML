@@ -1,18 +1,11 @@
 <div class="main-content">
-	<h1>Thank you for participating!</h1>
-	<div class="buttonsCollection">
-		<a onclick="showCode()">Show code again</a>
-	</div>
 </div>
 
 <div class="popup-modal-container">
 	<div class="popup-modal" style="padding: 20px 50px;">
-		<p style="font-size:25px;font-weight:bold;margin:25px 0;">Thank you for participating!</p>
-		<p style="margin:1em 0;">Your confirmation code is:</p>
-		<code></code>
-		<div id="userInputButtons" style="padding-top:30px;">
-			<button id="copyButton" onclick="copyCode()">Copy code</button>
-		</div>
+		<p style="font-size:25px;font-weight:bold;margin:25px 0;text-align:center;">Thank you for participating!</p>
+		<p style="margin:1em 0;max-width:30rem;text-align:center;">Click <a id="exitLink" href="#">here</a> to verify
+			your completion of the game and return safely to Prolific.</p>
 	</div>
 </div>
 
@@ -20,44 +13,48 @@
 	.popup-modal {
 		align-items: initial;
 	}
+
+	a {
+		color: #9999ff;
+	}
+
+	a:hover {
+		text-decoration-thickness: 2px;
+	}
 </style>
 
 <script>
 	const $popupModal = $(".popup-modal-container");
 
 	$(document).ready(() => {
-		// if (!sessionStorage.getItem('uuid')) window.location.href = '/';
-		showCode();
+		$.ajax({
+			url: '/thank-you',
+			type: 'POST',
+			data: JSON.stringify({
+				uuid: sessionStorage.getItem('uuid'),
+			}),
+			contentType: 'application/json; charset=utf-8',
+			success: (data, status, jqXHR) => {
+				console.log(data, status, jqXHR);
+			},
+			error: (jqXHR, status, err) => {
+				console.log(jqXHR, status, err);
+				alert(err);
+			},
+		});
 		localStorage.setItem('failedTutorial', false);
+		showExit();
 	});
 
-	$(window).on('click', e => {
-		if ($popupModal.is(e.target)) {
-			$popupModal.css('visibility', 'hidden');
-			$popupModal.css('opacity', '0');
-			$('nav').removeClass('disabled');
-			$('.main-content').removeClass('disabled');
-			$('#instructions').removeClass('disabled');
-		}
-	});
+	function exitGame() {
+		window.location.href += '#';
+	}
 
-	function showCode() {
-		$('#copyButton').css('background-color', '#252525');
+	function showExit() {
+		$('#exitBtn').css('background-color', '#252525');
 		$popupModal.css('visibility', 'visible');
 		$popupModal.css('opacity', '1');
 		$('nav').addClass('disabled');
 		$('.main-content').addClass('disabled');
-		$('code').text(sessionStorage.getItem('uuid'));
-		$('#copyButton').text('Copy code');
-	}
-
-	function copyCode() {
-		const $temp = $('<input>');
-		$('body').append($temp);
-		$temp.val($('code').text()).select();
-		document.execCommand('copy');
-		$temp.remove();
-		$('#copyButton').text('Copied!');
-		$('#copyButton').css('background-color', '#4ca450');
 	}
 </script>
