@@ -5,7 +5,7 @@ const SimulationResultSchema = new mongoose.Schema({
 	failedTutorial: Boolean,
 	map: Number,
 	gameMode: String,
-	fromProlific: Boolean,
+	playedOn: String,
 	section1: {
 		movement: [],
 		humanTraversal: [],

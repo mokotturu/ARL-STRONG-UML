@@ -294,7 +294,7 @@ nav {
 
 #endRoundQContainer {
 	width: fit-content !important;
-	height: 100% !important;
+	height: fit-content !important;
 	max-width: 90%;
 	max-height: 86%;
 	padding: 35px 50px;

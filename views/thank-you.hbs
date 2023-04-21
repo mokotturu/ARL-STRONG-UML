@@ -4,7 +4,8 @@
 <div class="popup-modal-container">
 	<div class="popup-modal" style="padding: 20px 50px;">
 		<p style="font-size:25px;font-weight:bold;margin:25px 0;text-align:center;">Thank you for participating!</p>
-		<p style="margin:1em 0;max-width:30rem;text-align:center;">Click <a id="exitLink" href="#">here</a> to verify
+		<p style="margin:1em 0;max-width:30rem;text-align:center;">Click <a id="exitLink"
+				href="https://app.prolific.co/submissions/complete?cc=C1HX4F1I">here</a> to verify
 			your completion of the game and return safely to Prolific.</p>
 	</div>
 </div>
@@ -32,6 +33,7 @@
 			type: 'POST',
 			data: JSON.stringify({
 				uuid: sessionStorage.getItem('uuid'),
+				playedOn: window.location.hostname,
 			}),
 			contentType: 'application/json; charset=utf-8',
 			success: (data, status, jqXHR) => {
