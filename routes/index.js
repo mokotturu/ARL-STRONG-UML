@@ -105,6 +105,7 @@ router.post('/simulation/2', async (req, res) => {
 					agent2: req.body.decisions.agent2,
 				},
 				obstacles: req.body.obstacles,
+				timestamps: req.body.timestamps,
 				endGame: req.body.endGame,
 			}
 		);

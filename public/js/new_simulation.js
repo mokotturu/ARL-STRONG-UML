@@ -168,6 +168,9 @@ let seconds = 0,
 	throttle,
 	timescale = 1;
 
+let gameStartedAt,
+	resultsShownAt = [];
+
 let eventListenersAdded = false,
 	fullMapDrawn = false,
 	pause = false;
@@ -697,6 +700,7 @@ function endMatching() {
 	refreshMap();
 
 	gaplessPlayer.play();
+	gameStartedAt = new Date();
 	currentFrame = requestAnimationFrame(loop);
 }
 
@@ -743,6 +747,10 @@ function terminate() {
 			agent2Explored: [],
 			obstacles: obstacles,
 			decisions: { agent1: log[0], agent2: log[1] },
+			timestamps: {
+				gameStartedAt: gameStartedAt,
+				resultsShownAt: resultsShownAt,
+			},
 			endGame: data.endGame,
 		}),
 		contentType: 'application/json; charset=utf-8',
@@ -870,6 +878,8 @@ async function animateFormula() {
 	$('#pastDecisionsTable').css('display', 'none');
 
 	$('#formulaContainer').find('*').removeClass('animate__fadeIn animate__fadeOut');
+
+	resultsShownAt.push(new Date());
 
 	await sleep(1000 * timescale);
 

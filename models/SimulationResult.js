@@ -26,6 +26,10 @@ const SimulationResultSchema = new mongoose.Schema({
 		agent2: []
 	},
 	obstacles: [],
+	timestamps: {
+		gameStartedAt: Date,
+		resultsShownAt: [],
+	},
 	endGame: [],
 	survey1: {
 		reliable: String,
