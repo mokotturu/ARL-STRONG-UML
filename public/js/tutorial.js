@@ -591,6 +591,13 @@ function resizeInstructionsModalVideo() {
 	document.querySelector('#instructions-modal').style.height = document.querySelector('body').clientHeight * 0.8 + "px";
 }
 
+function bypassTutorialVideo() {
+	if (localStorage.getItem('isDev') == 'true') {
+		document.querySelector('#instructions-button').disabled = false;
+		nextInstruction();
+	}
+}
+
 function resetMapSettings() {
 	human.x = 232;
 	human.y = 348;
@@ -968,11 +975,11 @@ function showInstructions15() {
 					<div class="mid-tutorial-choices">
 						<div class="grid-item" id="mid-tutorial-2-1-box">
 							<input type="radio" id="mid-tutorial-2-1" class="mid-tutorial-checkbox" name="mid-tutorial-2" value="yes" required />
-							<label id="mid-tutorial-2-1" for="mid-tutorial-2-1">Yes, I can see the robot score and trust decision and based on that I can make my trust decision</label>
+							<label id="mid-tutorial-2-1" for="mid-tutorial-2-1">Yes, I can see the teammate's score and trust decision and based on that I can make my trust decision</label>
 						</div>
 						<div class="grid-item" id="mid-tutorial-2-2-box">
 							<input type="radio" id="mid-tutorial-2-2" class="mid-tutorial-checkbox" name="mid-tutorial-2" value="no" required />
-							<label id="mid-tutorial-2-2" for="mid-tutorial-2-2">No, I cannot see the robot score and trust decision before I make my trust decision</label>
+							<label id="mid-tutorial-2-2" for="mid-tutorial-2-2">No, I cannot see the teammate's score and trust decision before I make my trust decision</label>
 						</div>
 					</div>
 				</div>
@@ -1003,8 +1010,8 @@ function showInstructions15() {
 function showInstructions16() {
 	const checkedElems = [...document.querySelectorAll('.mid-tutorial-checkbox')].filter(elem => elem.checked);
 
-	$('#mid-tutorial-1-4-box').css('background-color', 'rgba(0, 150, 0, 0.2');
-	if (checkedElems[0].value != 'robot and i cannot see and control') {
+	$('#mid-tutorial-1-2-box').css('background-color', 'rgba(0, 150, 0, 0.2');
+	if (checkedElems[0].value != 'human and i cannot see and control') {
 		$(`#${checkedElems[0].id}-box`).css('background-color', 'rgba(150, 0, 0, 0.2');
 	}
 
@@ -1133,7 +1140,7 @@ function showInstructions20() {
 		});
 		$('#instructions-heading').text('Adding to team score:');
 		$('#instructions-content').html(
-			"Let's see what happens when you and the robot integrate your coins to the team score. Click on 'Add to team score'."
+			"Let's see what happens when you and the human teammate integrate your coins to the team score. Click on 'Add to team score'."
 		);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', 'initial');
@@ -1159,7 +1166,7 @@ function showInstructions21() {
 		});
 		$('#instructions-heading').text('Scoring:');
 		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score.`);
-		$('#instructions-content').html(`Since both you and the robot collaborated and integrated your coins into the team score, ${currentTeamScore} coins were added to the team score!`);
+		$('#instructions-content').html(`Since both you and the human teammate collaborated and integrated your coins into the team score, ${currentTeamScore} coins were added to the team score!`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -1197,7 +1204,7 @@ function showInstructions22() {
 
 		$('#instructions-heading').text('Adding to individual score:');
 		$('#instructions-content').html(
-			"Now let's see what happens when you and the robot add to your respective individual scores. Click on 'Add to Individual score'."
+			"Now let's see what happens when you and the human teammate add to your respective individual scores. Click on 'Add to Individual score'."
 		);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-button').css('display', 'none');
@@ -1227,7 +1234,7 @@ function showInstructions23() {
 			'z-index': 2,
 		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and the robot did not collaborate and added to your individual scores, ${currentHumanScore} point(s) were added to your individual score, ${currentTeammateScore} point(s) were added to the robot's individual score, and 0 points were added to the team score.`);
+		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and the human teammate did not collaborate and added to your individual scores, ${currentHumanScore} point(s) were added to your individual score, ${currentTeammateScore} point(s) were added to the human teammate's individual score, and 0 points were added to the team score.`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -1299,7 +1306,7 @@ function showInstructions25() {
 			'z-index': 2,
 		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You collcted ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score, while the robot collected ${currentTeammateScore} coin(s) and added them to the team score. Since you did not collaborate as a team, ${human.tempTargetsFound.gold.length} point(s) were added to your individual score, but no points were added to the robot's individual score and the team score.`);
+		$('#instructions-content').html(`You collcted ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score, while the human teammate collected ${currentTeammateScore} coin(s) and added them to the team score. Since you did not collaborate as a team, ${human.tempTargetsFound.gold.length} point(s) were added to your individual score, but no points were added to the human teammate's individual score and the team score.`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -1393,7 +1400,7 @@ function nextQuestion() {
 
 	switch (qNum) {
 		case '1':
-			if (endOfTutorialQuizResponses.length == 1) {
+			if (endOfTutorialQuizResponses.length >= 1) {
 				$('#intervalSurveyRQMsg').css('display', 'none');
 				$('#intervalSurvey').attr('data-q-id', '2');
 				$('#endRoundQ1').css('display', 'none');
@@ -1406,7 +1413,7 @@ function nextQuestion() {
 			}
 			break;
 		case '2':
-			if (endOfTutorialQuizResponses.length == 2) {
+			if (endOfTutorialQuizResponses.length >= 2) {
 				$('#intervalSurveyRQMsg').css('display', 'none');
 				$('#intervalSurvey').attr('data-q-id', '3');
 				$('#endRoundQ2').css('display', 'none');
@@ -1419,7 +1426,7 @@ function nextQuestion() {
 			}
 			break;
 		case '3':
-			if (endOfTutorialQuizResponses.length == 3) {
+			if (endOfTutorialQuizResponses.length >= 3) {
 				$('#intervalSurveyRQMsg').css('display', 'none');
 				$('#intervalSurvey').css('margin-top', '2rem');
 				validateUser();
@@ -1442,7 +1449,7 @@ function nextInstruction() {
 }
 
 function validateUser() {
-	if ($('#intervalSurvey').serialize() == 'endTutorialQuizQ1=Team%20score%3A%2012%2C%20Human%20individual%20score%3A%200%2C%20Robot%20individual%20score%3A%200&endTutorialQuizQ2=Team%20score%3A%200%2C%20Human%20individual%20score%3A%202%2C%20Robot%20individual%20score%3A%203&endTutorialQuizQ3=Team%20score%3A%200%2C%20Human%20individual%20score%3A%202%2C%20Robot%20individual%20score%3A%200') {
+	if ($('#intervalSurvey').serialize() == 'endTutorialQuizQ1=Team%20score%3A%2012%2C%20Your%20individual%20score%3A%200%2C%20Human%20teammate%20individual%20score%3A%200&endTutorialQuizQ2=Team%20score%3A%200%2C%20Your%20individual%20score%3A%202%2C%20Human%20teammate%20individual%20score%3A%203&endTutorialQuizQ3=Team%20score%3A%200%2C%20Your%20individual%20score%3A%202%2C%20Human%20teammate%20individual%20score%3A%200') {
 		// proceed to next q or game
 		nextInstruction();
 	} else {
@@ -1764,14 +1771,14 @@ async function animateFormula() {
 	// "now let's fetch your teammate's score and decision"
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800 * timescale);
-	$('#formulaHeading').html(`Now let's fetch the robot's score and decision`);
+	$('#formulaHeading').html(`Now let's fetch the human teammate's score and decision`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(4000 * timescale);
 
 	// show teammate score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800 * timescale);
-	$('#formulaHeading').html(`The robot picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
+	$('#formulaHeading').html(`The human teammate picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000 * timescale);
 
