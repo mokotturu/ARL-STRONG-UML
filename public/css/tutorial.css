@@ -237,6 +237,27 @@ nav {
 	width: 100%;
 }
 
+#tutorial-loading-circle {
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	margin-left: 1rem;
+	border: 2px solid white;
+	border-top-color: transparent;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
 .keysContainer {
 	width: 100%;
 	display: flex;

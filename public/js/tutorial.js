@@ -152,6 +152,7 @@ let seconds = 0,
 	timeout,
 	startTime,
 	throttle,
+	throttleDelay = 50,
 	timescale = 1;
 let eventListenersAdded = false,
 	fullMapDrawn = false,
@@ -591,7 +592,7 @@ function resizeInstructionsModalVideo() {
 	document.querySelector('#instructions-modal').style.height = document.querySelector('body').clientHeight * 0.8 + "px";
 }
 
-function bypassTutorialVideo() {
+function bypassTutorialStep() {
 	if (localStorage.getItem('isDev') == 'true') {
 		document.querySelector('#instructions-button').disabled = false;
 		nextInstruction();
@@ -908,6 +909,61 @@ function showInstructions14() {
 	$('#instructions-content').removeClass('animate__zoomIn');
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
 	setTimeout(() => {
+		$('#instructions-content').css('display', 'initial');
+		$('#instructions-heading').html(`Teammate pairing`);
+		$('#instructions-content').html(
+			`In this game, you may be paired with either a human or a robot teammate. There will be a matching step shortly to determine your teammate.`
+		);
+		$('#instructions-button').prop('disabled', false);
+		$('#instructions-button').text('Begin pairing');
+
+		$instructionsModal.toggleClass('animate__fadeOutLeft animate__fadeInLeft');
+	}, 500);
+}
+
+function showInstructions15() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
+	setTimeout(() => {
+		$('#instructions-heading').text('');
+		$('#instructions-content').css('display', 'initial');
+
+		$('#instructions-modal-fp-container').css({
+			'background-color': '#000000AA',
+			'z-index': '10',
+			'justify-content': 'center',
+			'align-items': 'center',
+		});
+
+		$('#instructions-modal-content').css({
+			'align-items': 'center',
+		});
+
+		$instructionsModal[0].style.setProperty(
+			'width', 'fit-content', 'important',
+		);
+
+		$('#instructions-content').html(`Finding new teammate...<div id='tutorial-loading-circle'></div>`);
+		$('#instructions-button').text('Continue');
+		$('#instructions-button').prop('disabled', true);
+
+		setTimeout(nextInstruction, 4000);
+
+		$instructionsModal.toggleClass('animate__fadeOutLeft animate__zoomIn');
+	}, 500);
+}
+
+function showInstructions16() {
+	$('#instructions-content').html(`You have been paired with a <span class='text-highlight'>human</span> teammate!`);
+	$('#instructions-button').prop('disabled', false);
+}
+
+function showInstructions17() {
+	$('#instructions-heading').removeClass('animate__zoomIn');
+	$('#instructions-content').removeClass('animate__zoomIn');
+	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
+	setTimeout(() => {
 		$('#instructions-heading').text('');
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').html(`<video controls style="width:100%;"><source src='video/tutorial_2.webm' type='video/webm' /></video>`);
@@ -938,11 +994,11 @@ function showInstructions14() {
 			'width', '100%', 'important',
 		);
 
-		$instructionsModal.toggleClass('animate__fadeOutLeft animate__zoomIn');
+		$instructionsModal.toggleClass('animate__zoomOut animate__zoomIn');
 	}, 500);
 }
 
-function showInstructions15() {
+function showInstructions18() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		$('#instructions-heading').text('Mid Tutorial Questionnaire');
@@ -1007,7 +1063,7 @@ function showInstructions15() {
 	}, 500);
 }
 
-function showInstructions16() {
+function showInstructions19() {
 	const checkedElems = [...document.querySelectorAll('.mid-tutorial-checkbox')].filter(elem => elem.checked);
 
 	$('#mid-tutorial-1-2-box').css('background-color', 'rgba(0, 150, 0, 0.2');
@@ -1030,7 +1086,7 @@ function showInstructions16() {
 	$('#instructions-button')[0].onclick = nextInstruction;
 }
 
-function showInstructions17() {
+function showInstructions20() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		$('#instructions-heading').text('');
@@ -1066,7 +1122,7 @@ function showInstructions17() {
 	}, 500);
 }
 
-function showInstructions18() {
+function showInstructions21() {
 	$instructionsModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		$('#instructions-heading').text('Collecting coins:');
@@ -1107,7 +1163,7 @@ function showInstructions18() {
 	}, 500);
 }
 
-function showInstructions19() {
+function showInstructions22() {
 	$('#instructions-button').prop('disabled', true);
 	$(document).on('keydown', e => {
 		eventKeyHandlers(e);
@@ -1124,7 +1180,7 @@ function showInstructions19() {
 	refreshMap();
 }
 
-function showInstructions20() {
+function showInstructions23() {
 	$instructionsModal.toggleClass('animate__fadeInLeft animate__fadeOutLeft');
 	setTimeout(() => {
 		$('#addTeamBtn').prop('disabled', true);
@@ -1150,7 +1206,7 @@ function showInstructions20() {
 	}, 500);
 }
 
-function showInstructions21() {
+function showInstructions24() {
 	$instructionsModal.toggleClass('animate__fadeOutUp');
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
@@ -1176,7 +1232,7 @@ function showInstructions21() {
 	}, 500);
 }
 
-function showInstructions22() {
+function showInstructions25() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		currentTeamScore = 0, currentHumanScore = 0, currentTeammateScore = 0;
@@ -1212,7 +1268,7 @@ function showInstructions22() {
 	}, 500);
 }
 
-function showInstructions23() {
+function showInstructions26() {
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
 		$('#instructions-modal-fp-container').css({
@@ -1248,7 +1304,7 @@ function showInstructions23() {
 	}, 500);
 }
 
-function showInstructions24() {
+function showInstructions27() {
 	$instructionsModal.toggleClass('animate__fadeInRight animate__fadeOutRight');
 	setTimeout(() => {
 		currentTeamScore = 0, currentHumanScore = 0, currentTeammateScore = 0;
@@ -1284,7 +1340,7 @@ function showInstructions24() {
 	}, 500);
 }
 
-function showInstructions25() {
+function showInstructions28() {
 	$('#exploration-results-btn').prop('disabled', true);
 	setTimeout(() => {
 		$('#instructions-modal-fp-container').css({
@@ -1320,7 +1376,7 @@ function showInstructions25() {
 	}, 500);
 }
 
-function showInstructions26() {
+function showInstructions29() {
 	$instructionsModal.removeClass('animate__fadeInLeft');
 	$instructionsModal.addClass('animate__fadeOutRight');
 
@@ -1346,7 +1402,7 @@ function showInstructions26() {
 	}, 500);
 }
 
-function showInstructions27() {
+function showInstructions30() {
 	$endRoundModal.toggleClass('animate__zoomIn animate__zoomOut');
 	setTimeout(() => {
 		$detailsModal.css('visibility', 'hidden');
@@ -2477,7 +2533,7 @@ function eventKeyHandlers(e) {
 		}
 		throttle = setTimeout(() => {
 			throttle = null;
-		}, 50);
+		}, throttleDelay);
 	}
 }
 
