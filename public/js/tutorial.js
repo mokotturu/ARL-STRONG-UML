@@ -1196,7 +1196,7 @@ function showInstructions23() {
 		});
 		$('#instructions-heading').text('Adding to team score:');
 		$('#instructions-content').html(
-			"Let's see what happens when you and the human teammate integrate your coins to the team score. Click on 'Add to team score'."
+			"Let's see what happens when you and your teammate integrate your coins to the team score. Click on 'Add to team score'."
 		);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', 'initial');
@@ -1222,7 +1222,7 @@ function showInstructions24() {
 		});
 		$('#instructions-heading').text('Scoring:');
 		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score.`);
-		$('#instructions-content').html(`Since both you and the human teammate collaborated and integrated your coins into the team score, ${currentTeamScore} coins were added to the team score!`);
+		$('#instructions-content').html(`Since both you and your teammate collaborated and integrated your coins into the team score, ${currentTeamScore} coins were added to the team score!`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -1260,7 +1260,7 @@ function showInstructions25() {
 
 		$('#instructions-heading').text('Adding to individual score:');
 		$('#instructions-content').html(
-			"Now let's see what happens when you and the human teammate add to your respective individual scores. Click on 'Add to Individual score'."
+			"Now let's see what happens when you and your teammate add to your respective individual scores. Click on 'Add to Individual score'."
 		);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-button').css('display', 'none');
@@ -1290,7 +1290,7 @@ function showInstructions26() {
 			'z-index': 2,
 		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and the human teammate did not collaborate and added to your individual scores, ${currentHumanScore} point(s) were added to your individual score, ${currentTeammateScore} point(s) were added to the human teammate's individual score, and 0 points were added to the team score.`);
+		$('#instructions-content').html(`You found ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score. Since you and your teammate did not collaborate and added to your individual scores, ${currentHumanScore} point(s) were added to your individual score, ${currentTeammateScore} point(s) were added to your teammate's individual score, and 0 points were added to the team score.`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -1362,7 +1362,7 @@ function showInstructions28() {
 			'z-index': 2,
 		});
 		$('#instructions-heading').text('Scoring:');
-		$('#instructions-content').html(`You collcted ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score, while the human teammate collected ${currentTeammateScore} coin(s) and added them to the team score. Since you did not collaborate as a team, ${human.tempTargetsFound.gold.length} point(s) were added to your individual score, but no points were added to the human teammate's individual score and the team score.`);
+		$('#instructions-content').html(`You collcted ${human.tempTargetsFound.gold.length} coin(s) and added them to your ${log[agentNum - 1][intervalCount - 1].decision} score, while your teammate collected ${currentTeammateScore} coin(s) and added them to the team score. Since you did not collaborate as a team, ${human.tempTargetsFound.gold.length} point(s) were added to your individual score, but no points were added to your teammate's individual score and the team score.`);
 		$('#instructions-content').css('display', 'initial');
 		$('#instructions-content').css('margin-bottom', '2rem');
 		$('#instructions-button').css('display', 'inline-block');
@@ -1827,14 +1827,14 @@ async function animateFormula() {
 	// "now let's fetch your teammate's score and decision"
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800 * timescale);
-	$('#formulaHeading').html(`Now let's fetch the human teammate's score and decision`);
+	$('#formulaHeading').html(`Now let's fetch your teammate's score and decision`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(4000 * timescale);
 
 	// show teammate score heading
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(800 * timescale);
-	$('#formulaHeading').html(`The human teammate picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
+	$('#formulaHeading').html(`Your teammate picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
 	await sleep(1000 * timescale);
 

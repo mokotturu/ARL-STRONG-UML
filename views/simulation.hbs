@@ -29,7 +29,7 @@
 	<div class='body-container'>
 		<div class='popup-modal-container' id='trust-cue-modal'>
 			<div class='popup-modal' id='trust-cue-modal-content'>
-				<h2 style='color: white;font-size: 26px;'>The human teammate 1 says:</h2>
+				<h2 style='color: white;font-size: 26px;'>Your teammate says:</h2>
 				<div class='trustCueMessage'>
 					Testing...
 				</div>
@@ -42,7 +42,7 @@
 		<div class='popup-modal-container' id='matching-modal'>
 			<div class='popup-modal' id='matching-modal-content'>
 				<h3 id='matching-content' class='animate__animated animate__pulse animate__infinite'>
-					You have a message from the human teammate!
+					You have a message from your teammate!
 				</h3>
 				<div class='userInputButtons'>
 					<button onclick='endMatching()' style='margin: 0px;' id='endMatchingBtn'>Continue</button>
@@ -98,7 +98,7 @@
 						</div>
 						<p>Your individual score</p>
 						<p>Team score</p>
-						<p>Human teammate's individual score</p>
+						<p>Your teammate's individual score</p>
 					</div>
 				</div>
 				<div id="pastDecisionsTable" class='tableItemsWrapper'
@@ -120,7 +120,7 @@
 				<div id='legend'>
 					<p class='scoreTitle'>Your Individual Score:</p>
 					<p class='score' id='humanIndMain'>0</p>
-					<p class='scoreTitle'>Human teammate's Individual Score:</p>
+					<p class='scoreTitle'>Your teammate's Individual Score:</p>
 					<p class='score' id='teammateIndMain'>0</p>
 					<p class='scoreTitle'>Team Score:</p>
 					<p class='score' id='teamMain'>0</p>
@@ -140,7 +140,7 @@
 					questions:</h1>
 				<form name='intervalSurvey' id='intervalSurvey' onsubmit='return false;'>
 					<div class='questionContainer'>
-						<h4>Please rate the performance of the human teammate in this round.<br />(1 =
+						<h4>Please rate the performance of your teammate in this round.<br />(1 =
 							poor performance, 7 = excellent performance)
 						</h4>
 						<div class='optionsContainer'>
@@ -161,7 +161,7 @@
 						</div>
 					</div>
 					<div class='questionContainer'>
-						<h4>Please rate the human teammate's honesty/morality.<br />(1 = not honest/moral, 7 = very honest/moral)
+						<h4>Please rate your teammate's honesty/morality.<br />(1 = not honest/moral, 7 = very honest/moral)
 							<div class='optionsContainer'>
 								<label for='threeOne' class='radio-inline grid-item'><input id='threeOne' type='radio'
 										name='honestlyMoralityRating' value='1' />1</label>
@@ -219,10 +219,10 @@
 					</div>
 					<div class='questionContainer'>
 						<h4>
-							What were the human teammate's decisions about their
+							What were your teammate's decisions about their
 							scores in the last two rounds of the game?<sup style='font-size: 11px;color: red;'>*</sup>
 							<br />
-							The human teammate added their scores to _____ and
+							My teammate added their scores to _____ and
 							_____ in the last two rounds of the game.
 						</h4>
 						<div class='optionsContainer fullWidthOptions'>
