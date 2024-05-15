@@ -879,8 +879,6 @@ async function animateFormula() {
 
 	$('#formulaContainer').find('*').removeClass('animate__fadeIn animate__fadeOut');
 
-	resultsShownAt.push(new Date());
-
 	await sleep(1000 * timescale);
 
 	// show initial heading
@@ -920,6 +918,7 @@ async function animateFormula() {
 	await sleep(800 * timescale);
 	$('#formulaHeading').html(`The robot picked <span class="text-highlight">${fakeAgentScores[fakeAgentNum - 1].gold} coin(s)</span> in this round and added them to ${fakeAgentScores[fakeAgentNum - 1].addedTo == 'team' ? 'the <span class="text-highlight">team' : 'their <span class="text-highlight">individual'} score</span>`);
 	$('#formulaHeading').toggleClass('animate__fadeIn animate__fadeOut');
+	resultsShownAt.push(new Date());
 	await sleep(1000 * timescale);
 
 	// show teammate score
