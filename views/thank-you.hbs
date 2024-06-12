@@ -1,12 +1,11 @@
 <div class="main-content">
 </div>
 
+<p id="show-code-button"></p>
 <div class="popup-modal-container">
 	<div class="popup-modal" style="padding: 20px 50px;">
 		<p style="font-size:25px;font-weight:bold;margin:25px 0;text-align:center;">Thank you for participating!</p>
-		<p style="margin:1em 0;max-width:30rem;text-align:center;">Click <a id="exitLink"
-				href="https://app.prolific.co/submissions/complete?cc=C1HX4F1I">here</a> to verify
-			your completion of the game and return safely to Prolific.</p>
+		<p style="margin:1em 0;max-width:30rem;text-align:center;">You may call the administrator now. Please do not close this window.</p>
 	</div>
 </div>
 
@@ -21,6 +20,22 @@
 
 	a:hover {
 		text-decoration-thickness: 2px;
+	}
+
+	#show-code-button {
+		position: fixed;
+		bottom: 0;
+		right: 0;
+		z-index: 1000000;
+		padding: 0.5rem 1rem;
+		background-color: white;
+		color: black;
+		opacity: 0;
+		transition: opacity 0.5s;
+	}
+
+	#show-code-button:hover {
+		opacity: 1;
 	}
 </style>
 
@@ -46,6 +61,7 @@
 		});
 		localStorage.setItem('failedTutorial', false);
 		showExit();
+		$('#show-code-button').text(sessionStorage.getItem('uuid'));
 	});
 
 	function exitGame() {
@@ -58,5 +74,10 @@
 		$popupModal.css('opacity', '1');
 		$('nav').addClass('disabled');
 		$('.main-content').addClass('disabled');
+	}
+
+	window.onbeforeunload = e => {
+		e = e || window.event;
+		return 'Are you sure you want to leave?';
 	}
 </script>
