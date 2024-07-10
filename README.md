@@ -4,8 +4,6 @@ This project is a study conducted by ARL STRONG UMass Lowell.
 ## Website
 ![simulation gif](https://media.giphy.com/media/4Xv6MxRUr6saZ2WSjs/giphy.gif)
 
-https://arlstrong-uml.herokuapp.com/
-
 ## Background
 This project pertains to team formation in groups of humans and robots trying to accomplish a common objective, such as a search and rescue operation. Teams succeed because of the network of relationships they possess, and the emergent behaviors this network facilitates. These emergent behaviors arise due to three constructs: (a) multiple agents in the team capable of taking actions, (b) interactions between the agents, and (c\) emergence of global-scale patterns due to the interactions. The overall research strategy and objective tackles each of these constructs as separate tasks in the context of a search and rescue mission. Search and rescue operations are often severely resource constrained in terms of time, energy, and information organization. Operating in such resource-constrained scenarios can impact the ability of human-agent teams to tackle complex problems, resulting in sub-optimal outputs.
 
@@ -13,39 +11,16 @@ This project pertains to team formation in groups of humans and robots trying to
 This study is largely exploratory. We will vary study parameters such as the goal assigned to the human-robot team, the complexity of the search and rescue environment, and the resources available to the team (such as level of map detail). We will observe and measure the resulting trust between humans and robots in the team, as well as the level of team performance and cohesion.
 
 ##  Project Details
-The website uses Node JS, Express, and MongoDB.
+The website is built using jQuery, Node JS, Express, and MongoDB.
 
-## Instructions on how to use the website
-Your goal is to explore a set of rooms and find as many victims and hazards as possible. You will have help from two autonomous agents. You do not need to do anything when you find a victim or a hazard, the system will record your exploration as you move.
+Each branch is a different version of the 2D game with different conditions and objectives (not the best design but it's what I came up with in my early CS days). Many branches are now obsolete. Please check the most recently updated branches for the latest versions of the game.
 
-![human on the map](/public/img/blue.png)
+To host the website locally, clone the repository and run the following commands:
+```bash
+$ npm install
+$ npm run dev
+```
 
-The blue colored square represents a human on the map. The light blue colored area shaded around the human is the area of the map visible to (human's field of view)/explored by the human.
+Note: You will need a `config.env` file in the `config/` directory with a `MONGO_URI` variable to connect to a MongoDB database.
 
-![explored area on the map not integrated - agent 1](/public/img/green.png)
-
-The red colored square marked by "1" represents the first agent on the map that moves autonomously. The green colored area shaded around the agent is the area of the map visible to (agent's field of view)/explored by the agent in the current interval.
-
-![explored area on the map not integrated - agent 2](/public/img/orange.png)
-
-The red colored square marked by "2" represents the second agent on the map that moves autonomously. The orange colored area shaded around the agent is the area of the map visible to (agent's field of view)/explored by the agent in the current interval.
-
-![explored area on the map integrated](/public/img/red.png)
-
-The light red colored area shaded on the map is the area of the map that has been explored by the agent in the past intervals and has been integrated by the human.
-
-![area on the map explored by both human and agent](/public/img/yellow.png)
-
-The yellow colored area shaded on the map is the area of the map that has been explored by both the agent and the human in the past intervals and has been integrated by the human.
-
-![Victim marker](/public/img/victim-marker-front.png)
-
-This marker on the minimap in the trust confirmatin pop-up means that a victim has been found on the map.
-
-![Hazard marker](/public/img/hazard-marker-front.png)
-
-This marker on the minimap in the trust confirmation pop-up means that a hazard has been found on the map.
-
-![trust confirmation screen](/public/img/pop-up.png)
-
-Use the arrow keys or awsd (or hjkl if you're a vim power user) to control the human. After every 30 seconds, you will be shown the images of the current state of the whole map, the human explored area, and the agent explored area. You will be prompted to either integrate or discard both agents' explored regions (Agent 1 and Agent 2). If you choose to integrate, the agent explored region (shaded green/orange) will turn red. If you choose to discard this area, the green/orange colored region will disappear and is considered unexplored.
+Feel free to contact me for more information about the project.
